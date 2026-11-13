@@ -1,7 +1,9 @@
-# fire-census
+# Fire Census
 
 NASA Space Apps Challenge 2026, challenge **Harmonization of MODIS and VIIRS Hot Spots**.
 Team **Sharmaji Ka Satellite**, Bangalore local event.
+
+One fire record, whichever satellite was watching.
 
 A web app that turns 20+ years of MODIS and VIIRS active fire hotspots into one
 consistent burning activity calendar for any area a user selects.

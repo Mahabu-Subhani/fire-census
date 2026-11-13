@@ -46,6 +46,7 @@ cause Git errors on Windows.
 - [ ] `docs/ARCHITECTURE.md`
 - [ ] Your own file in `docs/tasks/`
 - [ ] `docs/STRETCH.md`
+- [ ] `docs/DECISIONS.md` (defaults are filled in; say if you disagree with any)
 
 ### Team meeting (one hour, all three)
 

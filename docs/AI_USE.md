@@ -36,5 +36,9 @@ Record here, in the team's own words, which approach the team chose and why,
 and what the team changed from any AI suggestion. Fill this in after the team
 discussion.
 
+- 13 Nov 2026: the defaults in `docs/DECISIONS.md` (name, regions, thresholds,
+  framework, stretch order) were recommended by the AI assistant and accepted by
+  Mahabu. They are not yet team decisions. Record below what the team confirms,
+  changes or rejects.
 - Decision 1:
 - Decision 2:
