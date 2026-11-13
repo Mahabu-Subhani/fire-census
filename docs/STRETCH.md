@@ -7,6 +7,52 @@ working core with one finished stretch goal beats three unfinished ones.
 Each goal uses the harmonized record to do something the raw records cannot.
 They are ordered by value for effort. Pick at most two.
 
+## S0. Completeness curve: treat the two sensors like two telescopes
+
+**Where the idea comes from.** Astronomers have long merged star and galaxy
+catalogues from telescopes of different sensitivity. They do not use a single
+conversion factor. They measure each telescope's *completeness curve* (the
+chance it detects an object of a given brightness) and work with the
+*luminosity function* (how many objects exist at each brightness). MODIS and
+VIIRS are two telescopes of different sensitivity looking at the same fires.
+
+**What we build.** This replaces the hard floor of level L2 with a smooth curve.
+The hard floor is the special case where the curve is a step.
+
+1. In the overlap years, build the histogram of fire-cell FRP for Aqua and for
+   S-NPP, per day/night (and land cover if time allows).
+2. Their ratio, as a function of FRP, is MODIS's completeness relative to
+   VIIRS: near 0 for weak fires, rising to a plateau for strong ones. Rescale
+   so the plateau is 1 (this absorbs swath-coverage differences), and force
+   the curve to be non-decreasing.
+3. Harmonized VIIRS-era activity = the sum of the curve's value over all VIIRS
+   fire cells. In words: the number of fire cells MODIS would be expected to
+   see. Each cell counts as a fraction between 0 and 1, not as in or out.
+4. The same sum gives an uncertainty for free: the variance is the sum of
+   c x (1 - c) over the cells. This fills `harm_lo` and `harm_hi` without a
+   bootstrap.
+5. Show the curve in the app's method panel. It is the one picture that
+   explains why the sensors disagree.
+
+**Optional extra.** The slope of the FRP distribution above the plateau is a
+sensor-independent measure of how intense an area's fires are. Tracking it by
+year asks "are fires here getting stronger?", which raw counts cannot answer.
+
+**Prior work (VERIFY before citing).** FRP frequency distributions have been
+used to compare fire products, including an inverse-gamma fit whose "rollover"
+marks where a sensor stops detecting weak fires. Detection limits for MODIS and
+VIIRS are published. We have not found this used as the harmonization step of
+a fire calendar, but we must not claim it is the first.
+
+**Risks.** MODIS and VIIRS FRP for the same fire are not on exactly the same
+scale, so the curve is empirical, in VIIRS-FRP units. Histograms need enough
+fires per bin: pool months and use wide bins. It must pass the same tests T1
+to T6 as the hard floor. If it does no better, ship the hard floor and report
+the comparison.
+
+**Owner:** A. **Cost:** about two hours on top of L2. **Order:** build L2
+first; attempt S0 only after L2 has a test result.
+
 ## S1. The record finds a real event: Punjab's shifted burning season
 
 **Claim to test:** a harmonized record should reproduce a change that is already
