@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.*
+
+# Raw and intermediate data (large; reproduce with the pipeline)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node
+node_modules/
+dist/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
