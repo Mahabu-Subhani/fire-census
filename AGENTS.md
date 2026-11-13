@@ -19,7 +19,9 @@ harmonization method that is physically explained and tested, not a black-box ra
 4. The task file for the person you are helping, in `docs/tasks/`.
 5. `docs/AI_USE.md`: how AI assistance must be labelled.
 
-Ask your human which person they are (A, B or C) if they have not said.
+Person A is Mahabu Subhani (data and science), Person B is 8crsk (web app),
+Person C is Charulekha Rajesh (story and submission). Ask your human which one
+they are if they have not said.
 
 ## Hard rules (breaking these can disqualify the team)
 

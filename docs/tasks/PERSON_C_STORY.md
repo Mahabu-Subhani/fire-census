@@ -1,4 +1,4 @@
-# Person C: story, validation of claims, and submission
+# Person C (Charulekha Rajesh): story, validation of claims, and submission
 
 You own `docs/` and `submission/`. Most of the judging is based on the project
 page, and Presentation is one of five equally weighted scores. Your work decides

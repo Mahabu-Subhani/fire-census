@@ -1,4 +1,4 @@
-# Person B: web app
+# Person B (8crsk): web app
 
 You own `app/`. You read the files in `app/public/data/` that Person A writes.
 The app is what judges touch, so a small set of features that all work beats a

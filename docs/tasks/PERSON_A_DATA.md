@@ -1,4 +1,4 @@
-# Person A: data and science
+# Person A (Mahabu Subhani): data and science
 
 You own `pipeline/` and `data/`, and you write the files in `app/public/data/`.
 Everything else in the project depends on your output, so ship something small
