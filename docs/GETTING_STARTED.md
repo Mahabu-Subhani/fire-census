@@ -63,7 +63,8 @@ file. Mahabu commits the changes.
 | 6 | App framework | Vite + React + TypeScript, or plain HTML and JavaScript | `docs/ARCHITECTURE.md` |
 | 7 | Display cell size | 0.1 degree, or 0.05 degree | `docs/ARCHITECTURE.md` |
 | 8 | Demo format | 30-second video, or 7 slides | `docs/tasks/PERSON_C_STORY.md` |
-| 9 | Which stretch goals, if the core is done? | S1, S2, S3, at most two | `docs/STRETCH.md` |
+| 9 | Do we adopt the completeness curve (S0) as an upgrade to the hard floor? | Yes after L2 has a result; or no | `docs/STRETCH.md` |
+| 9b | Which other stretch goals, if the core is done? | S1, S2, S3, at most two | `docs/STRETCH.md` |
 | 10 | Project name and one-line tagline | Team's choice | `README.md` |
 
 Also agree:
