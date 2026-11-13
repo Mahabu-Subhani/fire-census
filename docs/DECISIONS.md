@@ -60,6 +60,21 @@ passes the Saturday 19:30 checkpoint.
 
 S3 (estimated small fires before 2012) is not planned.
 
+## From the challenge author's video (added 14 November, before the start)
+
+The author, from CONAE, speaks from its space centre in Córdoba. Her team does
+early warning and emergency response. Points that change our plan:
+
+| # | What she says | Decision |
+|---|---|---|
+| 21 | The calendar "shows you how many hotspots a particular month has across different years" | Months-across-years is the first view on screen |
+| 22 | Without a method, "almost 10 years of historical information will be lost" | State on the project page that the record keeps the MODIS-only years (2002 to 2011) usable on today's scale |
+| 23 | Combine MODIS's history with the "continuity and greater detail" of VIIRS | The small-fire layer is **core, not optional**. It is how VIIRS's detail is kept |
+| 24 | "It doesn't matter if one hotspot came from one sensor or the other" | Checks C1 and C4 in PREREGISTRATION.md measure exactly this; lead with them |
+| 25 | Use resources from "our agency and other agencies" | Cite CONAE's hotspot catalogue as context; ESA Fire_cci check (C6) for Córdoba |
+| 26 | She shows a fire in Argentina in July 2026 (place unknown to us) | After the start, look for the largest July 2026 event in the Argentina data. If found, use it as the demo example and widen region 14 if needed |
+| 27 | Demo lead | Córdoba leads the demo for global judging; Punjab and Haryana is shown second, for the local judges and the season-shift check. Both regions are processed; whichever passes its checks first is built into the app first |
+
 ## Change log
 
 | Date | Who | Change | Reason |
