@@ -27,7 +27,7 @@ row, add your name and the reason, and tell the others. Changes after Saturday
 | 7 | Overpass key | `satellite + acq_date + daynight` | `acq_time` varies within one pass |
 | 8 | Confidence filter | Drop MODIS below 30 and VIIRS "low". Report how results change with the filter off | Matches common practice; the sensitivity check keeps it honest |
 | 9 | Agreement tolerance for the floor | Ratio within 10 percent of 1 | A starting point; record the achieved value |
-| 10 | Reference pair | Aqua MODIS and S-NPP VIIRS, calibration years 2012 to 2019 | Matched overpass time; ends before Aqua's orbit began to drift |
+| 10 | Reference pair | Aqua MODIS and S-NPP VIIRS, calibration years 2012 to 2019. If VIIRS FRP shifts at 2015 (see ARCHITECTURE.md, verified facts), use 2016 to 2019 | Matched overpass time; ends before Aqua's orbit began to drift |
 | 11 | Held-out years (T3) | 2020 to 2021 | After calibration, before the drift becomes large. **VERIFY** drift dates |
 | 12 | Comparison labels | Below normal: under 0.5 x median. Near normal: 0.5 to 1.5. Above: 1.5 to 3. Far above: over 3 | Simple and explainable. Shown in the UI. Needs at least 5 earlier years, else "not enough history" |
 

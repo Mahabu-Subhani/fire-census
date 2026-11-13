@@ -148,7 +148,44 @@ which already satisfies "downloadable analytics".
 
 ## FIRMS data notes for the pipeline
 
-**VERIFY every item here against the live FIRMS site at the start.**
+### Verified on the FIRMS site, 13 November 2026
+
+Sources: https://firms.modaps.eosdis.nasa.gov/download/ and
+https://www.earthdata.nasa.gov/data/tools/firms/active-fire-data-attributes-modis-viirs
+
+| Fact | Value |
+|---|---|
+| Archive coverage, MODIS Collection 6.1 | 1 November 2000 to present |
+| Archive coverage, VIIRS S-NPP 375 m | 20 January 2012 to **2 November 2026**. S-NPP no longer delivers new data |
+| Archive coverage, VIIRS NOAA-20 375 m | 1 April 2018 to present |
+| Archive coverage, VIIRS NOAA-21 375 m | 1 March 2023 to present |
+| Archive tool | Serves data older than the last 7 days, as CSV, shapefile or JSON. Sign in with Earthdata login or an email code. A download link arrives by email once the request is processed. A "yearly summary by country" CSV download is also offered |
+| Standard versus near-real-time | NRT data are replaced by standard (science quality) data with a lag of about 5 months. So roughly the latest 5 months of any download are NRT |
+| `satellite` codes, MODIS | `A` = Aqua, `T` = Terra (documented for NRT; archive files may spell the names out, so accept both) |
+| `satellite` codes, VIIRS | `N` = Suomi NPP, `N20` = NOAA-20, `N21` = NOAA-21 |
+| `type` field | Standard-quality data only. NRT rows do not have it |
+| `version` field | A suffix marks the processing: `NRT`, `RT`, `URT`, or none for standard (for example `6.1NRT` versus `6.1`). Use this to tell standard rows from NRT rows |
+| VIIRS FRP | A hybrid of 375 m and 750 m data; the 750 m M13 channel was incorporated **starting in 2015** |
+| VIIRS low-confidence night pixels | Removed from NRT data over the South Atlantic Magnetic Anomaly region (11 E to 110 W, 7 N to 55 S). Córdoba lies inside this region |
+
+Consequences for the pipeline:
+
+- Split rows into standard and NRT using `version`. Apply `type == 0` to
+  standard rows; for NRT rows use a mask of cells that are persistently
+  non-vegetation in the standard data.
+- Check whether VIIRS FRP behaves differently before and after 2015 (compare
+  the FRP histograms for 2012 to 2014 and 2016 to 2018). If it does, calibrate
+  the floor and the completeness curve on 2016 to 2019 only, and say so.
+- The harmonized series after 2 November 2026 must run without S-NPP. Test that
+  NOAA-20 alone reproduces the S-NPP-based series in the years both flew.
+
+**Not found on the public pages** (visible only after signing in to the request
+form): the maximum area or date range per archive request, and the usual
+delivery time. Find these out in the first minutes on Saturday and keep the
+per-country yearly files as the backup.
+
+The items below were written before this check. Where they differ from the
+table above, the table is correct.
 
 - Bulk archive: https://firms.modaps.eosdis.nasa.gov/download/ (request by area
   and date; files arrive by email link) and per-country yearly files at
