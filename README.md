@@ -15,7 +15,8 @@ Building starts when the hackathon opens: **Saturday 14 November 2026, 10:15 IST
 
 | You are | Read |
 |---|---|
-| Anyone (human or AI assistant) | [AGENTS.md](AGENTS.md) first |
+| Every team member | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) first |
+| Any AI assistant | [AGENTS.md](AGENTS.md) first |
 | Person A, data and science: Mahabu Subhani | [docs/tasks/PERSON_A_DATA.md](docs/tasks/PERSON_A_DATA.md) |
 | Person B, web app: 8crsk | [docs/tasks/PERSON_B_APP.md](docs/tasks/PERSON_B_APP.md) |
 | Person C, story and submission: Charulekha Rajesh | [docs/tasks/PERSON_C_STORY.md](docs/tasks/PERSON_C_STORY.md) |
