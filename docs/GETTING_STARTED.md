@@ -27,7 +27,7 @@ data, or record anything today.
 - [ ] A code editor installed (VS Code is fine).
 - [ ] Your AI assistant works and you are signed in.
 - [ ] Person A also: Python 3.11 or newer. Check: `python --version`
-- [ ] Person B also: Node.js LTS. Check: `node --version`
+- [ ] Persons B and C also: Node.js LTS. Check: `node --version`
 
 ### Get the repo
 
@@ -91,7 +91,7 @@ Each person works on their own branch and merges into `main` often.
 ```bash
 git checkout main
 git pull
-git checkout -b a/pipeline      # Person B uses b/app, Person C uses c/story
+git checkout -b a/pipeline      # Person B uses b/app, Person C uses c/charts
 ```
 
 Save work:

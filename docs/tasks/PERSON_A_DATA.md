@@ -166,8 +166,24 @@ method is fixed. Do not keep tuning.
 - [ ] Second region processed end to end and exported.
 - [ ] Stretch goals the team chose from `docs/STRETCH.md`, in the agreed order.
 - [ ] Per-year hotspot CSV files for the raw download (stretch).
-- [ ] Hand Person C: final `meta.json`, the ladder table, every figure, and one
-      plain sentence explaining each figure and each test result.
+
+### Writing (yours, because the web app is split between B and C)
+
+Finish by **Sun 10:00** and save in `submission/` so Charulekha can edit it into
+the project page.
+
+- [ ] `submission/method.md`: the method for an emergency manager, about 200
+      words. Two reasons the sensors disagree, one fix for each, what the
+      small-fire layer is.
+- [ ] `submission/results.md`: one sentence per test (what it checks, the
+      result, pass or fail), including any that failed, plus the ladder table.
+- [ ] `submission/limits.md`: from `docs/APPROACH.md`, "Known limits".
+- [ ] `submission/nasa_data.md`: FIRMS, the exact MODIS and VIIRS product names
+      and satellites used, and the citation.
+- [ ] The text for the app's method panel; give it to 8crsk.
+- [ ] Fact-check every claim: source, and whether you read the source yourself.
+      Resolve or remove each item still marked VERIFY.
+- [ ] Hand Charulekha every figure with a one-line caption.
 
 **Checkpoint Sun 12:30.** Final data files merged. `meta.json` complete.
 
@@ -202,8 +218,9 @@ method is fixed. Do not keep tuning.
 | Person B | L0 cube and `regions.json` | Sat 13:00 |
 | Person C | `raw_jump.png` | Sat 13:00 |
 | Person B | Harmonized cube and `meta.json` | Sat 19:30 |
-| Person C | Test results and figures with one-line explanations | Sat 19:30, updated Sun 12:30 |
-| Person B | Second region, ranges, stretch data | Sun 12:30 |
+| Person C | Test results in plain sentences; cut-offs for the comparison labels | Sat 19:30 |
+| Person C | Draft text for the project page (method, results, limits, NASA data) | Sun 10:00 |
+| Person B | Method panel text, second region, ranges, stretch data | Sun 12:30 |
 
 ## Prompt to give your AI assistant at the start
 

@@ -36,11 +36,57 @@ inside it, in plain JavaScript. This keeps files small and the app fast on a pho
 | `pipeline/` | A | Download, clean, harmonize, validate, export scripts |
 | `pipeline/tests/` | A | Data checks and the T1 to T6 tests |
 | `data/` | A | Raw and intermediate data. **Git-ignored** |
-| `app/` | B | The web app |
-| `app/public/data/` | A writes, B reads | Files defined by the contract below |
-| `docs/` | C | These documents, methods text, references |
-| `docs/REFERENCES.md` | everyone | Every external resource used |
+| `app/` except `app/src/charts/` | B | App shell, deployment, data loading, map, controls, downloads, method panel |
+| `app/src/charts/` | C | Calendar, time series, comparison and other chart components |
+| `app/public/data/` | A writes, B reads | Files defined by the data contract below |
+| `docs/` | A | These documents, methods text |
+| `docs/REFERENCES.md`, `docs/AI_USE.md` | everyone | Every external resource used; every use of AI |
 | `submission/` | C | Project page text, demo script, screenshots |
+
+## Inside the app (Person B provides, Person C consumes)
+
+The web app is built by two people. This interface lets them work in parallel
+without editing each other's files. Changing it needs both B and C to agree.
+
+B exports one hook from `app/src/selection`. C's chart components call it and
+never load files themselves.
+
+```ts
+type Mode = "raw" | "harmonized";
+
+interface CubeRow {            // one cell and month; same fields as cube.json
+  lon: number; lat: number; ym: string;
+  raw_modis: number; raw_viirs: number;
+  harm: number; harm_lo: number; harm_hi: number;
+  small: number; terra_only: boolean;
+}
+
+interface Selection {
+  region: Region | null;       // entry from regions.json
+  meta: Meta | null;           // contents of meta.json
+  rows: CubeRow[];             // rows inside the drawn area and date range
+  from: string; to: string;    // "YYYY-MM"
+  mode: Mode;
+  showSmall: boolean;
+  status: "idle" | "loading" | "ready" | "empty" | "error";
+}
+
+function useSelection(): Selection;
+```
+
+Chart components C builds, each taking no props and reading `useSelection()`:
+
+| Component | Shows |
+|---|---|
+| `BurningCalendar` | Year by month heat map with totals and legend |
+| `ActivitySeries` | Monthly time series; range shading; small-fire layer |
+| `MonthComparison` | Latest month against the historical median, with a label |
+| `UnusualBanner` | Alert when the latest month is far above its median |
+| `SeasonTiming` | Stretch goal S1 only |
+
+B places these components in the layout and owns everything around them. B
+merges the hook (returning mock rows if needed) and empty placeholder
+components by Saturday 11:30 so C can start.
 
 ## The data contract (Person A produces, Person B consumes)
 

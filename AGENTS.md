@@ -20,8 +20,9 @@ harmonization method that is physically explained and tested, not a black-box ra
 5. `docs/AI_USE.md`: how AI assistance must be labelled.
 6. `docs/STRETCH.md`: optional ambitious goals, only after the Saturday 19:30 checkpoint.
 
-Person A is Mahabu Subhani (data and science), Person B is 8crsk (web app),
-Person C is Charulekha Rajesh (story and submission). Ask your human which one
+Person A is Mahabu Subhani (data, science and technical writing). The web app is
+split: Person B is 8crsk (app foundation, map and controls) and Person C is
+Charulekha Rajesh (charts, demo and submission). Ask your human which one
 they are if they have not said.
 
 ## Hard rules (breaking these can disqualify the team)
