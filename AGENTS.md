@@ -18,6 +18,7 @@ harmonization method that is physically explained and tested, not a black-box ra
 3. `docs/ARCHITECTURE.md`: stack, repo layout, and the data contract between people.
 4. The task file for the person you are helping, in `docs/tasks/`.
 5. `docs/AI_USE.md`: how AI assistance must be labelled.
+6. `docs/STRETCH.md`: optional ambitious goals, only after the Saturday 19:30 checkpoint.
 
 Person A is Mahabu Subhani (data and science), Person B is 8crsk (web app),
 Person C is Charulekha Rajesh (story and submission). Ask your human which one
