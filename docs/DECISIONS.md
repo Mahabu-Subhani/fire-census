@@ -72,7 +72,7 @@ early warning and emergency response. Points that change our plan:
 | 23 | Combine MODIS's history with the "continuity and greater detail" of VIIRS | The small-fire layer is **core, not optional**. It is how VIIRS's detail is kept |
 | 24 | "It doesn't matter if one hotspot came from one sensor or the other" | Checks C1 and C4 in PREREGISTRATION.md measure exactly this; lead with them |
 | 25 | Use resources from "our agency and other agencies" | Cite CONAE's hotspot catalogue as context; ESA Fire_cci check (C6) for Córdoba |
-| 26 | She shows a fire in Argentina in July 2026 (place unknown to us) | After the start, look for the largest July 2026 event in the Argentina data. If found, use it as the demo example and widen region 14 if needed |
+| 26 | She shows a fire in "Chile Rio", Argentina, in July 2026 | Most likely **Chilecito, La Rioja**: news reports describe a fire of more than 900 hectares in the Famatina sierra (Guanchín, Chilecito department) starting about 27 July 2026 and declared out in early August. **VERIFY** in the data after the start. Chilecito is near 29.2 S, 67.5 W, which is **outside** the Córdoba box. Add a small third area, "Chilecito and Famatina, La Rioja" (approximate box -68.2, -29.8, -66.8, -28.4), as an event case study: show the event on the calendar and whether it is flagged as unusual. It is a demo example, not a calibration region |
 | 27 | Demo lead | Córdoba leads the demo for global judging; Punjab and Haryana is shown second, for the local judges and the season-shift check. Both regions are processed; whichever passes its checks first is built into the app first |
 
 ## Change log
