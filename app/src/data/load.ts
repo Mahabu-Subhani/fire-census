@@ -1,7 +1,7 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 // Loads the static files Person A writes to app/public/data/.
 import type { District } from "./places";
-import type { CubeRow, DriftFile, Episodes, LandCover, Meta, Region, Season } from "./types";
+import type { CubeRow, DriftFile, Episodes, LandCover, Meta, Population, Region, Season } from "./types";
 
 const base = `${import.meta.env.BASE_URL}data/`;
 
@@ -41,6 +41,7 @@ async function getOptional<T>(path: string): Promise<T | null> {
 export const loadSeason = (regionId: string) => getOptional<Season>(`${regionId}/season.json`);
 export const loadDrift = (regionId: string) => getOptional<DriftFile>(`${regionId}/drift.json`);
 export const loadLandCover = (regionId: string) => getOptional<LandCover>(`${regionId}/landcover.json`);
+export const loadPopulation = (regionId: string) => getOptional<Population>(`${regionId}/population.json`);
 export const loadEpisodes = (regionId: string) => getOptional<Episodes>(`${regionId}/episodes.json`);
 
 // Districts are optional: a region without the file simply has no place search.

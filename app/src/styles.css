@@ -485,6 +485,27 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   position: absolute; left: 12px; bottom: 80px; z-index: 5; padding: 10px 12px; width: 240px;
   background: var(--surface); border: 1px solid var(--border);
 }
+/* Map layers: playback and NASA live fires (decision 49). */
+.map-layers { display: grid; gap: 8px; font-size: 0.8rem; }
+.ml-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ml-row input[type="range"] { flex: 1; min-width: 120px; accent-color: var(--accent); min-height: 32px; }
+.ml-row button { min-height: 32px; }
+.ml-play { min-width: 64px; }
+.ml-label { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.7rem; }
+.ml-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff2a1a; box-shadow: 0 0 0 0 rgba(255, 42, 26, 0.6); animation: ml-pulse 1.8s infinite; }
+@keyframes ml-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 42, 26, 0.6); } 70% { box-shadow: 0 0 0 7px rgba(255, 42, 26, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 42, 26, 0); } }
+@media (prefers-reduced-motion: reduce) { .ml-dot { animation: none; } }
+.ml-note { margin: 0; color: var(--muted); font-size: 0.72rem; line-height: 1.35; max-width: 360px; }
+.map-stamp { display: none; }
+.mf-map .map-layers {
+  position: absolute; top: 64px; left: 56px; z-index: 5; padding: 8px 10px; width: min(380px, calc(100% - 520px));
+  min-width: 280px; background: var(--surface); border: 1px solid var(--border);
+}
+.mf-map .map-stamp {
+  display: block; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 4; pointer-events: none;
+  padding: 4px 14px; background: var(--surface); border: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.04em;
+}
 .mf-panel {
   position: absolute; top: 12px; right: 12px; bottom: 80px; z-index: 6; width: min(400px, calc(100% - 24px));
   display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: thin;
@@ -524,6 +545,9 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   .mf-map { position: relative; height: 56vh; }
   .mf-map .toolbar { top: auto; bottom: 12px; left: 12px; max-width: calc(100% - 24px); }
   .mf-map .map-legend { display: none; }
+  .mf-map .map-layers { top: 12px; left: 12px; width: auto; min-width: 0; max-width: calc(100% - 24px); }
+  .mf-map .map-layers .ml-row button { min-height: 44px; }
+  .mf-map .map-stamp { top: auto; bottom: 76px; font-size: 1.15rem; }
   .mf-panel { position: static; width: auto; border-left: 0; border-right: 0; }
   .mf-tools { position: static; transform: none; width: 100%; justify-content: space-around; border-left: 0; border-right: 0; }
   .mf-tools button { flex: 1; padding: 6px 4px; }
@@ -532,7 +556,7 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   .mapfirst { height: auto; overflow: visible; margin: 0; }
   .mf-map { position: relative; height: 9cm; }
   .mf-panel { position: static; width: auto; border: 0; }
-  .mf-tools, .mf-sec { display: none !important; }
+  .mf-tools, .mf-sec, .map-layers { display: none !important; }
 }
 .app-wide { max-width: none; }
 .mf-body .cf-title { display: none; }

@@ -16,7 +16,7 @@ export interface ActivityCells {
  * of the share of the maximum, so a few very active cells do not wash out
  * the rest.
  */
-export function activityCells(rows: CubeRow[], mode: Mode, cellDeg: number): ActivityCells {
+export function activityCells(rows: CubeRow[], mode: Mode, cellDeg: number, fixedMax?: number): ActivityCells {
   const sums = new Map<string, { lon: number; lat: number; v: number }>();
   for (const row of rows) {
     const key = `${row.lon},${row.lat}`;
@@ -25,7 +25,8 @@ export function activityCells(rows: CubeRow[], mode: Mode, cellDeg: number): Act
     sums.set(key, cell);
   }
   const cells = [...sums.values()].filter((c) => c.v > 0);
-  const max = cells.reduce((m, c) => Math.max(m, c.v), 0);
+  // A fixed scale (playback) keeps one colour meaning the same amount in every frame.
+  const max = fixedMax ?? cells.reduce((m, c) => Math.max(m, c.v), 0);
   const h = cellDeg / 2;
   return {
     max,
@@ -34,7 +35,7 @@ export function activityCells(rows: CubeRow[], mode: Mode, cellDeg: number): Act
       type: "FeatureCollection",
       features: cells.map(({ lon, lat, v }) => ({
         type: "Feature",
-        properties: { v, t: max > 0 ? Math.sqrt(v / max) : 0 },
+        properties: { v, t: max > 0 ? Math.sqrt(Math.min(1, v / max)) : 0 },
         geometry: { type: "Polygon", coordinates: [[[lon - h, lat - h], [lon + h, lat - h], [lon + h, lat + h], [lon - h, lat + h], [lon - h, lat - h]]] },
       })),
     },

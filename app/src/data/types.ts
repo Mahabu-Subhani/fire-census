@@ -145,6 +145,17 @@ export interface LandCover {
   unlabelled_fire_cells: number;
 }
 
+/** <region>/population.json (app/scripts/make_population.py): people per square of the cube grid. */
+export interface Population {
+  source: string;
+  population_year: number;
+  square_deg: number;
+  method: string;
+  region_population: number;
+  /** [lon, lat, people]: square centre, as in cube.json, and its population. Squares with nobody are left out. */
+  squares: [number, number, number][];
+}
+
 /** A closed ring of [lon, lat] points. The last point need not repeat the first. */
 export type Polygon = [number, number][];
 
@@ -171,4 +182,6 @@ export interface Selection {
   drift: DriftFile | null;
   episodes: Episodes | null;
   landcover: LandCover | null;
+  /** People per square (WorldPop 2020); null where the file does not exist. */
+  population: Population | null;
 }

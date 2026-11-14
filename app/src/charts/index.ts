@@ -13,6 +13,7 @@ const BurningCalendar = lazy(() => import("./BurningCalendar"));
 const MonthComparison = lazy(() => import("./MonthComparison"));
 const OutlookStrip = lazy(() => import("./OutlookStrip"));
 const LandCover = lazy(() => import("./LandCover"));
+const PeopleNearFire = lazy(() => import("./PeopleNearFire"));
 const FireEpisodes = lazy(() => import("./FireEpisodes"));
 const SeasonTiming = lazy(() => import("./SeasonTiming"));
 const TrendChart = lazy(() => import("./TrendChart"));
@@ -27,6 +28,8 @@ export const charts: { id: string; Component: ComponentType; views: View[]; avai
   // Whole-region analyses from the pipeline (decision 37); hidden when an area is drawn.
   { id: "season", Component: SeasonTiming, views: ["overview", "research"], available: (s) => !s.drawn && !!s.season?.years.length },
   { id: "landcover", Component: LandCover, views: ["overview", "research"], available: (s) => !s.drawn && !!s.landcover?.months.length },
+  // People per square (WorldPop 2020, decision 48); follows the drawn area and dates.
+  { id: "people", Component: PeopleNearFire, views: ["overview", "research"], available: (s) => !!s.population?.squares.length },
   { id: "episodes", Component: FireEpisodes, views: ["overview", "research"], available: (s) => !s.drawn && !!s.episodes?.count },
   { id: "series", Component: ActivitySeries, views: ["research"] },
   { id: "trend", Component: TrendChart, views: ["research"] },
