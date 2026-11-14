@@ -18,6 +18,8 @@ import sys
 import numpy as np
 import pandas as pd
 
+from pathlib import Path
+
 from config import AREAS, DATA, WORK
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +31,9 @@ RUNS = {
     "plateau at 90th percentile": ({"FC_PLATEAU_Q": "0.90"}, ""),
     "plateau at 99th percentile": ({"FC_PLATEAU_Q": "0.99"}, ""),
 }
-SHOWN = {"cordoba": "S0", "punjab-haryana": "L2"}
+# The model that ships in each calibrated area (pipeline/shipping.json), so this never falls behind it.
+_SHIP = json.loads((Path(HERE) / "shipping.json").read_text(encoding="utf-8"))["areas"]
+SHOWN = {area: _SHIP[area]["model"] for area in ("cordoba", "punjab-haryana")}
 
 
 def run(name: str, env_extra: dict, suffix: str) -> dict:
@@ -48,6 +52,7 @@ def run(name: str, env_extra: dict, suffix: str) -> dict:
         c = checks[area]["variants"]["A"]["checks"][model]
         f = curves["areas"][area]["A_D"]
         out[area] = {"model": model, "C1": c["C1"]["value"], "C2": c["C2"]["value"].split(";")[0],
+                     "C3": c["C3"]["value"], "C3x": c["C3x"]["value"],
                      "C3r": c["C3r"]["value"], "C4": c["C4"]["value"],
                      "midpoint_day_MW": round(f["f50"], 1),
                      "verdicts": {k: v["verdict"] for k, v in c.items()}}
@@ -75,12 +80,14 @@ def main() -> None:
     (WORK / "sensitivity.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     for area, model in SHOWN.items():
         print(f"\n{area} ({model})")
-        print("| Setting | C1 step 2012 | C2 placebo 2016 | C3r held-out | C4 NOAA-20 | Day midpoint MW | Fails |")
-        print("|---|---|---|---|---|---|---|")
+        print("| Setting | C1 step 2012 | C2 placebo 2016 | C3 held-out months | C3x 2020-2021 | C3r held-out total "
+              "| C4 NOAA-20 | Day midpoint MW | Fails |")
+        print("|---|---|---|---|---|---|---|---|---|")
         for name in RUNS:
             r = results[name][area]
             fails = ", ".join(k for k, v in r["verdicts"].items() if v == "fail") or "none"
-            print(f"| {name} | {r['C1']} | {r['C2']} | {r['C3r']} | {r['C4']} | {r['midpoint_day_MW']} | {fails} |")
+            print(f"| {name} | {r['C1']} | {r['C2']} | {r['C3']} | {r['C3x']} | {r['C3r']} | {r['C4']} "
+                  f"| {r['midpoint_day_MW']} | {fails} |")
     print("\nAqua against harmonized record, ln(Aqua / harmonized):",
           json.dumps(results["aqua_drift_ln_aqua_over_harmonized"]))
 
