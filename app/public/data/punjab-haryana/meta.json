@@ -739,8 +739,10 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "11ddeb1",
-  "generated_at": "2026-11-14T05:43:02Z",
+  "code_commit": "fd27353",
+  "generated_at": "2026-11-14T05:45:09Z",
+  "data_through": "2026-11-05",
+  "nrt_from": "2026-08",
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
     "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
