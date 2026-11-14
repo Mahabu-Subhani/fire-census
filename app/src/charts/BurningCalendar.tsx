@@ -6,7 +6,7 @@
 import * as Plot from "@observablehq/plot";
 import { useId, useMemo } from "react";
 import { useSelection } from "../selection";
-import { MONTH_NAMES, toCalendar, unitLabel } from "../stats";
+import { MONTH_NAMES, seasonMonths, toCalendar, unitLabel } from "../stats";
 import ChartFrame from "./ChartFrame";
 import { usePlot } from "./usePlot";
 
@@ -35,7 +35,13 @@ function hatch(id: string): string {
 }
 
 export default function BurningCalendar() {
-  const { status, rows, mode, meta, region, from, to, dataThrough } = useSelection();
+  const { status, rows, areaRows, mode, meta, region, from, to, dataThrough } = useSelection();
+  // Season band (APP_VISION Q2): from the whole history of the area, not the date range.
+  const season = useMemo(
+    () => (region ? seasonMonths(areaRows, region.harmonized_from, dataThrough) : null),
+    [areaRows, region, dataThrough],
+  );
+  const seasonNames = season ? season.months.map((m) => MONTH_NAMES[m - 1]) : [];
   const patternId = `terra-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const unit = unitLabel(meta, mode);
   const harmonizedFrom = region?.harmonized_from ?? null;
@@ -75,7 +81,8 @@ export default function BurningCalendar() {
     [
       `${d.month} ${d.year}: ${exact(d.v)}`,
       unit,
-      d.partial ? `Month not complete: 1 to ${partialDay} ${d.month} only` : null,
+      d.partial ? `You are here. Month not complete: 1 to ${partialDay} ${d.month} only` : null,
+      seasonNames.includes(d.month) ? "In the usual burning season" : null,
       d.terra ? TERRA_NOTE : null,
     ]
       .filter(Boolean)
@@ -103,7 +110,8 @@ export default function BurningCalendar() {
         marks: [
           Plot.cell(cells, { x: "month", y: "year", fill: "v", title: describe, tip: { fontSize: 12, fill: "var(--surface)", stroke: "var(--border)" } }),
           Plot.cell(cells.filter((d) => d.terra), { x: "month", y: "year", fill: `url(#${patternId})` }),
-          Plot.cell(cells.filter((d) => d.partial), { x: "month", y: "year", stroke: "currentColor", strokeWidth: 1.5, strokeDasharray: "2,2" }),
+          Plot.cell(seasonNames, { x: (d) => d, fill: "none", stroke: "var(--accent)", strokeWidth: 2, inset: -1 }),
+          Plot.cell(cells.filter((d) => d.partial), { x: "month", y: "year", stroke: "var(--accent)", strokeWidth: 2.5, inset: -1 }),
           Plot.text(totals, {
             x: () => TOTAL, y: "year", fill: "currentColor",
             text: (d) => `${compact(d.total)}${d.complete ? "" : "*"}`,
@@ -117,7 +125,7 @@ export default function BurningCalendar() {
       svg.setAttribute("aria-label", `Burning calendar, ${cal.years[0]} to ${cal.years[cal.years.length - 1]}, ${unit}`);
       return svg;
     },
-    [cells, totals, mode, unit, patternId],
+    [cells, totals, mode, unit, patternId, seasonNames],
   );
 
   const legendRef = usePlot(
@@ -128,9 +136,27 @@ export default function BurningCalendar() {
   const hasTerra = cells.some((d) => d.terra);
   const hasPartial = cells.some((d) => d.partial);
   const hasIncompleteYear = totals.some((d) => !d.complete);
+  const seasonText = season && seasonNames.length
+    ? `Usual burning season: ${seasonNames.join(", ")} hold ${Math.round(season.share * 100)}% of activity (${season.firstYear} to ${season.lastYear}, harmonized)`
+    : null;
+  const notes = [
+    ...(seasonText ? [`Outlined columns. ${seasonText}.`] : []),
+    ...(hasPartial ? [`You are here: data to ${dataThrough}; the month is not complete.`] : []),
+    ...(hasTerra ? [`Hatched: ${TERRA_NOTE} (before ${harmonizedFrom}).`] : []),
+    ...(hasIncompleteYear ? ["* Total of the months shown, not a full year."] : []),
+  ];
 
   return (
-    <ChartFrame title="Burning calendar">
+    <ChartFrame
+      title="Burning calendar"
+      exportName="calendar"
+      notes={notes}
+      table={() => ({
+        columns: ["year", "month", "value", "terra_only", "month_incomplete", "in_season"],
+        rows: cells.map((d) => [d.year, d.ym.slice(5), d.v, d.terra, d.partial, seasonNames.includes(d.month)]),
+        notes,
+      })}
+    >
       {status === "loading" || status === "idle" ? (
         <p className="cf-empty">Loading…</p>
       ) : cells.length === 0 ? (
@@ -153,9 +179,17 @@ export default function BurningCalendar() {
             {hasPartial && (
               <span className="cal-legend-item">
                 <svg className="cal-swatch" viewBox="0 0 18 12" aria-hidden="true">
-                  <rect x="1" y="1" width="16" height="10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2,2" />
+                  <rect x="1.5" y="1.5" width="15" height="9" fill="none" stroke="var(--accent)" strokeWidth="2.5" />
                 </svg>
-                Month not complete (data to {dataThrough})
+                You are here (data to {dataThrough}, month not complete)
+              </span>
+            )}
+            {seasonText && (
+              <span className="cal-legend-item">
+                <svg className="cal-swatch" viewBox="0 0 18 12" aria-hidden="true">
+                  <rect x="4" y="0.5" width="10" height="11" fill="none" stroke="var(--accent)" strokeWidth="2" />
+                </svg>
+                {seasonText}
               </span>
             )}
             {hasIncompleteYear && <span>* Total of the months shown, not a full year</span>}

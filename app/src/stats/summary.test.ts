@@ -1,6 +1,6 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending).
 import { describe, expect, it } from "vitest";
-import { formatRank, median, ordinal, p90, quantile, rank } from "./summary";
+import { formatRank, formatRatio, median, ordinal, p90, quantile, rank } from "./summary";
 
 describe("median", () => {
   it("is null for an empty list", () => expect(median([])).toBeNull());
@@ -35,10 +35,17 @@ describe("rank", () => {
 describe("formatRank", () => {
   it("writes the plain case", () => expect(formatRank({ rank: 2, of: 24, tied: false })).toBe("2nd highest of 24"));
   it("writes the top case", () => expect(formatRank({ rank: 1, of: 24, tied: false })).toBe("highest of 24"));
+  it("says lowest for an untied last place", () => expect(formatRank({ rank: 25, of: 25, tied: false })).toBe("lowest of 25"));
+  it("keeps the rank for a tied last place", () => expect(formatRank({ rank: 24, of: 25, tied: true })).toBe("joint 24th highest of 25"));
   it("writes ties", () => expect(formatRank({ rank: 3, of: 25, tied: true })).toBe("joint 3rd highest of 25"));
   it("handles 11th to 13th", () => {
     expect([1, 2, 3, 4, 11, 12, 13, 21, 22, 111].map(ordinal)).toEqual([
       "1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st", "22nd", "111th",
     ]);
   });
+});
+
+describe("formatRatio", () => {
+  it("keeps two decimals below 1", () => expect(formatRatio(138 / 2398)).toBe("0.06"));
+  it("keeps one decimal from 1", () => expect(formatRatio(2.44)).toBe("2.4"));
 });

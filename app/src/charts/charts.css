@@ -1,6 +1,14 @@
 /* AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending). */
 /* Styles for Person C's charts. Uses the colour tokens from styles.css. */
 
+/* Series colours: validated for colour-vision deficiency on both surfaces
+   (dataviz validate_palette.js, 14 Nov: all checks pass, light and dark). */
+:root { --series-1: #2a78d6; --series-2: #eb6834; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --series-1: #3987e5; --series-2: #d95926; }
+}
+:root[data-theme="dark"] { --series-1: #3987e5; --series-2: #d95926; }
+
 .cf { margin: 0; display: grid; gap: 8px; min-width: 0; }
 .cf-head { display: grid; gap: 2px; }
 .cf-title { margin: 0; font-size: 1.1rem; }
@@ -14,6 +22,24 @@
 .cf-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 .cf-actions:empty { display: none; }
 .cf-empty { color: var(--muted); margin: 8px 0; }
+.cf-error { color: var(--accent); font-size: 0.85rem; align-self: center; }
+.cf-actions button { min-height: 32px; padding: 4px 10px; font-size: 0.85rem; }
+
+/* Status sentence */
+.status { display: grid; gap: 8px; }
+.status-sentence { margin: 0; font-size: 1.15rem; line-height: 1.4; font-weight: 600; }
+.status-alert { border-left: 4px solid var(--accent); padding-left: 10px; }
+.verdict { display: inline-block; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border); font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+.verdict-above, .verdict-far-above { border-color: var(--accent); color: var(--accent); }
+.status-detail { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.chart-controls { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 0.85rem; }
+.chart-controls select {
+  font: inherit; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 6px; min-height: 32px;
+}
+.chart-controls .switch button { min-height: 32px; padding: 4px 10px; font-size: 0.85rem; }
+.series-key { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--muted); }
+.series-key i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
 
 .cal-plot { width: 100%; min-width: 0; overflow: hidden; }
 .cal-plot svg { display: block; max-width: 100%; height: auto; }
@@ -22,8 +48,8 @@
 .cal-legend-item { display: inline-flex; gap: 6px; align-items: center; }
 .cal-swatch { width: 18px; height: 12px; border: 1px solid var(--border); flex: none; }
 
-.cal-table summary { cursor: pointer; color: var(--focus); font-size: 0.85rem; }
-.cal-table-scroll { overflow-x: auto; }
-.cal-table table { border-collapse: collapse; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
-.cal-table th, .cal-table td { padding: 2px 6px; text-align: right; border-bottom: 1px solid var(--border); }
+.cal-table summary, .data-table summary { cursor: pointer; color: var(--focus); font-size: 0.85rem; }
+.cal-table-scroll, .data-table-scroll { overflow-x: auto; }
+.cal-table table, .data-table table { border-collapse: collapse; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+.cal-table th, .cal-table td, .data-table th, .data-table td { padding: 2px 6px; text-align: right; border-bottom: 1px solid var(--border); }
 .cal-table td.terra { font-style: italic; color: var(--muted); }
