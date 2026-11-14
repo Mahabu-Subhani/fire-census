@@ -96,8 +96,7 @@ export default function MonthComparison() {
 
   return (
     <ChartFrame
-      title={`Is this ${name} unusual?`}
-      lede={`Each bar is ${name}${toDayText} in one year; the ember bar is ${c?.year ?? "the latest"}. Lines: the usual level (median) and a bad year (90th percentile).`}
+      title={`Monthly comparison: ${name}`}
       exportName={`month-${String(month).padStart(2, "0")}`}
       notes={notes}
       table={() => ({

@@ -94,8 +94,7 @@ export default function SeasonTiming() {
 
   return (
     <ChartFrame
-      title="When is the critical period, and has it moved?"
-      lede="Each bar is one year's season, from the day it started to the day it ended. The dot is its peak; the line is the trend of the peak."
+      title="Fire season timing"
       mode="harmonized"
       exportName="season"
       notes={[sentence, latest, law, detail].filter(Boolean)}

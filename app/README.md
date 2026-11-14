@@ -81,6 +81,14 @@ counts the published hotspot files. Rerun it after the pipeline rewrites them:
 section (same fire, agreement, drift) are constants in
 `src/sources/agreement.ts` and decision 38.
 
+## Land cover
+
+`public/data/<region>/landcover.json` comes from `scripts/make_landcover.py`
+(needs only numpy; reads ESA WorldCover 2021 through the Planetary Computer
+data API, no account). Rerun after the hotspot files change:
+`python -I app/scripts/make_landcover.py` from the repo root, optionally with
+region ids. Takes a few minutes per area.
+
 ## District files
 
 `public/data/<region>/districts.json` comes from `scripts/make_districts.py`.

@@ -1,38 +1,99 @@
+<!-- AI-assisted: written with help from Claude (Anthropic). Reviewed by: Mahabu Subhani (pending). -->
+
 # Fire Census
 
-NASA Space Apps Challenge 2026, challenge **Harmonization of MODIS and VIIRS Hot Spots**.
-Team **Sharmaji Ka Satellite**, Bangalore local event.
+**One fire record, whichever satellite was watching.**
 
-One fire record, whichever satellite was watching.
+NASA Space Apps Challenge 2026, challenge *Harmonization of MODIS and VIIRS Hot Spots*.
+Team Sharmaji Ka Satellite, Bangalore.
 
-A web app that turns 20+ years of MODIS and VIIRS active fire hotspots into one
-consistent burning activity calendar for any area a user selects.
+**Live app: https://mahabu-subhani.github.io/fire-census/**
 
-## Status
+![Córdoba: the raw record against the harmonized record](submission/figures/harmonized_cordoba.png)
 
-Planning only. No solution code or processed data exists in this repository yet.
-Building starts when the hackathon opens: **Saturday 14 November 2026, 10:15 IST**.
+## The problem
 
-## Where to start
+NASA satellites have recorded fires since 2000. In 2012 a sharper sensor,
+VIIRS, joined the older MODIS, and the raw hotspot count jumps about fivefold
+overnight. The jump is the camera, not the fire, so 2005 and 2025 cannot be
+compared.
 
-| You are | Read |
+## What Fire Census does
+
+It rebuilds the NASA FIRMS record into one burning calendar in which every
+year means the same thing, and shows it in a web app that needs no account.
+
+- **Burning calendar**: every month from 2000 to today, one row per year.
+- **Is this month unusual?** The current month ranked against the same days in every earlier year.
+- **Area and dates**: draw a rectangle or polygon, type coordinates, or search a district; pick any date range.
+- **Raw or harmonized**: one switch shows the 2012 jump appear and disappear.
+- **Downloads**: every chart as CSV, PNG and SVG, and the hotspots behind a search as CSV.
+
+Four regions are processed: Córdoba and Chilecito (Argentina), Punjab and
+Haryana, and south Karnataka's forests (India). Selection works inside these
+regions, not worldwide.
+
+## How it works
+
+1. **Count each place once.** One fire fills several VIIRS pixels, so
+   detections are counted per 1 km grid square per satellite pass.
+2. **Weight by what MODIS could see.** Where Aqua MODIS and VIIRS passed on the
+   same day, we measured how often MODIS also reported a fire VIIRS saw, at
+   each fire strength. Each VIIRS detection is then counted by its chance of
+   being seen by MODIS.
+
+| Step at 2012 (1.0 = no jump) | Córdoba | Punjab and Haryana |
+|---|---|---|
+| Raw record | about 5.2× | about 5.4× |
+| After harmonization | 1.05× | 1.00× |
+
+## How we tested it, including what failed
+
+Ten checks and their limits were written down before the data was analysed
+([docs/PREREGISTRATION.md](docs/PREREGISTRATION.md)). All results are shown in the app.
+
+- **Passed in Córdoba:** no step at 2012, NOAA-20 (never used for fitting)
+  reproduces the record (slope 0.951, correlation 0.987), the curve is stable
+  when resampled.
+- **Caveat on the 2012 check:** the fitted constant overlaps the test window.
+  Fitted out of sample, the step is 0.106 against a limit of 0.10.
+- **Failed:** the month-by-month held-out check (0.207 against 0.15). We added
+  a two-year-total check afterwards and report both.
+- **Failed:** the comparison with ESA burned area in Córdoba. Aqua alone fails
+  it the same way.
+- **Weaker regions:** Punjab's curve was too unstable to ship, so a simpler
+  threshold is used there. Chilecito and Karnataka fail several checks and are
+  labelled in the app.
+
+Full limits: [submission/limits.md](submission/limits.md).
+
+## Run it
+
+App (Node 20 or newer):
+
+```bash
+cd app && npm install && npm run dev
+```
+
+Tests: `npm test` in `app/`. Rebuilding the data from FIRMS archive files:
+[pipeline/README.md](pipeline/README.md).
+
+## Team
+
+| Person | Role |
 |---|---|
-| Every team member | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) first |
-| Any AI assistant | [AGENTS.md](AGENTS.md) first (Claude Code loads it through CLAUDE.md) |
-| Prompts for Claude, per person and phase | [docs/prompts/](docs/prompts/README.md) |
-| Person A, data, science and technical writing: Mahabu Subhani | [docs/tasks/PERSON_A_DATA.md](docs/tasks/PERSON_A_DATA.md) |
-| Person B, app foundation, map and controls: 8crsk | [docs/tasks/PERSON_B_APP.md](docs/tasks/PERSON_B_APP.md) |
-| Person C, charts, demo and submission: Charulekha Rajesh | [docs/tasks/PERSON_C_STORY.md](docs/tasks/PERSON_C_STORY.md) |
+| Mahabu Subhani | Data, science, technical writing |
+| 8crsk | App foundation, map, controls |
+| Charulekha Rajesh | Charts, demo, submission |
 
-Background: [docs/CONTEXT.md](docs/CONTEXT.md), [docs/APPROACH.md](docs/APPROACH.md),
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+## Use of AI
 
-## Use of AI tools
+Most of the code and documentation in this repository was written with Claude
+(Anthropic), directed and reviewed by the team. Details: [docs/AI_USE.md](docs/AI_USE.md).
 
-The planning documents in this repository were drafted with AI assistance
-(Claude and Gemini) and reviewed by the team. Code written with AI assistance is
-marked in its file header. See [docs/AI_USE.md](docs/AI_USE.md).
+## Data and licence
 
-## Licence
-
-Apache 2.0. Fire data: NASA FIRMS (see docs/CONTEXT.md for the citation).
+Apache 2.0. We acknowledge the use of data from NASA's Fire Information for
+Resource Management System (FIRMS), part of NASA LANCE. Also used: MYD14A1
+(NASA LP DAAC), ESA Fire_cci v5.1, ESA WorldCover 2021. Full references:
+[docs/REFERENCES.md](docs/REFERENCES.md).

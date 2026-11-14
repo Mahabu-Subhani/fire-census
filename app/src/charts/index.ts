@@ -12,6 +12,7 @@ const ActivitySeries = lazy(() => import("./ActivitySeries"));
 const BurningCalendar = lazy(() => import("./BurningCalendar"));
 const MonthComparison = lazy(() => import("./MonthComparison"));
 const OutlookStrip = lazy(() => import("./OutlookStrip"));
+const LandCover = lazy(() => import("./LandCover"));
 const FireEpisodes = lazy(() => import("./FireEpisodes"));
 const SeasonTiming = lazy(() => import("./SeasonTiming"));
 const TrendChart = lazy(() => import("./TrendChart"));
@@ -25,6 +26,7 @@ export const charts: { id: string; Component: ComponentType; views: View[]; avai
   { id: "outlook", Component: OutlookStrip, views: ["overview", "research"] },
   // Whole-region analyses from the pipeline (decision 37); hidden when an area is drawn.
   { id: "season", Component: SeasonTiming, views: ["overview", "research"], available: (s) => !s.drawn && !!s.season?.years.length },
+  { id: "landcover", Component: LandCover, views: ["overview", "research"], available: (s) => !s.drawn && !!s.landcover?.months.length },
   { id: "episodes", Component: FireEpisodes, views: ["overview", "research"], available: (s) => !s.drawn && !!s.episodes?.count },
   { id: "series", Component: ActivitySeries, views: ["research"] },
   { id: "trend", Component: TrendChart, views: ["research"] },

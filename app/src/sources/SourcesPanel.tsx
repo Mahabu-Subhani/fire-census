@@ -1,5 +1,5 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
-// "Do the satellites agree?" Two parts, both counted from the published
+// Sensor agreement. Two parts, both counted from the published
 // hotspot files:
 //  1. Who was watching: which satellites reported each year, and how far each
 //     one's daytime pass has moved on the clock (from <region>/sources.json).
@@ -24,7 +24,7 @@ async function loadSources(regionId: string): Promise<SourceYear[]> {
 /** Minutes of drift to a step of the ember ramp (0 = on time). */
 const DRIFT_STEPS = [15, RULES.DRIFT_MINUTES, 60, 120];
 const driftStep = (minutes: number) => DRIFT_STEPS.filter((s) => Math.abs(minutes) > s).length;
-const DRIFT_LABELS = ["within 15 min", "15 to 30", "30 to 60", "60 to 120", "over 120 min"];
+const DRIFT_LABELS = ["< 15 min", "15–30", "30–60", "60–120", "> 120 min"];
 
 function Watching({ rows }: { rows: SourceYear[] }) {
   const { theme } = useTheme();
@@ -40,12 +40,7 @@ function Watching({ rows }: { rows: SourceYear[] }) {
 
   return (
     <>
-      <h3>Who was watching, and when in the day</h3>
-      <p className="src-note">
-        One square per satellite and year. Colour shows how far its daytime pass has moved from where it started. A fire that
-        peaks in the afternoon looks bigger to a satellite that arrives later, so a moved pass changes the count without any
-        change on the ground.
-      </p>
+      <h3>Satellite coverage and overpass drift</h3>
       <div className="src-grid-wrap">
         <div className="src-grid" role="img" aria-label="Satellites reporting each year, coloured by how far the daytime pass time has moved. The table below gives the same numbers.">
           {SATELLITES.map((s) => {
@@ -63,7 +58,7 @@ function Watching({ rows }: { rows: SourceYear[] }) {
                         key={y}
                         className={`src-cell${r ? "" : " src-cell-empty"}`}
                         style={r ? { background: ramp[1 + (usable ? driftStep(minutes) : 0)] } : undefined}
-                        title={r ? `${s}, ${y}: ${whole(r.day + r.night)} detections; daytime pass ${fmtClock(r.day_local_time)} local solar time` : `${s}, ${y}: not reporting`}
+                        title={r ? `${s}, ${y}: ${whole(r.day + r.night)} detections; day overpass ${fmtClock(r.day_local_time)} local solar time` : `${s}, ${y}: no data`}
                       />
                     );
                   })}
@@ -82,32 +77,32 @@ function Watching({ rows }: { rows: SourceYear[] }) {
         </div>
       </div>
       <p className="src-legend" aria-hidden="true">
-        <span>Daytime pass moved by</span>
+        <span>Daytime overpass drift</span>
         {DRIFT_LABELS.map((label, i) => (
           <span key={label} className="src-key"><i style={{ background: ramp[1 + i] }} />{label}</span>
         ))}
-        <span className="src-key"><i className="src-cell-empty" />not reporting</span>
+        <span className="src-key"><i className="src-cell-empty" />No data</span>
       </p>
       {moved.length > 0 ? (
         <ul className="src-findings">
           {moved.map((d) => (
             <li key={d.satellite}>
-              <strong>{d.satellite}</strong> passed at <span className="mono">{fmtClock(d.firstTime)}</span> in {d.firstYear} and at{" "}
-              <span className="mono">{fmtClock(d.lastTime)}</span> in {d.lastYear}: <span className="mono">{Math.abs(d.minutes)}</span> minutes{" "}
-              {d.minutes > 0 ? "later" : "earlier"}. Its recent counts are not comparable with its early ones.
+              <strong>{d.satellite}</strong>: <span className="mono">{fmtClock(d.firstTime)}</span> ({d.firstYear}) to{" "}
+              <span className="mono">{fmtClock(d.lastTime)}</span> ({d.lastYear}),{" "}
+              <span className="mono">{d.minutes > 0 ? "+" : "−"}{Math.abs(d.minutes)}</span> min.
             </li>
           ))}
-          {viirsSteady && <li>The harmonized record uses VIIRS from 2012, whose pass has stayed within {RULES.DRIFT_MINUTES} minutes here, so this drift does not enter it.</li>}
+          {viirsSteady && <li>VIIRS overpass stable within {RULES.DRIFT_MINUTES} min; harmonized record unaffected.</li>}
         </ul>
       ) : (
-        <p className="src-note">No satellite's daytime pass has moved by more than {RULES.DRIFT_MINUTES} minutes here.</p>
+        <p className="src-note">No overpass drift above {RULES.DRIFT_MINUTES} min.</p>
       )}
       <details className="src-details">
-        <summary>The same numbers as a table</summary>
+        <summary>Table</summary>
         <div className="ev-table-wrap">
           <table className="ev-table">
             <thead>
-              <tr><th>Year</th>{SATELLITES.map((s) => <th key={s}>{s}: detections, daytime pass</th>)}</tr>
+              <tr><th>Year</th>{SATELLITES.map((s) => <th key={s}>{s}: detections, day overpass</th>)}</tr>
             </thead>
             <tbody>
               {years.map((y) => (
@@ -115,7 +110,7 @@ function Watching({ rows }: { rows: SourceYear[] }) {
                   <td>{y}</td>
                   {SATELLITES.map((s) => {
                     const r = byKey.get(`${s}|${y}`);
-                    return <td key={s}>{r ? `${whole(r.day + r.night)}, ${fmtClock(r.day_local_time)}` : "not reporting"}</td>;
+                    return <td key={s}>{r ? `${whole(r.day + r.night)}, ${fmtClock(r.day_local_time)}` : "–"}</td>;
                   })}
                 </tr>
               ))}
@@ -127,12 +122,12 @@ function Watching({ rows }: { rows: SourceYear[] }) {
   );
 }
 
-const TIERS: { key: "both" | "viirsSeveral" | "viirsOne" | "modisOnly"; label: string; meaning: string }[] = [
-  { key: "both", label: "Seen by MODIS and VIIRS", meaning: "Both kinds of sensor saw it. The strongest confirmation." },
-  { key: "viirsSeveral", label: "Seen by two or more VIIRS satellites, not MODIS", meaning: "Confirmed by a second look, but too small or too cool for MODIS." },
-  { key: "viirsOne", label: "Seen by one VIIRS satellite only", meaning: "A single look: a short burn that ended between passes, cloud on the other pass, or a fire at the edge of detection." },
-  { key: "modisOnly", label: "Seen by MODIS only", meaning: "Usually a different time of day: Terra passes in the morning, and Aqua now passes later than VIIRS." },
-];
+const TIERS: { key: "both" | "viirsSeveral" | "viirsOne" | "modisOnly"; label: string }[] = [
+  { key: "both", label: "MODIS and VIIRS" },
+  { key: "viirsSeveral", label: "VIIRS, two or more satellites" },
+  { key: "viirsOne", label: "VIIRS, single satellite" },
+  { key: "modisOnly", label: "MODIS only" },
+]
 
 function Result({ a, year }: { a: Agreement; year: number }) {
   const max = Math.max(a.both, a.viirsSeveral, a.viirsOne, a.modisOnly, 1);
@@ -141,7 +136,7 @@ function Result({ a, year }: { a: Agreement; year: number }) {
       <div className="ev-table-wrap">
         <table className="ev-table">
           <thead>
-            <tr><th>Satellite</th><th>Sensor</th><th>Detections</th><th>Fire cells</th><th>Day pass</th><th>Night pass</th></tr>
+            <tr><th>Satellite</th><th>Sensor</th><th>Detections</th><th>Fire cells</th><th>Day overpass</th><th>Night overpass</th></tr>
           </thead>
           <tbody>
             {a.satellites.map((s) => (
@@ -154,22 +149,19 @@ function Result({ a, year }: { a: Agreement; year: number }) {
         </table>
       </div>
       <p className="src-note">
-        Pass times are local solar time, averaged over this area's detections. Detections are every row FIRMS reported. Fire
-        cells count a square of about 1 km once per satellite, date and half of the day, after leaving out{" "}
-        <span className="mono">{whole(a.notFire)}</span> detections that are not vegetation fires and{" "}
-        <span className="mono">{whole(a.lowConfidence)}</span> of low confidence.
+        Overpass times in local solar time. Excluded: <span className="mono">{whole(a.notFire)}</span> non-vegetation,{" "}
+        <span className="mono">{whole(a.lowConfidence)}</span> low confidence.
       </p>
 
       {a.fires === 0 ? (
-        <p className="src-note">No fire cells here in {year}. That does not prove there was no fire.</p>
+        <p className="src-note">No fire cells in {year}.</p>
       ) : !a.hasViirs ? (
         <p className="src-note">
-          Only MODIS reported here in these dates (VIIRS starts in 2012), so there is nothing to compare:{" "}
-          <span className="mono">{whole(a.modisOnly)}</span> fire cells seen by MODIS.
+          MODIS only (VIIRS from 2012): <span className="mono">{whole(a.modisOnly)}</span> fire cells.
         </p>
       ) : (
         <>
-          <h4>Of <span className="mono">{whole(a.fires)}</span> fire cells, who saw each one</h4>
+          <h4>Fire cells by detecting sensor (<span className="mono">{whole(a.fires)}</span>)</h4>
           <ul className="src-tiers">
             {TIERS.map((t) => (
               <li key={t.key}>
@@ -178,21 +170,19 @@ function Result({ a, year }: { a: Agreement; year: number }) {
                   <span className="mono">{whole(a[t.key])} · {fmtShare(a[t.key] / a.fires)}</span>
                 </div>
                 <div className="src-bar"><i style={{ width: `${(a[t.key] / max) * 100}%` }} /></div>
-                <p>{t.meaning}</p>
               </li>
             ))}
           </ul>
           {a.pair && (
             <p className={`src-verdict src-verdict-${a.pair.verdict}`}>
               {a.pair.verdict === "few" ? (
-                <>Too few fires to judge whether {a.pair.a} and {a.pair.b} agree (fewer than {RULES.MIN_SAMPLE} fire cells for one of them).</>
+                <><strong>Insufficient data.</strong> {a.pair.a} / {a.pair.b}: fewer than {RULES.MIN_SAMPLE} fire cells.</>
               ) : (
                 <>
-                  <strong>{a.pair.verdict === "agree" ? "The two VIIRS satellites agree." : "The two VIIRS satellites differ."}</strong>{" "}
-                  {a.pair.a} saw <span className="mono">{whole(a.pair.na)}</span> fire cells and {a.pair.b}{" "}
-                  <span className="mono">{whole(a.pair.nb)}</span>: log ratio <span className="mono">{a.pair.logRatio!.toFixed(2)}</span>, limit{" "}
-                  <span className="mono">{RULES.AGREE_LOG_RATIO.toFixed(2)}</span>.
-                  {a.pair.verdict === "differ" && " Treat this area and period with care: one satellite may have been off, or cloud may have hidden one pass."}
+                  <strong>{a.pair.verdict === "agree" ? "VIIRS consistent." : "VIIRS inconsistent."}</strong>{" "}
+                  {a.pair.a} <span className="mono">{whole(a.pair.na)}</span>, {a.pair.b}{" "}
+                  <span className="mono">{whole(a.pair.nb)}</span> fire cells. Log ratio <span className="mono">{a.pair.logRatio!.toFixed(2)}</span>{" "}
+                  (limit <span className="mono">{RULES.AGREE_LOG_RATIO.toFixed(2)}</span>).
                 </>
               )}
             </p>
@@ -247,17 +237,12 @@ export default function SourcesPanel() {
 
   return (
     <section className="sources" id="sources">
-      <p className="eyebrow">Sources</p>
-      <h2>Do the satellites agree?</h2>
-      <p className="ev-lead">
-        Five satellites with two kinds of sensor pass over at different times of day, so they never report exactly the same
-        thing. This section shows who was watching, when, and how often they confirm each other.
-      </p>
+      <h2>Sensor agreement</h2>
       <Watching rows={sources} />
 
-      <h3>In your area: who saw each fire</h3>
+      <h3>Detection agreement</h3>
       {chosen === null ? (
-        <p className="src-note">No hotspot files for the years in your date range.</p>
+        <p className="src-note">No hotspot files for the selected period.</p>
       ) : (
         <div className="src-run">
           <div className="field">
@@ -267,25 +252,24 @@ export default function SourcesPanel() {
             </select>
           </div>
           <button type="button" className="btn btn-primary" onClick={run} disabled={state.status === "busy"}>
-            {state.status === "busy" ? "Reading every detection…" : "Compare the satellites"}
+            {state.status === "busy" ? "Processing…" : "Run comparison"}
           </button>
-          <p className="fine-print">Reads every detection of that year in your area and dates. A busy year is a few megabytes.</p>
         </div>
       )}
       <div role="status">
-        {state.status === "error" && <p className="note error">Could not compare: {state.message}</p>}
+        {state.status === "error" && <p className="note error">Comparison failed: {state.message}</p>}
         {state.status === "done" && state.result && <Result a={state.result} year={state.year!} />}
       </div>
 
       <details className="src-details">
-        <summary>The rules used here</summary>
+        <summary>Criteria</summary>
         <ul className="src-rules">
-          <li>Same fire: detections in the same square of about 1 km ({RULES.CELL_DEG} degree) or a neighbouring one, on the same date and the same half of the day. This is the rule the harmonization uses.</li>
-          <li>Left out before comparing: detections FIRMS marks as not a vegetation fire, MODIS confidence below {RULES.MODIS_MIN_CONFIDENCE}, and VIIRS "low" confidence.</li>
-          <li>Two VIIRS satellites agree when the log of the ratio of their fire cells is at most {RULES.AGREE_LOG_RATIO.toFixed(2)} (about 28 percent). Two identical sensors differ by 0.07 to 0.10 in a month in our data, so this is about three times their normal scatter.</li>
-          <li>Fewer than {RULES.MIN_SAMPLE} fire cells: too few to judge, the same minimum as the pre-registered checks.</li>
-          <li>A daytime pass has drifted when it moved more than {RULES.DRIFT_MINUTES} minutes from its first year.</li>
-          <li>Near-real-time rows carry no type, so recent static heat sources may still be counted as fires here.</li>
+          <li>Same fire: same or adjacent {RULES.CELL_DEG}° cell, same date, same half-day.</li>
+          <li>Excluded: non-vegetation detections, MODIS confidence below {RULES.MODIS_MIN_CONFIDENCE}, VIIRS low confidence.</li>
+          <li>VIIRS agreement: |log ratio| ≤ {RULES.AGREE_LOG_RATIO.toFixed(2)}.</li>
+          <li>Minimum sample: {RULES.MIN_SAMPLE} fire cells.</li>
+          <li>Overpass drift: more than {RULES.DRIFT_MINUTES} min from the first year.</li>
+          <li>Near-real-time rows carry no type; static heat sources may be included.</li>
         </ul>
       </details>
     </section>

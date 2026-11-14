@@ -5,12 +5,14 @@
    (dataviz validate_palette.js, 14 Nov: all checks pass, light and dark).
    Dark is the default theme. */
 :root, :root[data-theme="dark"] { --series-1: #3987e5; --series-2: #d95926; }
+/* Land cover: dataviz reference slots (yellow, aqua, blue), validated all-pairs in both themes. */
+:root, :root[data-theme="dark"] { --lc-crop: #c98500; --lc-forest: #199e70; --lc-grass: #3987e5; }
+:root[data-theme="light"] { --lc-crop: #eda100; --lc-forest: #1baf7a; --lc-grass: #2a78d6; }
 :root[data-theme="light"] { --series-1: #2a78d6; --series-2: #eb6834; }
 
 .cf { margin: 0; display: grid; gap: 14px; min-width: 0; }
 .cf-head { display: grid; gap: 4px; }
 .cf-title { margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-.cf-lede { margin: 0; color: var(--muted); font-size: 0.92rem; max-width: 62ch; }
 .cf-mode {
   display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
   border: 1px solid var(--border-strong); color: var(--muted); letter-spacing: 0.02em;

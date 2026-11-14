@@ -133,6 +133,18 @@ export interface Episodes {
   latest: Episode[];
 }
 
+/** <region>/landcover.json (app/scripts/make_landcover.py): fire cells by land cover. */
+export interface LandCover {
+  source: string;
+  method: string;
+  groups: { id: string; name: string; classes: string[] }[];
+  /** Fire cells per group: `harmonized` (what MODIS would usually see) and `small` (small-fire layer). */
+  years: { year: number; harmonized: Record<string, number>; small: Record<string, number> }[];
+  months: { month: number; harmonized: Record<string, number>; small: Record<string, number> }[];
+  share_by_class: Record<string, number>;
+  unlabelled_fire_cells: number;
+}
+
 /** A closed ring of [lon, lat] points. The last point need not repeat the first. */
 export type Polygon = [number, number][];
 
@@ -158,4 +170,5 @@ export interface Selection {
   season: Season | null;
   drift: DriftFile | null;
   episodes: Episodes | null;
+  landcover: LandCover | null;
 }

@@ -6,7 +6,7 @@ import { useTheme } from "../theme";
 
 const VIEWS: { id: View; label: string }[] = [
   { id: "overview", label: "Overview" },
-  { id: "research", label: "Data & methods" },
+  { id: "research", label: "Data" },
 ];
 
 function Logo() {
