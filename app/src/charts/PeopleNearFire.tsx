@@ -83,12 +83,19 @@ export default function PeopleNearFire() {
   const topIndex = quarter >= 0 ? quarter : upTo(LEVELS.length - 1) >= 0.01 * people ? LEVELS.length - 1 : -1;
   const top = topIndex >= 0 ? LEVELS[topIndex] : null;
   const topPeople = topIndex >= 0 ? upTo(topIndex) : 0;
-  const period = from && to ? `${formatMonth(from)} to ${formatMonth(to)}` : "the period shown";
+  const oneMonth = !!from && from === to;
+  const period = from && to ? (oneMonth ? formatMonth(from) : `${formatMonth(from)} to ${formatMonth(to)}`) : "the period shown";
+  // Under a year the levels count detections in the period, not per year, so the headline names the period.
+  const when = from && to ? (oneMonth ? `in ${formatMonth(from)}` : `from ${formatMonth(from)} to ${formatMonth(to)}`) : "in the period shown";
   const perYear = years >= 1 ? "a year" : "in the period";
   const headline = top
-    ? top.id === "light"
-      ? `${fmtPeople(topPeople)} people live where there is some burning every year`
-      : `${fmtPeople(topPeople)} people live where it burns ${ADVERB[top.id]}`
+    ? years >= 1
+      ? top.id === "light"
+        ? `${fmtPeople(topPeople)} people live where there is some burning every year`
+        : `${fmtPeople(topPeople)} people live where it burns ${ADVERB[top.id]}`
+      : top.id === "light"
+        ? `${fmtPeople(topPeople)} people live where there was some burning ${when}`
+        : `${fmtPeople(topPeople)} people live where it burned ${ADVERB[top.id]} ${when}`
     : "Almost nobody here lives where it burns";
   const sub = top
     ? `${fmtShare(people > 0 ? topPeople / people : 0)} of the ${fmtPeople(people)} people in this area: ${OR_MORE[top.id]} fire detections ${perYear} within about 11 km, ${years >= 1 ? "on average, " : ""}${period}${mode === "raw" ? ", raw counts" : ""}.`
@@ -144,6 +151,7 @@ export default function PeopleNearFire() {
       {series.length > 0 && (
         <>
           <p className="pnf-sub">People by burning level, each year · {mode === "raw" ? "Raw" : "Harmonized"} <span>(switch at the top)</span></p>
+          {years < 1 && <p className="status-detail">Here the levels count detections in a whole year (light 1 to 9 a year), so they are not the same as the levels above for {period}.</p>}
           <div ref={plotRef} className="cal-plot" />
         </>
       )}
