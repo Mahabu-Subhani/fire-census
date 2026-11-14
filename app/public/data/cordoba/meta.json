@@ -41,9 +41,9 @@
     },
     {
       "level": "L2 hard floor",
-      "step_2012": 0.066,
-      "placebo_2016": "-0.070",
-      "held_out": 0.284
+      "step_2012": 0.062,
+      "placebo_2016": "-0.071",
+      "held_out": 0.292
     },
     {
       "level": "S0 detection curve",
@@ -155,7 +155,7 @@
       "value": "midpoint 9.9 MW, 90% range 8.6 to 12.3 (width 38% of midpoint)",
       "threshold": "90% range at most 50% of the midpoint",
       "verdict": "pass",
-      "note": "daytime curve"
+      "note": "daytime curve. The night curve, read the same way, would be over the limit (72%); night fires are 7.4% of the reference fire cells in the fitting years"
     }
   ],
   "all_models": {
@@ -757,13 +757,13 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "4940239",
-  "generated_at": "2026-11-14T16:09:26Z",
+  "code_commit": "8b0ea58",
+  "generated_at": "2026-11-14T18:14:07Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
-    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
-    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
+    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days",
+    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days"
   ],
   "month_log_sd": 0.244
 }

@@ -1,9 +1,9 @@
 {
   "level_shipped": "L2",
   "level_name": "Hard floor",
-  "shipping_reason": "Hard floor. Since Punjab was clipped to Punjab, Haryana and Chandigarh (decision 44) it passes every pre-registered check that applies to it, including the original held-out check C3 (0.144 against 0.15), so it ships under the original rule. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship.",
+  "shipping_reason": "Hard floor. Passes C0, C1, C1b, C2, C3r and C4. Fails the original held-out check C3 (0.169 against 0.15), as in Cordoba; it ships under the revised check C3r, which it passes (0.042 against 0.10). Both verdicts are shown. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship. Until 14 Nov the floor's constant was fitted on whole strength bins, which made the record 4.6 percent too high and C3 read 0.144; fixed.",
   "unit": "Aqua-equivalent fire cells",
-  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve.",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the hard floor (only fires at or above MODIS's detection limit are counted).",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
@@ -19,8 +19,8 @@
     "night": 4.17
   },
   "constants": {
-    "day": 0.3881,
-    "night": 0.205
+    "day": 0.3711,
+    "night": 0.221
   },
   "ladder": [
     {
@@ -41,9 +41,9 @@
     },
     {
       "level": "L2 hard floor",
-      "step_2012": 0.028,
+      "step_2012": -0.016,
       "placebo_2016": "-0.060",
-      "held_out": 0.144
+      "held_out": 0.169
     },
     {
       "level": "S0 detection curve",
@@ -64,7 +64,7 @@
     {
       "id": "C1",
       "name": "No seam at 2012",
-      "value": 0.028,
+      "value": -0.016,
       "threshold": "absolute value at most 0.10",
       "verdict": "pass",
       "note": ""
@@ -72,7 +72,7 @@
     {
       "id": "C1b",
       "name": "No change point at 2012 (Pettitt)",
-      "value": "p=1.000 at 2013-02",
+      "value": "p=0.324 at 2012-09",
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
       "verdict": "pass",
       "note": "119 months with at least 30 Aqua fire cells"
@@ -81,9 +81,9 @@
       "id": "C1x",
       "name": "No seam at 2012, out of sample (added after results)",
       "threshold": "absolute log ratio at most 0.10",
-      "value": "+0.024",
+      "value": "+0.023",
       "verdict": "pass",
-      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Leaving one year out at a time (2012 to 2021): 8 of 10 years within 0.10, mean +0.000, largest 0.132."
+      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Leaving one year out at a time (2012 to 2021): 8 of 10 years within 0.10, mean +0.000, largest 0.129."
     },
     {
       "id": "C2",
@@ -96,15 +96,15 @@
     {
       "id": "C3",
       "name": "Held-out years 2018 to 2019",
-      "value": 0.144,
+      "value": 0.169,
       "threshold": "median absolute log ratio at most 0.15",
-      "verdict": "pass",
+      "verdict": "fail",
       "note": "15 of 24 months have at least 30 Aqua fire cells"
     },
     {
       "id": "C3r",
       "name": "Held-out years, two-year total (revised after results)",
-      "value": 0.003,
+      "value": -0.042,
       "threshold": "absolute log ratio at most 0.10",
       "verdict": "pass",
       "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); reported beside C3, never instead of it; 15 months"
@@ -131,7 +131,7 @@
       "value": -0.104,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "pass",
-      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; reported, not gated: Fire_cci misses many small fires here. Aqua alone, which has no sensor change, gives -0.125 on the same statistic and the raw record 1.553: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.021. ESA months missing: 2019-10, 2019-11, 2019-12"
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; reported, not gated: Fire_cci misses many small fires here. Aqua alone, which has no sensor change, gives -0.125 on the same statistic and the raw record 1.553: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.021. ESA months missing: 2019-10, 2019-11, 2019-12 Computed before the 14 Nov correction of the hard-floor constant. The correction lowers the record after 2012 by 4.6 percent, which moves this value by about -0.05; still inside the limit. Not yet recomputed with the burned-area data."
     },
     {
       "id": "C6m",
@@ -139,12 +139,12 @@
       "value": -0.036,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "pass",
-      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.036. Aqua alone, with no sensor change: -0.089. Raw record: 1.726"
+      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.036. Aqua alone, with no sensor change: -0.089. Raw record: 1.726 Computed before the 14 Nov correction of the hard-floor constant. The correction lowers the record after 2012 by 4.6 percent, which moves this value by about -0.05; still inside the limit. Not yet recomputed with the burned-area data."
     },
     {
       "id": "C7",
       "name": "Punjab peak moves later after 2009",
-      "value": "+8.1 days (p=0.0009); Aqua alone +7.4 days",
+      "value": "+8.2 days (p=0.0009); Aqua alone +7.4 days",
       "threshold": "at least +5 days, p < 0.05",
       "verdict": "pass",
       "note": ""
@@ -174,7 +174,7 @@
       "C1": "pass",
       "C1b": "pass",
       "C2": "pass",
-      "C3": "pass",
+      "C3": "fail",
       "C3r": "pass",
       "C4": "pass"
     },
@@ -757,13 +757,13 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "4940239",
-  "generated_at": "2026-11-14T16:09:26Z",
+  "code_commit": "8b0ea58",
+  "generated_at": "2026-11-14T18:14:07Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
-    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
-    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
+    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days",
+    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days"
   ],
-  "month_log_sd": 0.423
+  "month_log_sd": 0.426
 }

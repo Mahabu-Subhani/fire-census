@@ -130,7 +130,7 @@
    "peak_doy": 307,
    "end_doy": 316,
    "length_days": 24,
-   "total": 13890.57,
+   "total": 13280.77,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -142,7 +142,7 @@
    "peak_doy": 306,
    "end_doy": 316,
    "length_days": 22,
-   "total": 12581.36,
+   "total": 12029.11,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -154,7 +154,7 @@
    "peak_doy": 307,
    "end_doy": 316,
    "length_days": 24,
-   "total": 15029.43,
+   "total": 14369.6,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -166,7 +166,7 @@
    "peak_doy": 308,
    "end_doy": 318,
    "length_days": 25,
-   "total": 12804.52,
+   "total": 12242.47,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -178,7 +178,7 @@
    "peak_doy": 308,
    "end_doy": 316,
    "length_days": 25,
-   "total": 17287.14,
+   "total": 16528.53,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -190,7 +190,7 @@
    "peak_doy": 304,
    "end_doy": 324,
    "length_days": 34,
-   "total": 11174.38,
+   "total": 10684.03,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -202,7 +202,7 @@
    "peak_doy": 309,
    "end_doy": 320,
    "length_days": 23,
-   "total": 11815.55,
+   "total": 11297.15,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -214,7 +214,7 @@
    "peak_doy": 307,
    "end_doy": 316,
    "length_days": 22,
-   "total": 9004.5,
+   "total": 8609.34,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -226,7 +226,7 @@
    "peak_doy": 308,
    "end_doy": 316,
    "length_days": 23,
-   "total": 14141.54,
+   "total": 13521.07,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -238,7 +238,7 @@
    "peak_doy": 311,
    "end_doy": 318,
    "length_days": 19,
-   "total": 15477.41,
+   "total": 14798.18,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -250,7 +250,7 @@
    "peak_doy": 308,
    "end_doy": 317,
    "length_days": 21,
-   "total": 9152.19,
+   "total": 8751.26,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -262,7 +262,7 @@
    "peak_doy": 310,
    "end_doy": 322,
    "length_days": 24,
-   "total": 6316.27,
+   "total": 6039.85,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -274,7 +274,7 @@
    "peak_doy": 312,
    "end_doy": 326,
    "length_days": 36,
-   "total": 1677.02,
+   "total": 1604.57,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -286,7 +286,7 @@
    "peak_doy": 308,
    "end_doy": 319,
    "length_days": 27,
-   "total": 737.28,
+   "total": 705.86,
    "sensor": "VIIRS, harmonized"
   }
  ],

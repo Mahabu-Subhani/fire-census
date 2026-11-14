@@ -41,8 +41,8 @@
     },
     {
       "level": "L2 hard floor",
-      "step_2012": -0.078,
-      "placebo_2016": "+0.375",
+      "step_2012": -0.077,
+      "placebo_2016": "+0.373",
       "held_out": null
     },
     {
@@ -72,10 +72,10 @@
     {
       "id": "C1b",
       "name": "No change point at 2012 (Pettitt)",
-      "value": "p=1.000 at 2017-10",
+      "value": null,
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
-      "verdict": "pass",
-      "note": "4 months with at least 30 Aqua fire cells curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "verdict": "not run",
+      "note": "only 4 months with at least 30 Aqua fire cells: too few for the test to find a change point at p < 0.05 curve and constants borrowed from cordoba; too few fires here to calibrate"
     },
     {
       "id": "C1x",
@@ -155,14 +155,14 @@
       "value": "midpoint 9.9 MW, 90% range 8.6 to 12.3 (width 38% of midpoint)",
       "threshold": "90% range at most 50% of the midpoint",
       "verdict": "pass",
-      "note": "daytime curve curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "daytime curve. The night curve, read the same way, would be over the limit (72%); night fires are 7.4% of the reference fire cells in the fitting years curve and constants borrowed from cordoba; too few fires here to calibrate"
     }
   ],
   "all_models": {
     "S0": {
       "C0": "pass",
       "C1": "fail",
-      "C1b": "pass",
+      "C1b": "not run",
       "C2": "pass",
       "C3": "not run",
       "C3r": "not run",
@@ -172,7 +172,7 @@
     "L2": {
       "C0": "pass",
       "C1": "pass",
-      "C1b": "pass",
+      "C1b": "not run",
       "C2": "fail",
       "C3": "not run",
       "C3r": "not run",
@@ -181,7 +181,7 @@
     "L1r": {
       "C0": "pass",
       "C1": "fail",
-      "C1b": "pass",
+      "C1b": "not run",
       "C2": "fail",
       "C3": "not run",
       "C3r": "not run",
@@ -757,13 +757,13 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "4940239",
-  "generated_at": "2026-11-14T16:09:26Z",
+  "code_commit": "8b0ea58",
+  "generated_at": "2026-11-14T18:14:07Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
-    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
-    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
+    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days",
+    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days"
   ],
   "month_log_sd": 0.244
 }
