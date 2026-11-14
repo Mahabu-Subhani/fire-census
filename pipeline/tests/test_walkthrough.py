@@ -42,6 +42,18 @@ def test_c6_table_reads_every_note(tmp_path, monkeypatch):
         assert "n/a" not in line, f"unparsed C6 note: {line}"
 
 
+def test_time_series_step_is_the_shipped_c1(tmp_path, monkeypatch):
+    """The Raw/Harmonized screen quotes the shipped model's step, not the year-round variant's."""
+    text = build(tmp_path, monkeypatch)
+    section = text.split("### Monthly time series")[1].split("###")[0]
+    for area, region in walkthrough.regions().items():
+        meta = walkthrough.load(area, "meta.json")
+        if not meta:
+            continue
+        c1 = next(c["value"] for c in meta["checks"] if c["id"] == "C1")
+        assert f"({c1}, check C1) against Aqua alone" in section, f"{area}: C1 {c1} not quoted"
+
+
 def test_no_number_typed_by_hand_for_the_jump(tmp_path, monkeypatch):
     text = build(tmp_path, monkeypatch)
     meta = json.loads((walkthrough.APP_DATA / "punjab-haryana" / "meta.json").read_text(encoding="utf-8"))

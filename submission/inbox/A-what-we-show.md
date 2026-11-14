@@ -148,10 +148,10 @@ Live app: https://mahabu-subhani.github.io/fire-census/. Each screen: what it sh
 - **Say:** "Raw: burning seems to jump in 2012. That is the new camera. Harmonized: the jump disappears."
 - **Numbers come from:** meta.json (ladder: step at 2012 against Aqua alone, as a multiplier) and cube.json (yearly sums)
 - **Numbers to quote:**
-  - Punjab and Haryana, India: raw x5.33 (1.674); harmonized, hard floor x0.98 (-0.016) against Aqua alone at 2012
-  - Córdoba and neighbouring areas, Argentina: raw x5.20 (1.648); harmonized, hard floor x1.06 (0.062) against Aqua alone at 2012
-  - Chilecito and Famatina, La Rioja, Argentina: raw x5.17 (1.642); harmonized, hard floor x0.93 (-0.077) against Aqua alone at 2012
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India: raw x7.36 (1.996); harmonized, conversion ratio (fallback) x0.97 (-0.033) against Aqua alone at 2012
+  - Punjab and Haryana, India: raw x5.33 (1.674); harmonized, hard floor x0.98 (-0.02, check C1) against Aqua alone at 2012
+  - Córdoba and neighbouring areas, Argentina: raw x5.20 (1.648); harmonized, hard floor x1.08 (0.077, check C1) against Aqua alone at 2012
+  - Chilecito and Famatina, La Rioja, Argentina: raw x5.17 (1.642); harmonized, hard floor x0.87 (-0.138, check C1) against Aqua alone at 2012
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India: raw x7.36 (1.996); harmonized, conversion ratio (fallback) x1.03 (0.031, check C1) against Aqua alone at 2012
   - Punjab and Haryana, India, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 18,109 / 14,536; 2011: 19,512 / 14,810; 2012: 116,469 / 16,153; 2013: 107,926 / 14,836; 2014: 119,926 / 17,370
   - Córdoba and neighbouring areas, Argentina, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 2,458 / 1,526; 2011: 2,953 / 1,782; 2012: 9,374 / 1,419; 2013: 17,576 / 2,126; 2014: 5,737 / 707
   - Chilecito and Famatina, La Rioja, Argentina, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 106 / 46; 2011: 101 / 44; 2012: 209 / 18; 2013: 259 / 19; 2014: 224 / 15

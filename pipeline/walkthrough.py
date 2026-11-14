@@ -347,10 +347,12 @@ def section_screens(R, metas, extra) -> list[str]:
             continue
         lad = {x["level"]: x for x in m.get("ladder", [])}
         l0 = next((v["step_2012"] for k, v in lad.items() if k.startswith("L0")), None)
-        shipped = next((v for k, v in lad.items() if m["level_shipped"] in k.split()[0]), None)
-        if l0 is not None and shipped:
+        # The shipped step is check C1. The ladder holds each model twice (one year-round constant,
+        # a constant per calendar month), so matching its rows by level picked the year-round one.
+        step = next((c["value"] for c in m.get("checks", []) if c["id"] == "C1"), None)
+        if l0 is not None and isinstance(step, (int, float)):
             jumps.append(f"{R[a]['name']}: raw {times(l0)} ({l0}); harmonized, {m['level_name'].lower()} "
-                         f"{times(shipped['step_2012'])} ({shipped['step_2012']}) against Aqua alone at 2012")
+                         f"{times(step)} ({step}, check C1) against Aqua alone at 2012")
     for a in R:
         yt = extra[a]["years"]
         if 2011 in yt and 2013 in yt:
