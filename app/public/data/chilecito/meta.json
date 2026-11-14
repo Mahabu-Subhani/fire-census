@@ -3,6 +3,7 @@
   "level_name": "Detection curve",
   "shipping_reason": "Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there.",
   "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+  "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
     "months": [

@@ -88,7 +88,8 @@ How to read the rows (one rule for every chart, implemented once in `app/src/sta
 - **Harmonized** mode value per row: `harm`, with range `harm_lo` to `harm_hi`.
   The small-fire layer `small` is shown as its own layer when `showSmall` is
   true, never added into `harm`.
-- Missing rows mean zero. The unit label comes from `meta.unit`.
+- Missing rows mean zero. The unit label comes from `meta.unit` in Harmonized
+  mode and from `meta.unit_raw` in Raw mode.
 - Comparisons with history (median, rank, outlook, trend) use `areaRows`, so
   the result does not change when the user narrows the date range. The
   calendar and the series show `rows`.
@@ -179,6 +180,12 @@ in APPROACH.md is internal to the pipeline. DECIDE 0.05 if files stay small.
 `verdict` is exactly one of `pass`, `fail` or `not run`. `curve` holds the
 points of the detection curve for the method panel; it is empty if the hard
 floor shipped. The older name `tests` is replaced by `checks`.
+
+`unit` labels the harmonized value (`harm`, `harm_lo`, `harm_hi`, `small`,
+`mtd`). `unit_raw` labels the raw value (`raw_modis + raw_viirs`), which counts
+FIRMS detections and is not in the harmonized unit. Charts take both labels
+from here and never type them by hand. `unit_raw` proposed 14 November by
+Mahabu (A); awaiting 8crsk (B).
 
 `data_through` is the last date with data, `YYYY-MM-DD`. `nrt_from` is the
 first month (`YYYY-MM`) built from near-real-time rows, which may still change.

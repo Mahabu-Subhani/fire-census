@@ -3,6 +3,7 @@
   "level_name": "Detection curve",
   "shipping_reason": "Detection curve. Passes C0, C1, C1b, C2, C3r, C4 and C8. Fails the original held-out check C3 (0.207 against 0.15); the team adopted the revised check C3r, which it passes (0.072 against 0.10). Both verdicts are shown.",
   "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+  "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
     "months": [
