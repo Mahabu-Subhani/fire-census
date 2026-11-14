@@ -9,16 +9,14 @@ export function value(row: CubeRow, mode: Mode): number {
 }
 
 /**
- * Label for raw mode. meta.json has no field for it (only `unit`, which
- * describes `harm`), so it is written here once, from the contract's
- * definitions of `raw_modis` and `raw_viirs`. Replace it with a meta field
- * if Person A adds one.
+ * Fallback label for raw mode, used only if meta.json lacks `unit_raw`
+ * (older data files). The real label comes from meta.unit_raw.
  */
-export const RAW_UNIT = "hotspot detections (MODIS + VIIRS, not harmonized)";
+export const RAW_UNIT = "hotspot detections (MODIS + VIIRS), not harmonized";
 
 /** The unit of what a chart shows. Harmonized mode always uses meta.unit. */
 export function unitLabel(meta: Meta | null, mode: Mode): string {
-  if (mode === "raw") return RAW_UNIT;
+  if (mode === "raw") return typeof meta?.unit_raw === "string" ? meta.unit_raw : RAW_UNIT;
   return meta?.unit ?? "unit not stated in meta.json";
 }
 

@@ -23,7 +23,9 @@ describe("unitLabel", () => {
   const meta = { unit: "Aqua-equivalent fire cells" } as Meta;
   it("takes the harmonized unit from meta", () => expect(unitLabel(meta, "harmonized")).toBe("Aqua-equivalent fire cells"));
   it("says so when meta has no unit", () => expect(unitLabel(null, "harmonized")).toMatch(/not stated/));
-  it("labels raw mode as detections, not the harmonized unit", () => expect(unitLabel(meta, "raw")).toBe(RAW_UNIT));
+  it("takes the raw unit from meta.unit_raw", () =>
+    expect(unitLabel({ ...meta, unit_raw: "FIRMS hotspot detections" } as Meta, "raw")).toBe("FIRMS hotspot detections"));
+  it("falls back to a raw label, never the harmonized unit, when unit_raw is missing", () => expect(unitLabel(meta, "raw")).toBe(RAW_UNIT));
 });
 
 describe("toCalendar", () => {

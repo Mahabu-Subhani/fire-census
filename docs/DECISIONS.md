@@ -89,9 +89,17 @@ early warning and emergency response. Points that change our plan:
 | 30 | Held-out check and what ships | Adopt the revised held-out check C3r (two-year total, at most 0.10) beside the original C3, as proposed in the dated note in `PREREGISTRATION.md`. Ship the **detection curve** for Córdoba and Chilecito and the **hard floor** for Punjab and Haryana. Both C3 and C3r verdicts are published | Mahabu, 14 Nov. Reason in his own words: **to be added by Mahabu**. The AI assistant laid out the options and evidence (`pipeline/NOTES_PHASE2.md`) and recommended this one |
 | 31 | Method changes from APPROACH.md | Matched detection instead of histogram ratio; cell FRP as the sum of detections; floor applied to VIIRS cells only; pre-2012 series is all Aqua fire cells | Built by the AI assistant during Phase 2 with reasons in `pipeline/NOTES_PHASE2.md`. **Awaiting Mahabu's confirmation** |
 
+## Status sentence (14 November 2026)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 32 | Minimum activity for the status sentence | Say "too little activity to judge" when both the historical median and this month are below **5** (harmonized units, on the same days of the month). Below 5 earlier years, decision 12 still says "not enough history" | Charulekha, 14 Nov. Reason in her own words: **to be added by Charulekha**. The AI assistant laid out three options (this one, a share of active years, no minimum) with evidence from our data: Chilecito, 1 to 5 November, has 0 this year and a median of 0 over 24 years, which ranked as "joint 14th of 25" |
+| 33 | Default baseline for comparisons | **All years** since harmonization (2002 onwards), matching the challenge's "historical median". "Last 10 years" is offered as a switch beside it | Charulekha, 14 Nov. Reason in her own words: **to be added by Charulekha**. Evidence shown: 1 to 5 November medians, all years against last 10, are 2,398 against 2,274 (Punjab and Haryana) and 16 against 12 (Córdoba) |
+
 ## Change log
 
 | Date | Who | Change | Reason |
 |---|---|---|---|
 | 13 Nov 2026 | Mahabu | Accepted the AI-recommended defaults above | To start on time; team to review |
 | 14 Nov 2026 | All three | Decision 28: app vision and contract fields | See row 28 |
+| 14 Nov 2026 | Charulekha | Decisions 32 and 33: minimum activity and default baseline for the status sentence | See rows 32 and 33 |

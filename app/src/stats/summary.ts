@@ -52,8 +52,14 @@ export function ordinal(n: number): string {
   return `${n}${({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th"}`;
 }
 
-/** "2nd highest of 24", "joint 2nd highest of 24", or "highest of 24". */
+/** "2nd highest of 24", "joint 2nd highest of 24", "highest of 24" or "lowest of 24". */
 export function formatRank(r: Rank): string {
+  if (r.rank === r.of && r.of > 1 && !r.tied) return `lowest of ${r.of}`;
   const place = r.rank === 1 ? "highest" : `${ordinal(r.rank)} highest`;
   return `${r.tied ? "joint " : ""}${place} of ${r.of}`;
+}
+
+/** A ratio to the median: two decimals below 1, so 0.058 reads "0.06", not a flattering "0.1". */
+export function formatRatio(r: number): string {
+  return r < 1 ? r.toFixed(2) : r.toFixed(1);
 }

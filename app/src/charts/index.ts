@@ -9,8 +9,8 @@ import MonthComparison from "./MonthComparison";
 import UnusualBanner from "./UnusualBanner";
 
 export const charts: { id: string; Component: ComponentType }[] = [
-  { id: "calendar", Component: BurningCalendar },
   { id: "banner", Component: UnusualBanner },
+  { id: "calendar", Component: BurningCalendar },
   { id: "comparison", Component: MonthComparison },
   { id: "series", Component: ActivitySeries },
 ];
