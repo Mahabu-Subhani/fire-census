@@ -2,6 +2,12 @@
 
 # For Charulekha: one-line versions for the project page
 
+> **Superseded on 15 November by decision 57.** Every number in the list of
+> corrections below was right for the record as it stood late on 14 November.
+> The record was rebuilt on 15 November with one constant per calendar month,
+> so use `submission/results.md`, `submission/limits.md` and
+> `submission/inbox/A-judge-fixes.md` instead. Kept for the history.
+
 Full drafts: `submission/method.md`, `results.md`, `limits.md`, `nasa_data.md`.
 Figures: `submission/figures/`.
 
