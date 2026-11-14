@@ -75,8 +75,16 @@ early warning and emergency response. Points that change our plan:
 | 26 | She shows a fire in "Chile Rio", Argentina, in July 2026 | Most likely **Chilecito, La Rioja**: news reports describe a fire of more than 900 hectares in the Famatina sierra (Guanchín, Chilecito department) starting about 27 July 2026 and declared out in early August. **VERIFY** in the data after the start. Chilecito is near 29.2 S, 67.5 W, which is **outside** the Córdoba box. Add a small third area, "Chilecito and Famatina, La Rioja" (approximate box -68.2, -29.8, -66.8, -28.4), as an event case study: show the event on the calendar and whether it is flagged as unusual. It is a demo example, not a calibration region |
 | 27 | Demo lead | Córdoba leads the demo for global judging; Punjab and Haryana is shown second, for the local judges and the season-shift check. Both regions are processed; whichever passes its checks first is built into the app first |
 
+## App vision (added 14 November, after the start)
+
+| # | Decision | Answer | Why |
+|---|---|---|---|
+| 28 | App vision | `docs/APP_VISION.md` is the plan for what the app answers. Stack unchanged (decisions 15 to 20). Contract fields `mtd`, `data_through`, `nrt_from`, and hook fields `areaKm2`, `place`, `dataThrough` added to `docs/ARCHITECTURE.md` | Agreed by all three, reported by 8crsk. Reason in the team's own words: <to add> |
+| 29 | First-principles additions | The section "First principles" in `docs/APP_VISION.md` (baseline window, downloads, hotspot CSV, trends, keeping the data current) | **Proposed, not yet agreed.** Needs all three |
+
 ## Change log
 
 | Date | Who | Change | Reason |
 |---|---|---|---|
 | 13 Nov 2026 | Mahabu | Accepted the AI-recommended defaults above | To start on time; team to review |
+| 14 Nov 2026 | All three | Decision 28: app vision and contract fields | See row 28 |

@@ -61,6 +61,7 @@ interface CubeRow {            // one cell and month; same fields as cube.json
   raw_modis: number; raw_viirs: number;
   harm: number; harm_lo: number; harm_hi: number;
   small: number; terra_only: boolean;
+  mtd: number | null;          // month-to-date count; see the cube table
 }
 
 interface Selection {
@@ -71,6 +72,9 @@ interface Selection {
   mode: Mode;
   showSmall: boolean;
   status: "idle" | "loading" | "ready" | "empty" | "error";
+  areaKm2: number | null;      // area of the selection
+  place: string | null;        // name of a searched place, or null if drawn
+  dataThrough: string | null;  // "YYYY-MM-DD", copied from meta.data_through
 }
 
 function useSelection(): Selection;
@@ -121,6 +125,7 @@ One row per cell and month that has any value. Missing rows mean zero.
 | `harm_lo`, `harm_hi` | number | Range for `harm`. Equal to `harm` if no range is computed |
 | `small` | number | Small-fire layer count (VIIRS below the floor). 0 before 2012 |
 | `terra_only` | boolean | True for months before `harmonized_from` |
+| `mtd` | number or null | Month to date: `harm` counted over days 1 to D only, where D is the day of `meta.data_through`. Filled for that calendar month in every year (for example every November when data runs to 7 November); null in all other rows. Lets the app compare an incomplete current month fairly (docs/APP_VISION.md, trap 1) |
 
 Display grid `cell_deg` is 0.1 degree (about 11 km) by default. The 1 km grid
 in APPROACH.md is internal to the pipeline. DECIDE 0.05 if files stay small.
@@ -142,6 +147,8 @@ in APPROACH.md is internal to the pipeline. DECIDE 0.05 if files stay small.
   "data_version": "0.1.0",
   "code_commit": "",
   "generated_at": "2026-11-14T00:00:00Z",
+  "data_through": null,
+  "nrt_from": null,
   "sources": ["MODIS C6.1 (MCD14ML / MCD14DL)", "VIIRS 375 m S-NPP, NOAA-20, NOAA-21"]
 }
 ```
@@ -152,6 +159,11 @@ in APPROACH.md is internal to the pipeline. DECIDE 0.05 if files stay small.
 `verdict` is exactly one of `pass`, `fail` or `not run`. `curve` holds the
 points of the detection curve for the method panel; it is empty if the hard
 floor shipped. The older name `tests` is replaced by `checks`.
+
+`data_through` is the last date with data, `YYYY-MM-DD`. `nrt_from` is the
+first month (`YYYY-MM`) built from near-real-time rows, which may still change.
+The app shows both in its freshness line. Fields added 14 November with the
+agreement of all three (docs/APP_VISION.md).
 
 Optional cube field, present only if the observation-aware step is completed:
 `obs` (integer or null), the number of valid clear observations of the cell in
