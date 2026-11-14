@@ -117,7 +117,7 @@ Chart components C builds, each taking no props and reading `useSelection()`:
 | `SeasonTiming` | Season start, peak and end per year with the peak trend (`season.json`) |
 | `FireEpisodes` | Latest and largest fire episodes with ranks (`episodes.json`) |
 | `LandCover` | Fire activity split by land cover, by month or year (`landcover.json`) |
-| `PeopleNearFire` | People living in squares with fire, for the area and dates shown, and per year in both records (`population.json`); works for drawn areas too |
+| `PeopleNearFire` | People by burning level (light, moderate, heavy fire detections a year in their square) for the area and dates shown, and per year in the record the switch shows (`population.json`, decision 52); works for drawn areas too |
 
 A chart in `charts/index.ts` may give `available(selection)`; the shell hides
 it when that returns false. The two above are whole-region analyses, so they
@@ -271,8 +271,8 @@ Written by `app/scripts/make_population.py` (Person B) from WorldPop 2020,
 `region_population`, and `squares`: `[lon, lat, people]` per square, centres
 as in `cube.json`, squares with nobody left out. Each 1 km population pixel
 counts whole in the square holding its centre. The app joins it to the cube
-rows (`app/src/charts/population.ts`): a square counts when it had at least 3
-fire detections in the period (decision 48). Hidden if the file is missing.
+rows (`app/src/charts/population.ts`): each square gets a burning level from
+its fire detections per year (decision 52). Hidden if the file is missing.
 
 ### `app/public/data/<region_id>/sources.json`
 

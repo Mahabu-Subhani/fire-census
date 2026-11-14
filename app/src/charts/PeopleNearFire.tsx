@@ -1,15 +1,16 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
-// "Who lives near the fires?" People (WorldPop 2020) in the 0.1 degree squares
-// that had fire in the area and dates shown, and the same count per year in
-// both records. Every number comes from <region>/population.json and the cube;
-// the rule is in ./population.ts (decision 48). Exposure means living in a
-// square with fire, not harm or risk.
+// "Population near fires". People (WorldPop 2020) per burning level, for the
+// area and dates shown, and year by year in the record the switch shows.
+// Every number comes from <region>/population.json and the cube; the rules are
+// in ./population.ts (decisions 48 and 52). Exposure means living in a square
+// where it burns, not harm or risk.
 import * as Plot from "@observablehq/plot";
 import { useMemo } from "react";
 import { useSelection, useSelectionActions } from "../selection";
-import { fmtShare } from "../stats";
+import { fmtShare, monthsBetween } from "../stats";
+import { EMBER, useTheme } from "../theme";
 import ChartFrame, { formatMonth } from "./ChartFrame";
-import { areaPopulation, exposure, MIN_FIRE, populationIndex, stepAtViirs, VIIRS_YEAR, yearlyExposure, type YearExposure } from "./population";
+import { areaPopulation, LEVELS, peopleByLevel, populationIndex, shiftAtViirs, VIIRS_YEAR, yearlyLevels, type ByLevel, type Level } from "./population";
 import { usePlot } from "./usePlot";
 
 export function fmtPeople(n: number): string {
@@ -18,108 +19,161 @@ export function fmtPeople(n: number): string {
   return Math.round(n).toLocaleString("en-GB");
 }
 
-const signed = (s: number) => `${s >= 0 ? "+" : "−"}${fmtShare(Math.abs(s))}`;
+const RANGE: Record<Exclude<Level, "none">, string> = { heavy: "50 or more", moderate: "10 to 49", light: "1 to 9" };
+const ADVERB: Record<Exclude<Level, "none">, "heavily" | "moderately or heavily" | "lightly or more"> = { heavy: "heavily", moderate: "moderately or heavily", light: "lightly or more" };
+/** The headline counts a level and every level above it. */
+const OR_MORE: Record<Exclude<Level, "none">, string> = { heavy: "50 or more", moderate: "10 or more", light: "1 or more" };
 
-interface Point {
+interface Bar {
   year: number;
-  record: string;
+  level: string;
   people: number;
 }
 
 export default function PeopleNearFire() {
   const { population: pop, region, rows, areaRows, mode, from, to, dataThrough } = useSelection();
   const { polygon } = useSelectionActions();
+  const { theme } = useTheme();
+  // Ember ramp, as on the map: more fire is brighter (dark theme) or darker (light theme).
+  const ramp = EMBER[theme];
+  const colour: Record<Level, string> = { heavy: ramp[5], moderate: ramp[3], light: ramp[1], none: "var(--surface-2)" };
+
   const index = useMemo(() => (pop ? populationIndex(pop) : null), [pop]);
-  const now = useMemo(() => (index ? exposure(rows, mode, index) : null), [rows, mode, index]);
-  const inArea = useMemo(() => (pop ? areaPopulation(pop, polygon) : 0), [pop, polygon]);
-  const series = useMemo<YearExposure[]>(
-    () => (index && region ? yearlyExposure(areaRows, index, region.harmonized_from, dataThrough) : []),
-    [areaRows, index, region, dataThrough],
+  const people = useMemo(() => (pop ? areaPopulation(pop, polygon) : 0), [pop, polygon]);
+  const years = from && to ? monthsBetween(from, to).length / 12 : 1;
+  const now = useMemo<ByLevel | null>(() => (index ? peopleByLevel(rows, mode, index, people, years) : null), [rows, mode, index, people, years]);
+  const series = useMemo(
+    () => (index && region ? yearlyLevels(areaRows, index, people, region.harmonized_from, dataThrough) : []),
+    [areaRows, index, people, region, dataThrough],
   );
-  const points = useMemo<Point[]>(
-    () => series.flatMap((y) => [
-      { year: y.year, record: "Raw", people: y.raw },
-      { year: y.year, record: "Harmonized", people: y.harmonized },
-    ]),
-    [series],
+  const shift = useMemo(() => shiftAtViirs(series, people), [series, people]);
+  const bars = useMemo<Bar[]>(
+    () => series.flatMap((y) => LEVELS.map((l) => ({ year: y.year, level: l.name, people: y[mode][l.id] }))),
+    [series, mode],
   );
 
   const plotRef = usePlot(
     (width) => {
-      if (points.length === 0) return null;
+      if (bars.length === 0) return null;
       const narrow = width < 480;
-      const tip = (d: Point) => `${d.year} · ${d.record}\n${fmtPeople(d.people)} people`;
       return Plot.plot({
         width,
-        height: narrow ? 220 : 260,
-        marginLeft: 52,
+        height: narrow ? 200 : 230,
+        marginLeft: 44,
         style: { fontSize: narrow ? "10px" : "11.5px", fontFamily: "var(--font-sans)" },
-        x: { label: null, tickFormat: (y: number) => String(y), ticks: narrow ? 5 : 10 },
-        y: { label: null, grid: true, zero: true, tickFormat: (v: number) => (v >= 1e6 ? `${v / 1e6}M` : v >= 1e3 ? `${v / 1e3}k` : String(v)) },
-        color: { domain: ["Harmonized", "Raw"], range: ["var(--series-1)", "var(--bar-neutral)"] },
+        x: { label: null, tickFormat: (y: number) => (y % 5 === 0 ? String(y) : ""), padding: 0.12 },
+        y: { label: null, grid: true, tickFormat: (v: number) => (v >= 1e6 ? `${v / 1e6}M` : v >= 1e3 ? `${v / 1e3}k` : String(v)) },
+        color: { domain: LEVELS.map((l) => l.name), range: LEVELS.map((l) => colour[l.id]) },
         marks: [
-          Plot.ruleX([VIIRS_YEAR - 0.5], { stroke: "var(--border)", strokeDasharray: "3,3" }),
-          Plot.text([VIIRS_YEAR - 0.5], { x: (d: number) => d, frameAnchor: "top", dy: 2, dx: 4, textAnchor: "start", text: () => "VIIRS starts", fill: "var(--muted)" }),
-          Plot.lineY(points.filter((d) => d.record === "Raw"), { x: "year", y: "people", stroke: "var(--bar-neutral)", strokeWidth: 1.5, strokeDasharray: "4,3" }),
-          Plot.lineY(points.filter((d) => d.record === "Harmonized"), { x: "year", y: "people", stroke: "var(--series-1)", strokeWidth: 2 }),
-          Plot.dot(points, { x: "year", y: "people", fill: "record", r: 2.5 }),
-          Plot.tip(points, Plot.pointer({ x: "year", y: "people", title: tip, fontSize: 13, fill: "var(--surface-2)", stroke: "var(--border)" })),
+          Plot.barY(bars, {
+            x: "year", y: "people", fill: "level", order: LEVELS.map((l) => l.name),
+            title: (d: Bar) => `${d.year} · ${d.level} burning\n${fmtPeople(d.people)} people`,
+            tip: { fontSize: 13, fill: "var(--surface-2)", stroke: "var(--border)" },
+          }),
+          Plot.ruleX([VIIRS_YEAR], { stroke: "var(--muted)", strokeDasharray: "3,3", dx: -6 }),
+          Plot.text([VIIRS_YEAR], { x: (d: number) => d, frameAnchor: "top", dx: -2, textAnchor: "start", text: () => "VIIRS starts", fill: "var(--muted)" }),
         ],
       });
     },
-    [points],
+    [bars, theme],
   );
 
   if (!pop || !region || !now) return null;
-  const range = from && to ? `${formatMonth(from)} to ${formatMonth(to)}` : "the period shown";
-  const unit = mode === "raw" ? "hotspot detections" : "fire detections (MODIS-equivalent)";
-  const sentence = now.squares === 0
-    ? `No square in this area had ${MIN_FIRE} or more ${unit} from ${range}.`
-    : `About ${fmtPeople(now.people)} people live in the ${now.squares.toLocaleString("en-GB")} squares with ${MIN_FIRE} or more ${unit} from ${range}${inArea > 0 ? `: ${fmtShare(now.people / inArea)} of the ${fmtPeople(inArea)} people in this area` : ""}.`;
-  const stepRaw = stepAtViirs(series, "raw");
-  const stepHarm = stepAtViirs(series, "harmonized");
-  const stepText = stepRaw !== null && stepHarm !== null
-    ? `Average after ${VIIRS_YEAR} against before: raw ${signed(stepRaw)}, harmonized ${signed(stepHarm)}. ` +
-      (Math.abs(stepHarm) < Math.abs(stepRaw) / 3
-        ? "Most of the raw jump is the new satellite seeing more, not more people near fire."
-        : "The harmonized record still changes a lot here; read the trend with care (see the checks in Data & methods).")
+  // Headline: the most intense level that, with the levels above it, covers a quarter of the people;
+  // failing that, everyone with any burning (if at least 1 % of people).
+  const upTo = (i: number) => LEVELS.slice(0, i + 1).reduce((s, l) => s + now[l.id], 0);
+  const quarter = LEVELS.findIndex((_l, i) => upTo(i) >= 0.25 * people);
+  const topIndex = quarter >= 0 ? quarter : upTo(LEVELS.length - 1) >= 0.01 * people ? LEVELS.length - 1 : -1;
+  const top = topIndex >= 0 ? LEVELS[topIndex] : null;
+  const topPeople = topIndex >= 0 ? upTo(topIndex) : 0;
+  const period = from && to ? `${formatMonth(from)} to ${formatMonth(to)}` : "the period shown";
+  const perYear = years >= 1 ? "a year" : "in the period";
+  const headline = top
+    ? top.id === "light"
+      ? `${fmtPeople(topPeople)} people live where there is some burning every year`
+      : `${fmtPeople(topPeople)} people live where it burns ${ADVERB[top.id]}`
+    : "Almost nobody here lives where it burns";
+  const sub = top
+    ? `${fmtShare(people > 0 ? topPeople / people : 0)} of the ${fmtPeople(people)} people in this area: ${OR_MORE[top.id]} fire detections ${perYear} within about 11 km, ${years >= 1 ? "on average, " : ""}${period}${mode === "raw" ? ", raw counts" : ""}.`
+    : `Fewer than 1 % of the ${fmtPeople(people)} people in this area live where there is even one fire detection ${perYear}, ${period}.`;
+
+  const lvlName = shift ? LEVELS.find((l) => l.id === shift.level)!.name.toLowerCase() : "";
+  const shiftText = shift
+    ? `Raw satellite counts make it look as if the people living with ${lvlName} burning${shift.level === "heavy" ? "" : " or more"} went from ${fmtPeople(shift.before.raw)} a year before ${VIIRS_YEAR} to ${fmtPeople(shift.after.raw)} after, when the newer satellite arrived. ` +
+      `The harmonized record: ${fmtPeople(shift.before.harmonized)} to ${fmtPeople(shift.after.harmonized)}.`
     : "";
-  const caveat = `A square is about 11 km across; it counts when it had ${MIN_FIRE} or more fire detections in the period (or in the year, for the chart). ` +
-    `The threshold was chosen after looking at the data, because counting every square with any fire jumps when VIIRS arrives. ` +
-    `Population is the ${pop.population_year} map for every year. Living near fire is exposure, not a measure of harm or risk.`;
+  const harmChange = shift && shift.before.harmonized > 0 ? shift.after.harmonized / shift.before.harmonized - 1 : 0;
+  const warn = shift && Math.abs(harmChange) > 0.5
+    ? "Here the harmonized record also changes a lot across 2012, so read the trend with care (see the checks under Data)."
+    : "";
+  const method = "Each square is about 11 km across. Burning level = fire detections per year in the square: light 1 to 9, moderate 10 to 49, heavy 50 or more " +
+    "(MODIS-equivalent in Harmonized; as reported in Raw). These cut-offs were chosen after looking at the data. " +
+    `Population is the ${pop.population_year} map for every year, so changes show where fires burned, not population change. ` +
+    "Living where it burns is exposure, not a measure of harm or risk.";
+  const segments = [...LEVELS.map((l) => ({ id: l.id as Level, name: l.name, range: `${RANGE[l.id]} ${perYear}` })), { id: "none" as Level, name: "Little or none", range: `under 1 ${perYear}` }];
 
   return (
     <ChartFrame
       title="Population near fires"
       exportName="people-near-fire"
-      notes={[sentence, stepText, caveat, pop.source]}
+      notes={[`${headline}. ${sub}`, shiftText, method, pop.source]}
       table={() => ({
-        columns: ["year", "people_raw", "people_harmonized", "min_detections"],
-        rows: series.map((y) => [y.year, y.raw, y.harmonized, MIN_FIRE]),
-        notes: [caveat, pop.method, pop.source],
+        columns: ["year", ...LEVELS.flatMap((l) => [`raw_${l.id}`, `harmonized_${l.id}`])],
+        rows: series.map((y) => [y.year, ...LEVELS.flatMap((l) => [y.raw[l.id], y.harmonized[l.id]])]),
+        notes: [method, pop.method, pop.source],
       })}
     >
-      <p className="status-sentence" style={{ fontSize: "1rem" }}>{sentence}</p>
-      {stepText && <p className="status-detail">{stepText}</p>}
-      <div ref={plotRef} className="cal-plot" />
-      <div className="series-key">
-        <span><i style={{ background: "var(--series-1)" }} />Harmonized</span>
-        <span><i style={{ background: "var(--bar-neutral)" }} />Raw (MODIS + VIIRS as detected)</span>
+      <p className="pnf-headline">{headline}</p>
+      <p className="status-detail">{sub}</p>
+
+      <div className="pnf-bar" role="img" aria-label={segments.map((s) => `${s.name}: ${fmtPeople(now[s.id])}`).join("; ")}>
+        {segments.map((s) => {
+          const share = people > 0 ? now[s.id] / people : 0;
+          return share > 0 ? <span key={s.id} style={{ width: `${share * 100}%`, background: colour[s.id] }} title={`${s.name}: ${fmtPeople(now[s.id])}`} /> : null;
+        })}
       </div>
+      <ul className="pnf-key">
+        {segments.map((s) => (
+          <li key={s.id}>
+            <i style={{ background: colour[s.id] }} />
+            <span className="pnf-name">{s.name}</span>
+            <span className="pnf-range">{s.range}</span>
+            <span className="pnf-num">{fmtPeople(now[s.id])}</span>
+            <span className="pnf-share">{fmtShare(people > 0 ? now[s.id] / people : 0)}</span>
+          </li>
+        ))}
+      </ul>
+
+      {series.length > 0 && (
+        <>
+          <p className="pnf-sub">People by burning level, each year · {mode === "raw" ? "Raw" : "Harmonized"} <span>(switch at the top)</span></p>
+          <div ref={plotRef} className="cal-plot" />
+        </>
+      )}
+      {shiftText && <p className="status-detail">{shiftText} {warn}</p>}
+
+      <details className="src-details">
+        <summary>How this is worked out</summary>
+        <p className="status-detail">{method} {pop.source}.</p>
+      </details>
       <details className="src-details">
         <summary>The same numbers as a table</summary>
         <div className="ev-table-wrap">
           <table className="ev-table">
-            <thead><tr><th>Year</th><th>Raw</th><th>Harmonized</th></tr></thead>
+            <thead>
+              <tr><th>Year</th>{LEVELS.map((l) => <th key={l.id}>{l.name}</th>)}</tr>
+            </thead>
             <tbody>
               {series.map((y) => (
-                <tr key={y.year}><td>{y.year}</td><td>{y.raw.toLocaleString("en-GB")}</td><td>{y.harmonized.toLocaleString("en-GB")}</td></tr>
+                <tr key={y.year}>
+                  <td>{y.year}</td>
+                  {LEVELS.map((l) => <td key={l.id}>{y[mode][l.id].toLocaleString("en-GB")}</td>)}
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
       </details>
-      <p className="status-detail">{caveat} {pop.source}.</p>
     </ChartFrame>
   );
 }

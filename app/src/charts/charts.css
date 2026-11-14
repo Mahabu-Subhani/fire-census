@@ -63,3 +63,18 @@
 .cal-table caption { text-align: left; color: var(--muted); padding-bottom: 6px; font-family: var(--font-sans); }
 .cal-table th, .cal-table td, .data-table th, .data-table td { padding: 4px 8px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
 .cal-table td.terra { font-style: italic; color: var(--muted); }
+
+/* Population near fires (decision 52) */
+.pnf-headline { margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.2; }
+.pnf-bar { display: flex; height: 18px; border: 1px solid var(--border); overflow: hidden; background: var(--surface-2); }
+.pnf-bar span { display: block; height: 100%; }
+.pnf-bar span + span { border-left: 1px solid var(--surface); }
+.pnf-key { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.82rem; }
+.pnf-key li { display: grid; grid-template-columns: 12px 1fr auto auto; column-gap: 8px; align-items: baseline; }
+.pnf-key i { width: 12px; height: 12px; border: 1px solid var(--border); align-self: center; }
+.pnf-name { font-weight: 700; }
+.pnf-range { grid-column: 2; grid-row: 2; color: var(--muted); font-size: 0.74rem; }
+.pnf-num { grid-column: 3; grid-row: 1; text-align: right; font-variant-numeric: tabular-nums; }
+.pnf-share { grid-column: 4; grid-row: 1; text-align: right; min-width: 3.5em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pnf-sub { margin: 6px 0 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.pnf-sub span { font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--muted); }

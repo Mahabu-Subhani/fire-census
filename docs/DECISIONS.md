@@ -161,6 +161,13 @@ early warning and emergency response. Points that change our plan:
 |---|---|---|---|
 | 51 | Slow first load, and finding the other areas | (a) A loading bar with the share of the area's record received. Measured on the live site: the answer waits for `cube.json` (Punjab 14.5 MB, 1 MB gzipped), which took 15 to 27 s when GitHub Pages had not cached it (about 60 KB/s) and 3 s when it had; reading it takes about 0.1 s. Pages sends it gzipped, so the build records each cube's uncompressed size (`vite.config.ts`) to show a true percentage. The selection contract is unchanged (`cubeProgress` in `app/src/data/load.ts`). (b) One area is still loaded at a time, since loading all four would double the wait; the map now shows the other areas' outlines and name tags, a click on either switches area, and "Show all" zooms out to all four. A columnar cube (measured: Punjab 913 KB to 520 KB gzipped) is left for later: it changes the data contract with Person A | 8crsk, 14 Nov, as team lead: "why does it take a lot of time for it to load the data" and asked whether to keep one area at a time. The AI assistant measured the load and proposed both parts; 8crsk chose them |
 
+
+## Population view, second version (added 14 November, about 23:15)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 52 | Burning levels instead of a yes/no threshold | Replaces the 3-detection rule of decision 48. Each ~11 km square gets a level from its fire detections per year: light 1 to 9, moderate 10 to 49, heavy 50 or more (MODIS-equivalent in Harmonized). The section shows a headline (the most intense level that, with those above it, covers a quarter of the people), one bar of the area's people by level with numbers, people by level each year in the record the switch shows, and one sentence comparing raw and harmonized across 2012. Cut-offs chosen after looking at the data (Punjab square-years: median 8, 90th percentile 46); not pre-registered. Result, people living with heavy burning, mean 2003-2011 against 2012-2025, Punjab and Haryana: raw 6.3 M to 34.7 M, harmonized 3.0 M to 3.2 M. Fixes the false warning in the old sentence (it compared against the raw jump, which can be zero) | 8crsk, 14 Nov, as team lead: "the way the info is presented is not good" (a drawn area said 100.0 % of people, and the chart was a flat line). The AI assistant diagnosed it and proposed the levels; 8crsk asked for the fix |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -174,4 +181,5 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | 8crsk | Decision 44: land cover in the app | See row 44 |
 | 14 Nov 2026 | 8crsk | Decisions 48 and 49: people near fires; live NASA fires and playback on the map | See rows 48 and 49 |
 | 14 Nov 2026 | 8crsk | Decision 51: loading bar and the study areas on the map | See row 51 |
+| 14 Nov 2026 | 8crsk | Decision 52: population by burning level | See row 52 |
 | 14 Nov 2026 | Charulekha | Decision 39: map-first retro UI, Arial, satellite base map | See row 39 |
