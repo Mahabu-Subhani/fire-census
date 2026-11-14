@@ -193,7 +193,10 @@ def main() -> None:
             "level_shipped": model,
             "level_name": MODEL_NAMES[model],
             "shipping_reason": choice["reason"],
-            "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+            "unit": "Aqua-equivalent fire cells",
+            "unit_note": ("One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. "
+                          "Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua "
+                          "would have reported, computed from VIIRS with the detection curve."),
             "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
             "calibration": {"variant": variant, "months": curves["calibration"][variant],
                             "reference_pair": "Aqua MODIS and S-NPP VIIRS", "area": donor},

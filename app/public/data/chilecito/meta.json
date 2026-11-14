@@ -2,7 +2,8 @@
   "level_shipped": "S0",
   "level_name": "Detection curve",
   "shipping_reason": "Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there.",
-  "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+  "unit": "Aqua-equivalent fire cells",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve.",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
@@ -740,8 +741,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "6e00aaf",
-  "generated_at": "2026-11-14T05:59:55Z",
+  "code_commit": "83b4118",
+  "generated_at": "2026-11-14T10:01:59Z",
   "data_through": "2026-11-05",
   "nrt_from": "2026-08",
   "sources": [

@@ -77,5 +77,16 @@ Remaining step at 2012 (0 is perfect):
   curve's reference point. Punjab is fragile: two of those changes push C3r over
   its limit.
 - **The author's own example.** The challenge video shows a fire near
-  Chilecito, La Rioja, in July 2026. In our record that July has 6.0 times the
-  median of the 24 earlier Julys, which the app labels "far above normal".
+  Chilecito, La Rioja, in July 2026. In our record that July has 44.07 fire
+  cells against a median of 5.00 for the 24 earlier Julys (8.8 times), the
+  second highest July on record after 2003. The app labels it "far above
+  normal". Chilecito has too few fires to calibrate, so it borrows Córdoba's
+  curve, and two of its own checks fail on that borrowed calibration: the 2012
+  step (C1, 0.29) and NOAA-20 agreement (C4, correlation 0.889). Treat it as a
+  case study, not a validated region.
+- **Why the small-fire layer is larger than the record in Punjab.** From 2013
+  to 2025 the small-fire layer is 2.2 times the harmonized record in Punjab and
+  Haryana (2.1 to 2.6 by year) and 1.8 times in Córdoba. Crop-residue fires are
+  small and short, so VIIRS sees two to three weak fires there for every fire
+  MODIS would have reported. That is the "greater detail" of VIIRS, kept
+  separately so the long record stays comparable.

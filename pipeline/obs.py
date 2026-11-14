@@ -46,10 +46,16 @@ def download() -> None:
     earthaccess.login(strategy="environment")
     OUT.mkdir(parents=True, exist_ok=True)
     seen = {}
+    # Search in 4-year windows: one search over the whole period was silently capped
+    # (the India tiles stopped in mid-2019 on the first run).
+    windows = [(f"{y}-01-01", f"{y + 3}-12-31") for y in range(2002, 2027, 4)]
+    windows[0] = (START, windows[0][1])
+    windows[-1] = (windows[-1][0], END)
     for name, west, south, east, north, _ in AREAS.values():
-        for g in earthaccess.search_data(short_name=SHORT, version="061", bounding_box=(west, south, east, north),
-                                         temporal=(START, END)):
-            seen[g["umm"]["GranuleUR"]] = g
+        for lo, hi in windows:
+            for g in earthaccess.search_data(short_name=SHORT, version="061", count=-1,
+                                             bounding_box=(west, south, east, north), temporal=(lo, hi)):
+                seen[g["umm"]["GranuleUR"]] = g
     todo = [g for ur, g in seen.items() if not any(OUT.glob(ur + "*.hdf"))]
     print(f"{len(seen)} granules in total, {len(todo)} to download", flush=True)
     for i in range(0, len(todo), 200):

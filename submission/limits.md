@@ -23,5 +23,10 @@
 - **The last three months are provisional.** Near-real-time data from August
   2026 onward will be replaced by final data, and non-fire heat sources there
   are removed with a mask built from older data.
+- **Not every heat source is a fire.** Detections NASA flags as volcanoes,
+  offshore sources or other static land sources (gas flares, industry) are
+  excluded, as are near-real-time detections at places that the final data has
+  repeatedly flagged that way. Agricultural, land-clearing and waste burning
+  stay in, because they are burning activity.
 - **Dates are in UTC,** so a night detection can fall on the previous local day.
 - **Not checked against burned-area maps** (check C6 was not run).

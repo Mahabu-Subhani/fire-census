@@ -2,7 +2,8 @@
   "level_shipped": "L2",
   "level_name": "Hard floor",
   "shipping_reason": "Hard floor. The detection curve fails C8 here (its midpoint is too uncertain), so the rule moves to the hard floor, which passes C0, C1, C1b, C2, C3r and C4. Fails the original C3 (0.291). Both verdicts are shown.",
-  "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+  "unit": "Aqua-equivalent fire cells",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve.",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
@@ -740,8 +741,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "6e00aaf",
-  "generated_at": "2026-11-14T05:59:55Z",
+  "code_commit": "83b4118",
+  "generated_at": "2026-11-14T10:01:59Z",
   "data_through": "2026-11-05",
   "nrt_from": "2026-08",
   "sources": [
