@@ -92,3 +92,14 @@ Five satellites, two sensor types, different times of day. The app's rules:
 - No automatic alert when one satellite stops reporting; the number of days
   each satellite reported per year is in `sources.json` but not yet on screen.
 - Burned-area check C6 is not run.
+
+## Draft for the project page: crops or wild land?
+
+The challenge separates wildfires in natural vegetation from agricultural
+burns. For each area the app splits the whole harmonized record by the land
+each fire burned on, using ESA WorldCover 2021 read through the Microsoft
+Planetary Computer: cropland, forest, grass and shrub, or other, by month and
+by year, and separately for the small fires only VIIRS sees. One land-cover
+map serves every year, so land that changed use earlier may be mislabelled;
+the app says so under the chart. Numbers: fill in from the app after the
+final data build (`landcover.json`, `share_by_class`).

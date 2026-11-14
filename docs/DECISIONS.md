@@ -130,6 +130,7 @@ early warning and emergency response. Points that change our plan:
 | 41 | S3, estimating small fires before 2012 | **Not built.** It would be a model, not an observation, and could not be validated in the time left; the review (docs/REVIEW.md) warns against adding unvalidated results | Same |
 | 42 | Check C6 with ESA Fire_cci | **Run.** Córdoba fails (-0.440); Aqua alone, with no sensor change, gives -0.427, so the change is in burned area per detected fire, not a seam. Reported with that diagnosis | Same |
 | 43 | Partner and Global Offer data | ESA Fire_cci (C6) and ESA WorldCover through the Microsoft Planetary Computer (land cover at fire cells). Other Global Offers (cloud credits, weather API, domain, collaboration tools) not used: the app is static and needs none, and a new domain this close to the deadline risks a broken link | Same |
+| 44 | Land cover in the app | A chart "What is burning: crops or wild land?": every fire cell in the record gets the dominant ESA WorldCover 2021 class of its 1 km cell, grouped as cropland, forest, grass and shrub, other; by month and by year, for the MODIS-visible activity and the small-fire layer, whole region only. Extends decision 43 (Mahabu's one-year sample for the project page) to the full record. Limits stated on screen: one land-cover map for all years; shares of fire cells, not of the harmonized value | 8crsk, 14 Nov, as team lead, after the AI assistant proposed it from the Global Offer list. Short D1: the challenge text separates wildfires from agricultural burns, and no other view in the app does. Reason in 8crsk's own words: **to be added by 8crsk** |
 
 ## Change log
 
@@ -141,4 +142,5 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | 8crsk | Decision 34: plain-language guidance per audience | See row 34 |
 | 14 Nov 2026 | 8crsk | Decision 35: redesign and research view | See row 35 |
 | 14 Nov 2026 | 8crsk | Decision 38: rules for comparing the satellites | See row 38 |
+| 14 Nov 2026 | 8crsk | Decision 44: land cover in the app | See row 44 |
 | 14 Nov 2026 | Charulekha | Decision 39: map-first retro UI, Arial, satellite base map | See row 39 |

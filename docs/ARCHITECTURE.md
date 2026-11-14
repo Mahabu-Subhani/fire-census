@@ -80,6 +80,7 @@ interface Selection {
   season: Season | null;       // <region>/season.json, null if the file does not exist
   drift: DriftFile | null;     // <region>/drift.json
   episodes: Episodes | null;   // <region>/episodes.json
+  landcover: LandCover | null; // <region>/landcover.json
 }
 
 function useSelection(): Selection;
@@ -114,6 +115,7 @@ Chart components C builds, each taking no props and reading `useSelection()`:
 | `UnusualBanner` | Alert when the latest month is far above its median |
 | `SeasonTiming` | Season start, peak and end per year with the peak trend (`season.json`) |
 | `FireEpisodes` | Latest and largest fire episodes with ranks (`episodes.json`) |
+| `LandCover` | Fire activity split by land cover, by month or year (`landcover.json`) |
 
 A chart in `charts/index.ts` may give `available(selection)`; the shell hides
 it when that returns false. The two above are whole-region analyses, so they
@@ -240,6 +242,18 @@ If this is not ready, the CSV download exports the cube rows for the selection,
 which already satisfies "downloadable analytics". The app side is built: a "Download hotspots" button appears as
 soon as `<region>/hotspots/<last year>.csv.gz` exists, reads at most 5 years per
 download, and needs at least the columns `latitude`, `longitude` and `acq_date`.
+
+### `app/public/data/<region_id>/landcover.json`
+
+Written by `app/scripts/make_landcover.py` (Person B) from the hotspot files
+and ESA WorldCover 2021 (Planetary Computer data API); rerun it when the
+hotspot files change. `source`, `method`, `groups` (`id`, `name`, `classes`;
+ids `cropland`, `forest`, `grass_shrub`, `other`), `years` and `months` (one
+entry each with `harmonized` and `small`: fire cells per group id),
+`harmonized_by_class`, `share_by_class`, `unlabelled_fire_cells`. A fire cell
+is one 0.01 degree cell per satellite, date and half of the day; it takes the
+cell's dominant land cover. Shown by the `LandCover` chart for the whole
+region; hidden if the file is missing.
 
 ### `app/public/data/<region_id>/sources.json`
 

@@ -225,6 +225,7 @@ const OVERVIEW_CHARTS: Record<string, string> = {
   outlook: "Next 3 months · past years",
   // Whole-region analyses; listed only where the file exists and no area is drawn.
   season: "Critical period · has it moved?",
+  landcover: "Crops or wild land?",
   episodes: "This fire against earlier ones",
 };
 
