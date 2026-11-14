@@ -12,7 +12,7 @@ gaps, not a prediction.
 |---|---|---|---|
 | Impact | 7 | Solves a real, dated problem (MODIS ending; the author's own agency needs it); works for four audiences; but only four areas are processed, and it is not a live alert service | 8 |
 | Creativity | 8 | Detection-curve harmonization where others fit one ratio; the orbit-drift finding; every hotspot labelled with what harmonization did to it; checks fixed before the data was opened | 9 |
-| Validity | 8 | Ten pre-registered checks, failures shown; agreement with an independent physics paper; reproduced from a fresh clone; but C3 needed a revision after results, Punjab is fragile, Karnataka fails its held-out checks, C6 not run | 8 |
+| Validity | 8 | Ten pre-registered checks, failures shown; agreement with an independent physics paper; reproduced from a fresh clone; but C3 needed a revision after results, Punjab is fragile, Karnataka fails its held-out checks; C6 fails in Córdoba, though Aqua alone fails it identically | 8 |
 | Relevance (data) | 9 | All five MODIS and VIIRS satellites from FIRMS, Aqua daily fire masks, the FIRMS live API; every feature the challenge names is in the app | 9 |
 | Presentation | 7 | Polished app with plain-question charts and exact numbers; project page drafted; but no demo video yet and the pitch is not rehearsed | 9 |
 | **Total** | **39 / 50** | | **43 to 44** |
@@ -40,7 +40,7 @@ gaps, not a prediction.
    `docs/ARCHITECTURE.md`, decision 37). The season view is the strongest
    single image for local judges.
 5. **Say plainly what is not done:** four areas only, not an alert service,
-   C6 not run. Judges reward stated limits more than they punish them.
+   C6 fails in Córdoba (Aqua alone fails it the same way). Judges reward stated limits more than they punish them.
 
 ## What not to do now
 

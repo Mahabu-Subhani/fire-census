@@ -19,7 +19,7 @@ Figures: `submission/figures/`.
   Our record keeps the first ten MODIS-only years usable and does not inherit
   the drift.
 - **Honesty:** 10 checks were fixed before the data was opened (plus one added after, shown beside it); in Córdoba 8 pass,
-  1 fails and 2 were not run or do not apply, and all are shown in the app.
+  2 fail (C3; C6, where Aqua alone fails the same way) and 1 does not apply, and all are shown in the app.
 
 Best figures, in order: `harmonized_cordoba.png` (the jump and its removal),
 `detection_curve_cordoba.png`, `orbit_drift.png`, `ratio_stability_cordoba.png`.
