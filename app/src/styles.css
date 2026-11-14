@@ -541,6 +541,7 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 .mf-range { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
 .mf-verdict { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .mf-verdict.alert { color: var(--accent-2); }
+.mf-caveat { margin: 4px 0 0; font-size: 0.72rem; line-height: 1.35; color: var(--muted); }
 .mf-sec {
   width: 100%; min-height: 42px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center;
   background: var(--surface-2); border: 0; border-bottom: 1px solid var(--border); color: var(--text);

@@ -56,6 +56,7 @@ export default function Hero() {
                 {s.ratioText.endsWith(" times the median") && <span><b>{s.ratioText.replace(" times the median", "×")}</b> the usual</span>}
               </p>
               {s.provisional && <p className="answer-sub">{s.provisional}</p>}
+              {s.caveat && <p className="answer-sub">{s.caveat}</p>}
             </>
           ) : (
             <p className="answer-sub">{s.state === "loading" ? "Reading the record…" : s.headline}</p>

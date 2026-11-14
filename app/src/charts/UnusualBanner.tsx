@@ -55,6 +55,17 @@ export interface MonthStatus {
   medianText: string | null;
   /** "likely 21st to 24th": 90% range allowing for the harmonization error; "" when not computed. */
   rangeText: string;
+  /** Set when the month is below normal: a low count is fewer fires seen, not proof of less burning. */
+  caveat: string;
+}
+
+/** Satellites see a fire only if it burns, unclouded, while they pass; a low count can mean missed fires. */
+export const BELOW_NORMAL_CAVEAT =
+  "Fewer fires were seen than usual. Fires under cloud or smoke, or burning between satellite passes, are not seen, so this does not prove there was less burning.";
+
+/** The caveat to show under a verdict: only "below normal" needs one. */
+export function caveatFor(verdict: string | null | undefined): string {
+  return verdict === "below" ? BELOW_NORMAL_CAVEAT : "";
 }
 
 /** The month to judge when the chosen period is exactly one month; otherwise null (the newest month is judged). */
@@ -78,7 +89,7 @@ export function useMonthStatus(): MonthStatus {
         : null,
     [areaRows, month, year, baseline, region, dataThrough, sigma],
   );
-  const empty = { when: "", headline: "", ratioText: "", detail: "", verdict: null, verdictText: null, alert: false, provisional: "", valueText: null, medianText: null, rangeText: "" };
+  const empty = { when: "", headline: "", ratioText: "", detail: "", verdict: null, verdictText: null, alert: false, provisional: "", valueText: null, medianText: null, rangeText: "", caveat: "" };
   if (status === "loading" || status === "idle") return { state: "loading", ...empty };
   if (!c || !month || c.year === null) return { state: "none", ...empty, headline: "No data" };
 
@@ -102,7 +113,7 @@ export function useMonthStatus(): MonthStatus {
     const pct = sigma ? Math.round((Math.exp(sigma) - 1) * 100) : null;
     detail = `${subject} ${num(c.value!)}; median of ${earlier} ${num(c.median!)}.${c.toDay ? ` Every year counts days 1 to ${c.toDay} only.` : ""}` +
       (range && pct !== null
-        ? ` Allowing for the harmonization error (about ${pct} percent in a single month, measured on held-out years), the rank is ${range} in 9 cases out of 10.`
+        ? ` Allowing for the harmonization error (a typical spread of about ${pct} percent in a single month, one standard deviation, measured on held-out years), the rank is ${range} in 9 cases out of 10.`
         : "");
   } else if (c.status === "too-little") {
     headline = "Insufficient data";
@@ -128,6 +139,7 @@ export function useMonthStatus(): MonthStatus {
     valueText: c.value !== null && c.value !== undefined ? num(c.value) : null,
     medianText: c.median !== null && c.median !== undefined ? num(c.median) : null,
     rangeText,
+    caveat: caveatFor(c.verdict),
   };
 }
 
@@ -147,6 +159,7 @@ export default function UnusualBanner() {
             {s.verdictText && <span className={`verdict verdict-${s.verdict}`}>{s.verdictText}</span>}
           </p>
           <p className="status-detail">{s.detail} {s.provisional}</p>
+          {s.caveat && <p className="status-detail">{s.caveat}</p>}
           <div className="chart-controls">
             <span>Baseline</span>
             <BaselineSwitch />
