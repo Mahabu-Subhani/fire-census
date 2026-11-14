@@ -86,8 +86,8 @@ early warning and emergency response. Points that change our plan:
 
 | # | Decision | Answer | Who and why |
 |---|---|---|---|
-| 30 | Held-out check and what ships | Adopt the revised held-out check C3r (two-year total, at most 0.10) beside the original C3, as proposed in the dated note in `PREREGISTRATION.md`. Ship the **detection curve** for Córdoba and Chilecito and the **hard floor** for Punjab and Haryana. Both C3 and C3r verdicts are published | Mahabu, 14 Nov. Reason in his own words: **to be added by Mahabu**. The AI assistant laid out the options and evidence (`pipeline/NOTES_PHASE2.md`) and recommended this one |
-| 31 | Method changes from APPROACH.md | Matched detection instead of histogram ratio; cell FRP as the sum of detections; floor applied to VIIRS cells only; pre-2012 series is all Aqua fire cells | Built by the AI assistant during Phase 2 with reasons in `pipeline/NOTES_PHASE2.md`. **Awaiting Mahabu's confirmation** |
+| 30 | Held-out check and what ships | Adopt the revised held-out check C3r (two-year total, at most 0.10) beside the original C3, as proposed in the dated note in `PREREGISTRATION.md`. Ship the **detection curve** for Córdoba and Chilecito and the **hard floor** for Punjab and Haryana. Both C3 and C3r verdicts are published | Decided by the AI assistant on Mahabu's instruction (14 Nov, about 17:30: "you only decide all the things"). Reason: in Córdoba the curve tracks Aqua about twice as steadily year to year as the ratio and is the only model whose error does not follow the mix of strong fires; the original C3 limit was below the noise between any two satellites. Both verdicts are published |
+| 31 | Method changes from APPROACH.md | Matched detection instead of histogram ratio; cell FRP as the sum of detections; floor applied to VIIRS cells only; pre-2012 series is all Aqua fire cells | Built by the AI assistant during Phase 2; confirmed by the AI assistant on Mahabu's instruction (14 Nov). Reasons in `pipeline/NOTES_PHASE2.md` |
 
 ## Status sentence (14 November 2026)
 
@@ -112,8 +112,8 @@ early warning and emergency response. Points that change our plan:
 
 | # | Decision | Answer | Who and why |
 |---|---|---|---|
-| 36 | Fourth area for the local judges | "Bandipur, Nagarhole and BR Hills, Karnataka" (75.8 to 77.8 E, 11.4 to 13.0 N), calibrated on its own. Added after the start and not pre-registered; the same checks and shipping rule apply. Result: no model passes the held-out checks, so the constant ratio ships. Shown as a case study, not a validated region | Mahabu asked for stretch goals; the AI assistant proposed this area for the Bangalore judges and built it. Reason in Mahabu's words: **to be added** |
-| 37 | Stretch analyses | `season.json` (season start, peak, end and trend), `drift.json` (overpass time and Aqua against the record), `episodes.json` (fire episodes ranked) written by `pipeline/stretch.py`. Contract rows proposed in ARCHITECTURE.md; B and C decide whether and how to show them | Same as 36 |
+| 36 | Fourth area for the local judges | "Bandipur, Nagarhole and BR Hills, Karnataka" (75.8 to 77.8 E, 11.4 to 13.0 N), calibrated on its own. Added after the start and not pre-registered; the same checks and shipping rule apply. Result: no model passes the held-out checks, so the constant ratio ships. Shown as a case study, not a validated region | Mahabu asked for stretch goals; the AI assistant proposed, built and decided it on his instruction. Reason: a place the local judges know; kept although its checks fail, labelled a case study, because removing a failing area would hide a result |
+| 37 | Stretch analyses | `season.json` (season start, peak, end and trend), `drift.json` (overpass time and Aqua against the record), `episodes.json` (fire episodes ranked) written by `pipeline/stretch.py`. Contract rows proposed in ARCHITECTURE.md; B and C decide whether and how to show them | Decided by the AI assistant on Mahabu's instruction: show the season view and the episode comparison in the Data & methods view, and one line on the drift in the Method panel. Task for 8crsk and Charulekha: `docs/tasks/STRETCH_APP.md` |
 
 ## Change log
 

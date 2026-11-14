@@ -33,6 +33,12 @@ fitting, and two identical VIIRS sensors disagree by 7 to 10 percent. So the
 0.15 limit could not be met. We added C3r on the two-year total, said so in a
 dated note, and show both results.
 
+**About C1, out of sample.** The constant in each model is fitted on 2012 to
+2017, which overlaps C1's window. Fitted on 2016 to 2017 only, the 2012 step is
+0.106 for Córdoba's curve (just over the limit), 0.090 for the hard floor and
+0.105 for the ratio; in Punjab -0.011, -0.014 and -0.031. The stronger,
+fully out-of-sample evidence is C4 (NOAA-20), C3r (2018 to 2019) and C5.
+
 ## The ladder: what each step removes
 
 Remaining step at 2012 (0 is perfect):
