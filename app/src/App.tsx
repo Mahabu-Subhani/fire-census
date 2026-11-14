@@ -227,6 +227,7 @@ const OVERVIEW_CHARTS: Record<string, string> = {
   // Whole-region analyses; listed only where the file exists and no area is drawn.
   season: "Fire season timing",
   landcover: "Land cover",
+  people: "Population near fires",
   episodes: "Fire episodes",
 };
 
