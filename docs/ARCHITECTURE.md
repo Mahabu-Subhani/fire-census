@@ -42,6 +42,8 @@ inside it, in plain JavaScript. This keeps files small and the app fast on a pho
 | `docs/` | A | These documents, methods text |
 | `docs/REFERENCES.md`, `docs/AI_USE.md` | everyone | Every external resource used; every use of AI |
 | `submission/` | C | Project page text, demo script, screenshots |
+| `submission/inbox/` | anyone writes, C reads | Draft project-page sentences from A and B (prompt D3) |
+| `docs/research/` | everyone | One note per research question (prompt D2); append to others' notes, do not rewrite them |
 
 ## Inside the app (Person B provides, Person C consumes)
 

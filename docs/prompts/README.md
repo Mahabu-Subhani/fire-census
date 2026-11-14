@@ -11,6 +11,7 @@ repeating them.
 | 8crsk (B) | [PERSON_B.md](PERSON_B.md) |
 | Charulekha (C) | [PERSON_C.md](PERSON_C.md) |
 | Anyone, any time | [SHARED.md](SHARED.md): checkpoint report, review, stuck, hand-off |
+| Anyone, before a decision or after finishing work | [DEEPEN.md](DEEPEN.md): deepen a decision, research sweep, document, submission audit |
 
 ## Setup (once)
 
