@@ -108,7 +108,6 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   const ramp = EMBER[theme];
   const { region, rows, mode, meta } = useSelection();
   const { polygon, setPolygon } = useSelectionActions();
-  const [showActivity, setShowActivity] = useState(true);
   const activity = useMemo(() => (region ? activityCells(rows, mode, region.cell_deg) : null), [rows, mode, region]);
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
@@ -212,8 +211,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    (map.getSource("activity") as GeoJSONSource).setData(showActivity && activity ? activity.collection : empty);
-  }, [activity, showActivity, ready]);
+    (map.getSource("activity") as GeoJSONSource).setData(activity ? activity.collection : empty);
+  }, [activity, ready]);
 
   // Current selection.
   useEffect(() => {
@@ -269,25 +268,19 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
         <span className="hint" aria-live="polite">{hint}</span>
       </div>
       <div ref={container} className="map" />
-      <div className="map-legend">
-        <label className="check">
-          <input type="checkbox" checked={showActivity} onChange={(e) => setShowActivity(e.target.checked)} />
-          Show where it burned
-        </label>
-        {showActivity && activity && activity.max > 0 && (
-          <div className="legend-bar" aria-label={`Colour scale from low to ${fmtValue(activity.max, mode)}`}>
-            <span>Less</span>
-            <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ramp.join(", ")})` }} />
-            <span>More (up to {fmtValue(activity.max, mode)} per cell)</span>
-          </div>
-        )}
-        {showActivity && activity && (
-          <p className="fine-print">
-            Each square is about 11 km across, coloured by its total for the dates shown ({unitLabel(meta, mode)}).
-            {activity.max === 0 && " No activity in this area and date range."}
-          </p>
-        )}
-      </div>
+      {activity && (
+        <div className="map-legend">
+          <p className="legend-title">Hotspot activity per cell <span>({unitLabel(meta, mode)})</span></p>
+          {activity.max > 0 ? (
+            <div className="legend-scale" role="img" aria-label={`Colour scale from 0 to ${fmtValue(activity.max, mode)}`}>
+              <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ramp.join(", ")})` }} />
+              <span className="legend-ends"><span>0</span><span>{fmtValue(activity.max, mode)}</span></span>
+            </div>
+          ) : (
+            <p className="fine-print">No activity in this area and period.</p>
+          )}
+        </div>
+      )}
     </section>
   );
 }

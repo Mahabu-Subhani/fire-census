@@ -1,6 +1,5 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending).
-// The frame every chart sits in: a plain-question title and one line on how to
-// read it; the chart; and CSV, PNG and SVG export. The unit, mode and area are
+// The frame every chart sits in: a title; the chart; and CSV, PNG and SVG export. The unit, mode and area are
 // shown once above all charts (the context bar), not repeated per chart; they
 // are still written into every exported file. A chart that always shows one
 // record whatever the switch says gets a small badge saying so.
@@ -27,8 +26,6 @@ export function useAreaLabel(): string {
 
 interface Props {
   title: string;
-  /** One short line: how to read this chart. */
-  lede?: string;
   children: ReactNode;
   /** Set when the chart always shows one record whatever the switch says. */
   mode?: Mode;
@@ -40,7 +37,7 @@ interface Props {
   notes?: string[];
 }
 
-export default function ChartFrame({ title, lede, children, mode: forcedMode, exportName, table, notes = [] }: Props) {
+export default function ChartFrame({ title, children, mode: forcedMode, exportName, table, notes = [] }: Props) {
   const sel = useSelection();
   const { meta, from, to, region } = sel;
   const mode = forcedMode ?? sel.mode;
@@ -83,7 +80,6 @@ export default function ChartFrame({ title, lede, children, mode: forcedMode, ex
           {title}
           {forcedMode && forcedMode !== sel.mode && <span className={`cf-mode cf-mode-${forcedMode}`}>{modeText} only</span>}
         </h2>
-        {lede && <p className="cf-lede">{lede}</p>}
       </figcaption>
       <div className="cf-body">{children}</div>
       {exportName && (

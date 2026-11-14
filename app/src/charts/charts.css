@@ -10,7 +10,6 @@
 .cf { margin: 0; display: grid; gap: 14px; min-width: 0; }
 .cf-head { display: grid; gap: 4px; }
 .cf-title { margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-.cf-lede { margin: 0; color: var(--muted); font-size: 0.92rem; max-width: 62ch; }
 .cf-mode {
   display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
   border: 1px solid var(--border-strong); color: var(--muted); letter-spacing: 0.02em;

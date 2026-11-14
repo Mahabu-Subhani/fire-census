@@ -85,8 +85,7 @@ export default function ActivitySeries() {
 
   return (
     <ChartFrame
-      title="Month by month"
-      lede={mode === "raw" ? "As the satellites reported. Watch the jump in 2012 when VIIRS joins." : "Every month on one consistent scale. The 2012 jump of the raw record is gone."}
+      title="Monthly time series"
       exportName="series"
       notes={notes}
       table={() => ({
