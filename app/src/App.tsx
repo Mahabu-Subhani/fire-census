@@ -1,6 +1,10 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 // Page layout. Chart slots hold Person C's components from src/charts/.
+import { useState } from "react";
 import { charts } from "./charts";
+import CoordinateEntry from "./controls/CoordinateEntry";
+import DateRange from "./controls/DateRange";
+import { buildSelectionCsv, saveText } from "./downloads/csv";
 import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
 
@@ -33,8 +37,28 @@ function Header() {
 }
 
 function Controls() {
-  const { region, areaKm2, status, place } = useSelection();
-  const { regions, setRegion, error, polygon } = useSelectionActions();
+  const selection = useSelection();
+  const { region, meta, rows, from, to, mode, showSmall, areaKm2, status, place } = selection;
+  const { regions, setRegion, setShowSmall, error, polygon, cellCount } = useSelectionActions();
+  const [copied, setCopied] = useState(false);
+  const areaLabel = place ?? (polygon ? "Drawn area" : "Whole region");
+
+  const download = () => {
+    if (!region || !meta) return;
+    const csv = buildSelectionCsv({ region, meta, rows, from, to, mode, areaLabel, areaKm2, polygon });
+    saveText(csv, `fire-census_${region.id}_${from}_${to}${polygon ? "_area" : ""}.csv`);
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt("Copy this link:", window.location.href);
+    }
+  };
+
   return (
     <div className="controls">
       <label>
@@ -46,12 +70,27 @@ function Controls() {
         </select>
       </label>
       <p className="area-line">
-        {place ?? (polygon ? "Drawn area" : "Whole region")}
+        {areaLabel}
         {areaKm2 !== null && <>, {Math.round(areaKm2).toLocaleString("en-GB")} km²</>}
+        {cellCount !== null && <>, {cellCount.toLocaleString("en-GB")} grid cells</>}
       </p>
+      <DateRange />
+      <label className="check">
+        <input type="checkbox" checked={showSmall} onChange={(e) => setShowSmall(e.target.checked)} />
+        Show small fires (seen only by VIIRS, from 2012)
+      </label>
+      <div className="actions">
+        <button type="button" onClick={download} disabled={!meta || status === "loading"}>Download CSV</button>
+        <button type="button" onClick={copyLink}>{copied ? "Link copied" : "Copy link to this view"}</button>
+      </div>
       {status === "loading" && <p className="note">Loading the record for this region…</p>}
       {status === "error" && <p className="note error">Could not load the data: {error}</p>}
-      {status === "empty" && <p className="note">No detections in this area and date range. Zero detections does not prove there was no fire.</p>}
+      {status === "empty" && cellCount === 0 && (
+        <p className="note">This area contains no grid cell (cells are {region?.cell_deg} degree, about 11 km). Draw a larger area.</p>
+      )}
+      {status === "empty" && cellCount !== 0 && (
+        <p className="note">No detections in this area and date range. Zero detections does not prove there was no fire.</p>
+      )}
     </div>
   );
 }
@@ -76,6 +115,7 @@ export default function App() {
         <div className="left">
           <Controls />
           <MapView />
+          <CoordinateEntry />
         </div>
         <div className="right">
           {charts.map(({ id, Component }) => (

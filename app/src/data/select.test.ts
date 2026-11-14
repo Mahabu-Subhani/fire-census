@@ -1,6 +1,6 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 import { describe, expect, it } from "vitest";
-import { bboxToPolygon, overlapsBBox, pointInPolygon, polygonAreaKm2, selectCells } from "./select";
+import { bboxToPolygon, circlePolygon, countCellCentres, overlapsBBox, pointInPolygon, polygonAreaKm2, selectCells } from "./select";
 import type { CubeRow } from "./types";
 
 function row(lon: number, lat: number, ym: string, harm = 1): CubeRow {
@@ -60,4 +60,28 @@ describe("polygonAreaKm2", () => {
 describe("overlapsBBox", () => {
   it("detects overlap", () => expect(overlapsBBox(bboxToPolygon([75.5, 30.5, 80, 35]), [73.8, 27.6, 77.6, 32.6])).toBe(true));
   it("detects no overlap", () => expect(overlapsBBox(bboxToPolygon([10, 10, 11, 11]), [73.8, 27.6, 77.6, 32.6])).toBe(false));
+});
+
+describe("circlePolygon", () => {
+  it("has about the area of a circle", () => {
+    const area = polygonAreaKm2(circlePolygon(75, 30, 20));
+    expect(area).toBeGreaterThan(0.98 * Math.PI * 400);
+    expect(area).toBeLessThan(Math.PI * 400);
+  });
+});
+
+describe("countCellCentres", () => {
+  const bbox: [number, number, number, number] = [73.8, 27.6, 77.6, 32.6];
+  it("counts the cells of a 1 degree box as 100", () => {
+    expect(countCellCentres(bboxToPolygon([74.8, 28.6, 75.8, 29.6]), bbox, 0.1)).toBe(100);
+  });
+  it("finds no cell in an area smaller than a cell between centres", () => {
+    expect(countCellCentres(bboxToPolygon([74.81, 28.61, 74.84, 28.64]), bbox, 0.1)).toBe(0);
+  });
+  it("finds no cell outside the region", () => {
+    expect(countCellCentres(bboxToPolygon([10, 10, 11, 11]), bbox, 0.1)).toBe(0);
+  });
+  it("counts the whole region", () => {
+    expect(countCellCentres(bboxToPolygon(bbox), bbox, 0.1)).toBe(38 * 50);
+  });
 });

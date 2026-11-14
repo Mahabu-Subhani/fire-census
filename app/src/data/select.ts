@@ -73,3 +73,41 @@ export function overlapsBBox(ring: Polygon, [w, s, e, n]: BBox): boolean {
   const lats = ring.map(([, lat]) => lat);
   return Math.max(...lons) >= w && Math.min(...lons) <= e && Math.max(...lats) >= s && Math.min(...lats) <= n;
 }
+
+/** A circle of the given radius as a polygon ring (n vertices). */
+export function circlePolygon(lon: number, lat: number, radiusKm: number, n = 48): Polygon {
+  const dLat = radiusKm / KM_PER_DEG;
+  const dLon = radiusKm / (KM_PER_DEG * Math.cos((lat * Math.PI) / 180));
+  return Array.from({ length: n }, (_, i) => {
+    const a = (2 * Math.PI * i) / n;
+    return [lon + dLon * Math.cos(a), lat + dLat * Math.sin(a)] as [number, number];
+  });
+}
+
+/**
+ * Number of grid-cell centres of the region inside the polygon. Zero means the
+ * area is too small (or misplaced) to contain any cell, which is different
+ * from an area that contains cells with no detections.
+ */
+export function countCellCentres(ring: Polygon, bbox: BBox, cellDeg: number): number {
+  const [w, s, e, n] = bbox;
+  const lons = ring.map(([lon]) => lon);
+  const lats = ring.map(([, lat]) => lat);
+  const x0 = Math.max(w, Math.min(...lons));
+  const x1 = Math.min(e, Math.max(...lons));
+  const y0 = Math.max(s, Math.min(...lats));
+  const y1 = Math.min(n, Math.max(...lats));
+  if (x0 > x1 || y0 > y1) return 0;
+  // Cell centres sit at w + (i + 0.5) * cellDeg.
+  const i0 = Math.max(0, Math.ceil((x0 - w) / cellDeg - 0.5));
+  const i1 = Math.floor((x1 - w) / cellDeg - 0.5);
+  const j0 = Math.max(0, Math.ceil((y0 - s) / cellDeg - 0.5));
+  const j1 = Math.floor((y1 - s) / cellDeg - 0.5);
+  let count = 0;
+  for (let i = i0; i <= i1; i++) {
+    for (let j = j0; j <= j1; j++) {
+      if (pointInPolygon(w + (i + 0.5) * cellDeg, s + (j + 0.5) * cellDeg, ring)) count++;
+    }
+  }
+  return count;
+}
