@@ -6,9 +6,9 @@ For Charulekha to place on the project page. Every number is from the app
 
 **Who lives near the fires?** We joined the record to WorldPop's 2020
 population map. In Punjab and Haryana, the raw satellite record says the
-number of people living in squares with fire nearly doubled when VIIRS
-arrived in 2012 (+99 %). The harmonized record says it did not change
-(-3 %): the jump was the new satellite, not more people near fire. Limits:
+number of people living in squares with fire rose by about 40 % when VIIRS
+arrived in 2012 (+39 %). The harmonized record says it barely changed
+(+3 %): the jump was the new satellite, not more people near fire. Limits:
 one population map (2020) for every year; "near" means living in the same
 11 km square; the 3-detection threshold was chosen after looking at the data;
 in Córdoba a +105 % step remains and in Karnataka the harmonized series falls
