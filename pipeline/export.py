@@ -41,6 +41,10 @@ CHECKS = [
 MODEL_NAMES = {"S0": "Detection curve", "L2": "Hard floor", "L1r": "Constant ratio (fallback)"}
 
 
+def verdict_of(ok: bool) -> str:
+    return "pass" if ok else "fail"
+
+
 def git_commit() -> str:
     try:
         return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO,
@@ -129,12 +133,23 @@ def main() -> None:
         cube.loc[in_month & cube["mtd"].isna(), "mtd"] = 0.0
         cube.loc[~in_month, "mtd"] = np.nan
 
+        # Optional `obs`: mean clear-view days per 1 km pixel, from Aqua's daily fire masks (obs.py).
+        obs_file = WORK / f"obs_{area_id}.parquet"
+        if obs_file.exists():
+            obs = pd.read_parquet(obs_file)[["lon", "lat", "ym", "obs"]]
+            obs["lon"], obs["lat"] = obs["lon"].round(3), obs["lat"].round(3)
+            cube["lon"], cube["lat"] = cube["lon"].round(3), cube["lat"].round(3)
+            cube = cube.merge(obs, on=["lon", "lat", "ym"], how="left")
+        else:
+            cube["obs"] = np.nan
+
         rows = [{"lon": round(float(r.lon), 3), "lat": round(float(r.lat), 3), "ym": r.ym,
                  "raw_modis": int(r.raw_modis), "raw_viirs": int(r.raw_viirs),
                  "harm": round(float(r.harm), 2), "harm_lo": round(float(r.harm_lo), 2),
                  "harm_hi": round(float(r.harm_hi), 2), "small": round(float(r.small), 2),
                  "terra_only": bool(r.terra_only),
-                 "mtd": None if pd.isna(r.mtd) else round(float(r.mtd), 2)} for r in cube.itertuples()]
+                 "mtd": None if pd.isna(r.mtd) else round(float(r.mtd), 2),
+                 "obs": None if pd.isna(r.obs) else int(round(float(r.obs)))} for r in cube.itertuples()]
         out = APP_DATA / area_id
         out.mkdir(parents=True, exist_ok=True)
         (out / "cube.json").write_text(json.dumps(rows, separators=(",", ":")), encoding="utf-8")
@@ -146,6 +161,20 @@ def main() -> None:
             got = dict(mine.get(cid, {}))
             if cid == "C7" and "C7" in res:
                 got = {"value": res["C7"]["value"], "verdict": res["C7"]["verdict"]}
+            if cid == "C5" and (WORK / "evidence.json").exists():
+                c5 = json.loads((WORK / "evidence.json").read_text(encoding="utf-8"))["c5"].get(donor)
+                if c5:
+                    dd, nn = c5["D"], c5["N"]
+                    got = {"value": f"day {dd['our_midpoint_MW']} MW vs published {dd['published_nadir_MW']} "
+                                    f"(x{dd['ratio_to_nadir']}); night {nn['our_midpoint_MW']} MW vs "
+                                    f"{nn['published_nadir_MW']} (x{nn['ratio_to_nadir']})",
+                           "verdict": verdict_of(dd["pass_factor_2"] and nn["pass_factor_2"]),
+                           "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. "
+                                   f"At the mean Aqua pixel size over this area the published day limit is "
+                                   f"{dd['published_at_mean_pixel_MW']} MW"}
+            if cid == "C6":
+                got = {"value": None, "verdict": "not run",
+                       "note": "ESA Fire_cci burned area not processed in the time available"}
             if cid == "C8" and model != "S0":
                 got = dict(res["checks"]["S0"].get("C8", {}))
                 got["note"] = "applies to the detection curve, which is used for the small-fire layer"

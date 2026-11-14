@@ -19,6 +19,7 @@ Run: python pipeline/harmonize.py     Output: WORK/<area>_{cells,weights,series,
 """
 
 import json
+import os
 
 import duckdb
 import numpy as np
@@ -34,9 +35,9 @@ CAL = {"A": ("2012-02", "2017-12"),        # decision 10 minus the held-out year
        "B": ("2016-01", "2017-12")}        # after the 2015 change in VIIRS FRP retrieval
 VIIRS_OPS = {"S-NPP": ("2012-02", "2026-10"), "NOAA-20": ("2018-04", "9999-12"),
              "NOAA-21": ("2023-03", "9999-12")}
-NEIGHBOUR = 1          # an Aqua cell within +-1 cell (about 3 x 3 km) counts as the same fire
+NEIGHBOUR = int(os.environ.get("FC_NEIGHBOUR", 1))   # Aqua cell within +-NEIGHBOUR cells (default about 3 x 3 km) = same fire
 CONTROL_SHIFT = 10     # cells; a displaced search measures chance coincidences
-PLATEAU_Q = 0.95       # plateau = curve value at this quantile of calibration fire strength
+PLATEAU_Q = float(os.environ.get("FC_PLATEAU_Q", 0.95))   # plateau = curve value at this quantile of fire strength
 N_BOOT = 500
 TRANSFER = {"chilecito": "cordoba"}   # too few fires for its own curve: use the donor's
 RNG = np.random.default_rng(20261114)

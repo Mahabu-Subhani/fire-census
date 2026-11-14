@@ -110,10 +110,10 @@
     {
       "id": "C5",
       "name": "Curve midpoint is physically plausible",
-      "value": null,
+      "value": "day 9.87 MW vs published 5.7 (x1.73); night 6.86 MW vs 3.7 (x1.85)",
       "threshold": "within a factor of 2 of published limits",
-      "verdict": "not run",
-      "note": "published limits not yet verified against their source curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "verdict": "pass",
+      "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. At the mean Aqua pixel size over this area the published day limit is 10.4 MW curve and constants borrowed from cordoba; too few fires here to calibrate"
     },
     {
       "id": "C6",
@@ -121,7 +121,7 @@
       "value": null,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "not run",
-      "note": "burned-area data not yet obtained curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "ESA Fire_cci burned area not processed in the time available curve and constants borrowed from cordoba; too few fires here to calibrate"
     },
     {
       "id": "C7",
@@ -739,8 +739,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "fd27353",
-  "generated_at": "2026-11-14T05:45:09Z",
+  "code_commit": "6e00aaf",
+  "generated_at": "2026-11-14T05:59:55Z",
   "data_through": "2026-11-05",
   "nrt_from": "2026-08",
   "sources": [
