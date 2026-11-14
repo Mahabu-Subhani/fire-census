@@ -18,6 +18,13 @@ export const MIN_FIRE = 3;
 /** First year with VIIRS: where a footprint jumps if it is not harmonized. */
 export const VIIRS_YEAR = 2012;
 
+/** "61.2 million", "540 thousand", "8,412". */
+export function fmtPeople(n: number): string {
+  if (n >= 1e6) return `${(n / 1e6).toLocaleString("en-GB", { maximumFractionDigits: 1 })} million`;
+  if (n >= 1e4) return `${Math.round(n / 1e3).toLocaleString("en-GB")} thousand`;
+  return Math.round(n).toLocaleString("en-GB");
+}
+
 const key = (lon: number, lat: number) => `${lon.toFixed(2)},${lat.toFixed(2)}`;
 
 /** Square centre -> people. */

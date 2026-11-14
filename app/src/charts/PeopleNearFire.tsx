@@ -9,14 +9,10 @@ import { useMemo } from "react";
 import { useSelection, useSelectionActions } from "../selection";
 import { fmtShare } from "../stats";
 import ChartFrame, { formatMonth } from "./ChartFrame";
-import { areaPopulation, exposure, MIN_FIRE, populationIndex, stepAtViirs, VIIRS_YEAR, yearlyExposure, type YearExposure } from "./population";
+import { areaPopulation, exposure, fmtPeople, MIN_FIRE, populationIndex, stepAtViirs, VIIRS_YEAR, yearlyExposure, type YearExposure } from "./population";
 import { usePlot } from "./usePlot";
 
-export function fmtPeople(n: number): string {
-  if (n >= 1e6) return `${(n / 1e6).toLocaleString("en-GB", { maximumFractionDigits: 1 })} million`;
-  if (n >= 1e4) return `${Math.round(n / 1e3).toLocaleString("en-GB")} thousand`;
-  return Math.round(n).toLocaleString("en-GB");
-}
+export { fmtPeople } from "./population";
 
 const signed = (s: number) => `${s >= 0 ? "+" : "−"}${fmtShare(Math.abs(s))}`;
 
@@ -74,19 +70,18 @@ export default function PeopleNearFire() {
   const range = from && to ? `${formatMonth(from)} to ${formatMonth(to)}` : "the period shown";
   const unit = mode === "raw" ? "hotspot detections" : "fire detections (MODIS-equivalent)";
   const sentence = now.squares === 0
-    ? `No square in this area had ${MIN_FIRE} or more ${unit} from ${range}.`
-    : `About ${fmtPeople(now.people)} people live in the ${now.squares.toLocaleString("en-GB")} squares with ${MIN_FIRE} or more ${unit} from ${range}${inArea > 0 ? `: ${fmtShare(now.people / inArea)} of the ${fmtPeople(inArea)} people in this area` : ""}.`;
+    ? `No square with ${MIN_FIRE} or more ${unit}, ${range}.`
+    : `${fmtPeople(now.people)} people in ${now.squares.toLocaleString("en-GB")} squares with ${MIN_FIRE} or more ${unit}, ${range}${inArea > 0 ? ` (${fmtShare(now.people / inArea)} of ${fmtPeople(inArea)})` : ""}.`;
   const stepRaw = stepAtViirs(series, "raw");
   const stepHarm = stepAtViirs(series, "harmonized");
   const stepText = stepRaw !== null && stepHarm !== null
-    ? `Average after ${VIIRS_YEAR} against before: raw ${signed(stepRaw)}, harmonized ${signed(stepHarm)}. ` +
+    ? `Mean from ${VIIRS_YEAR} against earlier years: raw ${signed(stepRaw)}, harmonized ${signed(stepHarm)}. ` +
       (Math.abs(stepHarm) < Math.abs(stepRaw) / 3
-        ? "Most of the raw jump is the new satellite seeing more, not more people near fire."
-        : "The harmonized record still changes a lot here; read the trend with care (see the checks in Data & methods).")
+        ? "The raw increase reflects the sensor change."
+        : "The harmonized record also changes; interpret with care.")
     : "";
-  const caveat = `A square is about 11 km across; it counts when it had ${MIN_FIRE} or more fire detections in the period (or in the year, for the chart). ` +
-    `The threshold was chosen after looking at the data, because counting every square with any fire jumps when VIIRS arrives. ` +
-    `Population is the ${pop.population_year} map for every year. Living near fire is exposure, not a measure of harm or risk.`;
+  const caveat = `Square: 0.1° (about 11 km), counted at ${MIN_FIRE} or more fire detections in the period (per year in the chart); threshold set after data review. ` +
+    `Population: ${pop.population_year} map for all years. Exposure, not harm or risk.`;
 
   return (
     <ChartFrame
@@ -104,10 +99,10 @@ export default function PeopleNearFire() {
       <div ref={plotRef} className="cal-plot" />
       <div className="series-key">
         <span><i style={{ background: "var(--series-1)" }} />Harmonized</span>
-        <span><i style={{ background: "var(--bar-neutral)" }} />Raw (MODIS + VIIRS as detected)</span>
+        <span><i style={{ background: "var(--bar-neutral)" }} />Raw</span>
       </div>
       <details className="src-details">
-        <summary>The same numbers as a table</summary>
+        <summary>Table</summary>
         <div className="ev-table-wrap">
           <table className="ev-table">
             <thead><tr><th>Year</th><th>Raw</th><th>Harmonized</th></tr></thead>
