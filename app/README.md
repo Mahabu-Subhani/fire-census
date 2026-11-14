@@ -19,12 +19,13 @@ Every push to `main` runs the tests, builds and publishes to GitHub Pages
 
 ## What a visitor gets
 
-Two views share one selection; the view is part of the shareable link (`v=research`).
+Three pages share one selection; the page is part of the shareable link (`v=research`, `v=ask`).
 
 | View | For | Shows |
 |---|---|---|
 | Overview | Everyone, first | Hero with the answer for this month, four numbers and the record as a dot grid; the calendar; this month against past years; the next three months from history; for the whole region, when the season starts, peaks and ends and whether it has moved, and the latest fire episodes ranked against all earlier ones |
 | Data & methods | Scientists, judges | The satellite comparison (who was watching, at what local time, who saw each fire), every chart (adds the status panel, the monthly series and the trend), every pre-registered check with its verdict, the method, the glossary, whole files, a data dictionary, a citation and Python and R code |
+| Ask | Anyone who finds the rest too much | One text box (decision 55). Type a place and a time in plain words, for example `Sangrur October 2023 raw` or `Río Cuarto from 2015 to 2020`. Understood parts change colour while typing; Enter opens the Overview on that area, period and record. Fixed rules, no AI model, no network |
 
 The left panel (region, district search, map with drawing, coordinates,
 dates, downloads) scrolls on its own. With no area drawn, the selection is the
@@ -42,6 +43,7 @@ Nothing is shortened ("12K") or rounded further.
 | `src/selection/` | B | `useSelection()` for charts, `useSelectionActions()` for controls, the shareable link |
 | `src/map/` | B | Map, area drawing, fire-activity layer, no-WebGL fallback |
 | `src/controls/` | B | District search, date range, coordinate entry |
+| `src/ask/` | A (B to review) | The question bar: `parse.ts` (the rules, pure and tested), `AskLanding.tsx` (the page), `ask.css` |
 | `src/downloads/` | B | Selection CSV, hotspot CSV |
 | `src/evidence/` | B | Checks and method panel, checks badge |
 | `src/sources/` | B | "Do the satellites agree?": who was watching each year, pass-time drift, who saw each fire |
@@ -50,6 +52,25 @@ Nothing is shortened ("12K") or rounded further.
 | `src/App.tsx`, `src/styles.css`, `src/theme.tsx` | B | Page layout, design tokens, dark and light theme, colour ramps |
 | `src/charts/` | C | Chart components, their order and views (`index.ts`), legend, export |
 | `src/stats/` | C | The maths every chart shares, and the number formats |
+
+## Question bar (Ask)
+
+`parseQuery(text, { regions, places, currentRegionId })` in `src/ask/parse.ts`. When two readings overlap, the longest wins; on a tie a date, then a region, then a district.
+
+| It reads | Examples | Becomes |
+|---|---|---|
+| Region | `punjab`, `karnataka`, `chilecito` | That whole region |
+| District | `Ludhiana`, `rio cuarto` (case and accents ignored) | The district outline; its region is switched to |
+| One month | `October 2024`, `oct 2024`, `2024-10`, `October` (the most recent one) | From and To on that month |
+| A year or a range | `2019`, `2015 to 2020`, `2015-2020`, `between 2015 and 2020`, `since 2018`, `from March to June 2024` | That range, cut to the record |
+| Relative | `last year`, `this year`, `last month`, `last 5 years`, `past three months`, `whole record` | Counted back from the region's last month of data, not from the clock |
+| The present | `this month`, `now`, `latest` | The whole record: the answer at the top of the Overview is already about the latest month |
+| Option | `raw`, `harmonized`, `small fires`, `methods`, `checks` | Record switch, small-fire layer, or the Data page |
+
+Limits: English month names only; one date per question (the first); a district name shared by two provinces goes to the one in the current region, else the first; a word after "in", "at", "near" or "around" that is not a known place is refused when no other place is given; anything else it does not know is ignored, and stays uncoloured so the visitor can see that.
+When one month is asked for, the headline on the Overview and the Monthly comparison chart are about that month (decision 56); for a longer period the headline stays on the latest month of data, and the dates change the calendar, the charts and the downloads.
+
+Run its tests: `npx vitest run src/ask` (38 tests, under 1 second; run 14 Nov). Checked by hand in a browser on 14 Nov, dark theme, desktop and 375 px wide: colouring, a refusal, and Enter across regions. Light theme checked on desktop the same day. A real phone is untested.
 
 ## Design notes
 

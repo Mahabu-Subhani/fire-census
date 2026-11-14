@@ -27,6 +27,12 @@ export interface SelectionActions {
   setRange: (from: string, to: string) => void;
   setMode: (mode: Mode) => void;
   setShowSmall: (show: boolean) => void;
+  /**
+   * Set several things at once, across regions if need be: what the question
+   * bar does on Enter. A field left out keeps its value; a new region starts
+   * from its whole record unless dates are given.
+   */
+  apply: (next: { regionId?: string; polygon?: Polygon | null; place?: string | null; from?: string; to?: string; mode?: Mode; small?: boolean; view?: View }) => void;
 }
 
 const SelectionContext = createContext<Selection | null>(null);
@@ -160,6 +166,25 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     },
     setMode,
     setShowSmall,
+    apply: (next) => {
+      if (next.mode) setMode(next.mode);
+      if (next.small !== undefined) setShowSmall(next.small);
+      if (next.view) setView(next.view);
+      if (next.regionId && next.regionId !== regionId) {
+        // The region's effect reads these once its data starts loading.
+        pendingUrl.current = { region: next.regionId, polygon: next.polygon ?? null, place: next.place ?? null, from: next.from, to: next.to };
+        setRegionId(next.regionId);
+        return;
+      }
+      if (next.polygon !== undefined) {
+        setPolygonState(next.polygon);
+        setPlace(next.polygon ? (next.place ?? null) : null);
+      }
+      if (next.from && next.to) {
+        setFrom(next.from);
+        setTo(next.to);
+      }
+    },
   };
 
   return (

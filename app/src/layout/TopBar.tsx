@@ -1,10 +1,11 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
-// Sticky top bar: name, the two views, the Raw / Harmonized switch, theme.
+// Sticky top bar: name, the question bar and the two views, the Raw / Harmonized switch, theme.
 import { ChecksBadge } from "../evidence/ChecksBadge";
 import { useSelection, useSelectionActions, type View } from "../selection";
 import { useTheme } from "../theme";
 
 const VIEWS: { id: View; label: string }[] = [
+  { id: "ask", label: "Ask" },
   { id: "overview", label: "Overview" },
   { id: "research", label: "Data" },
 ];
@@ -44,14 +45,14 @@ export default function TopBar() {
         </nav>
         <div className="topbar-tools">
           {view === "research" && <ChecksBadge />}
-          <div className="seg" role="group" aria-label="Record shown">
+          {view !== "ask" && <div className="seg" role="group" aria-label="Record shown">
             {(["harmonized", "raw"] as const).map((m) => (
               <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
                 title={m === "harmonized" ? "Comparable across all years" : "As reported; jumps in 2012 when VIIRS starts"}>
                 {m === "harmonized" ? "Harmonized" : "Raw"}
               </button>
             ))}
-          </div>
+          </div>}
           <button type="button" className="icon-button" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
             {theme === "dark" ? (
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
