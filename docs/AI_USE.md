@@ -29,6 +29,7 @@ Add a row whenever an AI tool contributes. Be specific and truthful.
 |---|---|---|---|
 | 12–13 Nov 2026 | Claude (Anthropic) | Read the challenge page and official guides; surveyed public repositories of other teams; proposed and critiqued candidate harmonization approaches; drafted these planning documents | Team, pending |
 | 12–13 Nov 2026 | Gemini (Google) | Critiqued the proposed method and architecture | Team, pending |
+| 14 Nov 2026 | Claude (Anthropic) | Phase 1 and 2 pipeline code (inventory, cleaning, harmonization, checks, export, figures) and the notes in pipeline/; proposed the revised check C3r and recommended shipping the detection curve. Mahabu chose (DECISIONS.md, 28) | Mahabu |
 | 14 Nov 2026 | Claude (Anthropic) | Turned 8crsk's draft request into the decision protocol (AGENTS.md, "Before a decision"), the prompts in docs/prompts/DEEPEN.md and the research-note template in docs/research/ | 8crsk, team pending |
 
 ## The team's own decisions

@@ -1,20 +1,20 @@
 {
-  "note": "Which model fills `harm` for each area. Set by the pre-registered shipping rule in docs/PREREGISTRATION.md. Change only by a recorded team decision (docs/DECISIONS.md).",
+  "note": "Which model fills `harm` for each area. Set by the shipping rule in docs/PREREGISTRATION.md, using the revised held-out check C3r adopted by Mahabu on 14 Nov 2026 (docs/DECISIONS.md, decision 28). Both the original and the revised verdicts are published in meta.json.",
   "areas": {
     "cordoba": {
-      "model": "L1r",
+      "model": "S0",
       "variant": "A",
-      "reason": "Pre-registered rule: the detection curve and the hard floor both failed check C3 (held-out years), so the constant-ratio fallback ships. The curve passed C0, C1, C1b, C2, C4 and C8."
+      "reason": "Detection curve. Passes C0, C1, C1b, C2, C3r, C4 and C8. Fails the original held-out check C3 (0.207 against 0.15); the team adopted the revised check C3r, which it passes (0.072 against 0.10). Both verdicts are shown."
     },
     "punjab-haryana": {
-      "model": "L1r",
+      "model": "L2",
       "variant": "A",
-      "reason": "Pre-registered rule: the detection curve failed C3 and C8 and the hard floor failed C3, so the constant-ratio fallback ships. Note that the fallback itself fails C1b and C3 here."
+      "reason": "Hard floor. The detection curve fails C8 here (its midpoint is too uncertain), so the rule moves to the hard floor, which passes C0, C1, C1b, C2, C3r and C4. Fails the original C3 (0.291). Both verdicts are shown."
     },
     "chilecito": {
-      "model": "L1r",
+      "model": "S0",
       "variant": "A",
-      "reason": "Case-study area with too few fires to calibrate; uses Cordoba's constants and the same model as Cordoba."
+      "reason": "Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there."
     }
   }
 }

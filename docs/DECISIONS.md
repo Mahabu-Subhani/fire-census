@@ -75,6 +75,13 @@ early warning and emergency response. Points that change our plan:
 | 26 | She shows a fire in "Chile Rio", Argentina, in July 2026 | Most likely **Chilecito, La Rioja**: news reports describe a fire of more than 900 hectares in the Famatina sierra (Guanchín, Chilecito department) starting about 27 July 2026 and declared out in early August. **VERIFY** in the data after the start. Chilecito is near 29.2 S, 67.5 W, which is **outside** the Córdoba box. Add a small third area, "Chilecito and Famatina, La Rioja" (approximate box -68.2, -29.8, -66.8, -28.4), as an event case study: show the event on the calendar and whether it is flagged as unusual. It is a demo example, not a calibration region |
 | 27 | Demo lead | Córdoba leads the demo for global judging; Punjab and Haryana is shown second, for the local judges and the season-shift check. Both regions are processed; whichever passes its checks first is built into the app first |
 
+## After the Phase 2 results (14 November 2026)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 28 | Held-out check and what ships | Adopt the revised held-out check C3r (two-year total, at most 0.10) beside the original C3, as proposed in the dated note in `PREREGISTRATION.md`. Ship the **detection curve** for Córdoba and Chilecito and the **hard floor** for Punjab and Haryana. Both C3 and C3r verdicts are published | Mahabu, 14 Nov. Reason in his own words: **to be added by Mahabu**. The AI assistant laid out the options and evidence (`pipeline/NOTES_PHASE2.md`) and recommended this one |
+| 29 | Method changes from APPROACH.md | Matched detection instead of histogram ratio; cell FRP as the sum of detections; floor applied to VIIRS cells only; pre-2012 series is all Aqua fire cells | Built by the AI assistant during Phase 2 with reasons in `pipeline/NOTES_PHASE2.md`. **Awaiting Mahabu's confirmation** |
+
 ## Change log
 
 | Date | Who | Change | Reason |

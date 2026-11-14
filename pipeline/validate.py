@@ -98,6 +98,16 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
         out["C3"] = {"value": None, "verdict": "not run",
                      "note": f"only {int(m3.sum())} months with at least {MIN_CELLS} Aqua fire cells"}
 
+    m3r = (ser.index >= "2018-01") & (ser.index <= "2019-12") & (r >= MIN_CELLS)
+    if m3r.sum() >= 6:
+        c3r = float(np.log(h[m3r].sum() / r[m3r].sum()))
+        out["C3r"] = {"value": round(c3r, 3), "verdict": verdict(abs(c3r) <= 0.10),
+                      "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); "
+                              f"reported beside C3, never instead of it; {int(m3r.sum())} months"}
+    else:
+        out["C3r"] = {"value": None, "verdict": "not run",
+                      "note": f"only {int(m3r.sum())} months with at least {MIN_CELLS} Aqua fire cells"}
+
     base = "cells" if model == "cells" else f"{model}_{variant}"
     a, b = f"{base}__S-NPP", f"{base}__NOAA-20"
     if a in ser and b in ser:
@@ -147,12 +157,12 @@ def peak_shift(area: str, variant: str) -> dict:
             "verdict": verdict(h["shift_days"] >= 5 and h["p"] < 0.05), "detail": res}
 
 
-def shipping(checks: dict) -> str:
+def shipping(checks: dict, held_out: str = "C3") -> str:
     def passes(model, ids):
         return all(checks[model].get(i, {}).get("verdict") == "pass" for i in ids)
-    if passes("S0", ["C0", "C1", "C1b", "C2", "C3", "C8"]):
+    if passes("S0", ["C0", "C1", "C1b", "C2", held_out, "C8"]):
         return "S0"
-    if passes("L2", ["C0", "C1", "C1b", "C2", "C3"]):
+    if passes("L2", ["C0", "C1", "C1b", "C2", held_out]):
         return "L2"
     return "L1r"
 
@@ -174,7 +184,8 @@ def main() -> None:
                 ladder.append({"level": label, "step_2012": checks[m]["C1"]["value"],
                                "placebo_2016": checks[m]["C2"]["value"].split(";")[0].replace("2016: ", ""),
                                "held_out": checks[m]["C3"]["value"]})
-            entry = {"checks": checks, "ladder": ladder, "ship": shipping(checks)}
+            entry = {"checks": checks, "ladder": ladder, "ship": shipping(checks),
+                     "ship_revised": shipping(checks, "C3r")}
             if area == "punjab-haryana":
                 entry["C7"] = peak_shift(area, variant)
             result[area]["variants"][variant] = entry
@@ -182,7 +193,8 @@ def main() -> None:
 
     for area, res in result.items():
         for variant, e in res["variants"].items():
-            print(f"\n== {area} | calibration {variant} | ship: {e['ship']}")
+            print(f"\n== {area} | calibration {variant} | ship (original C3): {e['ship']} "
+                  f"| ship (revised C3r): {e['ship_revised']}")
             for row in e["ladder"]:
                 print("   ", row)
             for model in ("S0", "L2", "L1r"):

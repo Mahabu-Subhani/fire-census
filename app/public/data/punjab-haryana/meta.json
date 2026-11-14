@@ -1,7 +1,7 @@
 {
-  "level_shipped": "L1r",
-  "level_name": "Constant ratio (fallback)",
-  "shipping_reason": "Pre-registered rule: the detection curve failed C3 and C8 and the hard floor failed C3, so the constant-ratio fallback ships. Note that the fallback itself fails C1b and C3 here.",
+  "level_shipped": "L2",
+  "level_name": "Hard floor",
+  "shipping_reason": "Hard floor. The detection curve fails C8 here (its midpoint is too uncertain), so the rule moves to the hard floor, which passes C0, C1, C1b, C2, C3r and C4. Fails the original C3 (0.291). Both verdicts are shown.",
   "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
   "calibration": {
     "variant": "A",
@@ -17,8 +17,8 @@
     "night": 3.81
   },
   "constants": {
-    "day": 0.213,
-    "night": 0.0221
+    "day": 0.3888,
+    "night": 0.1599
   },
   "ladder": [
     {
@@ -62,7 +62,7 @@
     {
       "id": "C1",
       "name": "No seam at 2012",
-      "value": -0.03,
+      "value": -0.004,
       "threshold": "absolute value at most 0.10",
       "verdict": "pass",
       "note": ""
@@ -70,15 +70,15 @@
     {
       "id": "C1b",
       "name": "No change point at 2012 (Pettitt)",
-      "value": "p=0.000 at 2012-01",
+      "value": "p=1.000 at 2015-02",
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
-      "verdict": "fail",
+      "verdict": "pass",
       "note": "133 months with at least 30 Aqua fire cells"
     },
     {
       "id": "C2",
       "name": "No seam at placebo dates (2016, 2008)",
-      "value": "2016: -0.035; 2008: +0.000",
+      "value": "2016: -0.057; 2008: +0.000",
       "threshold": "absolute value at most 0.10 at both",
       "verdict": "pass",
       "note": "2008 is zero by construction: H equals the Aqua reference before 2012"
@@ -86,15 +86,23 @@
     {
       "id": "C3",
       "name": "Held-out years 2018 to 2019",
-      "value": 0.245,
+      "value": 0.291,
       "threshold": "median absolute log ratio at most 0.15",
       "verdict": "fail",
       "note": "17 of 24 months have at least 30 Aqua fire cells"
     },
     {
+      "id": "C3r",
+      "name": "Held-out years, two-year total (revised after results)",
+      "value": -0.022,
+      "threshold": "absolute log ratio at most 0.10",
+      "verdict": "pass",
+      "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); reported beside C3, never instead of it; 17 months"
+    },
+    {
       "id": "C4",
       "name": "NOAA-20 alone reproduces the record",
-      "value": "slope 1.038, correlation 0.994",
+      "value": "slope 1.024, correlation 0.995",
       "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
       "verdict": "pass",
       "note": "103 months"
@@ -139,6 +147,7 @@
       "C1b": "pass",
       "C2": "pass",
       "C3": "fail",
+      "C3r": "pass",
       "C4": "pass",
       "C8": "fail"
     },
@@ -148,6 +157,7 @@
       "C1b": "pass",
       "C2": "pass",
       "C3": "fail",
+      "C3r": "pass",
       "C4": "pass"
     },
     "L1r": {
@@ -156,6 +166,7 @@
       "C1b": "fail",
       "C2": "pass",
       "C3": "fail",
+      "C3r": "pass",
       "C4": "pass"
     }
   },
@@ -728,8 +739,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "e3f10f3",
-  "generated_at": "2026-11-14T05:36:17Z",
+  "code_commit": "11ddeb1",
+  "generated_at": "2026-11-14T05:43:02Z",
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
     "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"

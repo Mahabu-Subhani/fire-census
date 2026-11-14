@@ -31,6 +31,7 @@ CHECKS = [
     ("C1b", "No change point at 2012 (Pettitt)", "no change point with p < 0.05 between Jul 2011 and Dec 2012"),
     ("C2", "No seam at placebo dates (2016, 2008)", "absolute value at most 0.10 at both"),
     ("C3", "Held-out years 2018 to 2019", "median absolute log ratio at most 0.15"),
+    ("C3r", "Held-out years, two-year total (revised after results)", "absolute log ratio at most 0.10"),
     ("C4", "NOAA-20 alone reproduces the record", "slope 0.90 to 1.10 and correlation at least 0.90"),
     ("C5", "Curve midpoint is physically plausible", "within a factor of 2 of published limits"),
     ("C6", "Burned-area relationship is stable", "absolute log ratio at most 0.25"),
