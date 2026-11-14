@@ -6,6 +6,7 @@ import CoordinateEntry from "./controls/CoordinateEntry";
 import DateRange from "./controls/DateRange";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
 import EvidencePanel, { ChecksBadge } from "./evidence/EvidencePanel";
+import ErrorBoundary from "./ErrorBoundary";
 import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
 
@@ -136,18 +137,24 @@ export default function App() {
       <main className="layout">
         <div className="left">
           <Controls />
-          <MapView />
+          <ErrorBoundary name="the map">
+            <MapView />
+          </ErrorBoundary>
           <CoordinateEntry />
         </div>
         <div className="right">
           {charts.map(({ id, Component }) => (
             <div key={id} className={`slot slot-${id}`}>
-              <Component />
+              <ErrorBoundary name="this chart">
+                <Component />
+              </ErrorBoundary>
             </div>
           ))}
         </div>
       </main>
-      <EvidencePanel />
+      <ErrorBoundary name="the method and checks panel">
+        <EvidencePanel />
+      </ErrorBoundary>
       <footer className="app-footer">
         <Freshness />
         <p>

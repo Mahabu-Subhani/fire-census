@@ -120,6 +120,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     mode,
     showSmall,
     status: error ? "error" : loading ? "loading" : !cube ? "idle" : outside || rows.length === 0 ? "empty" : "ready",
+    drawn: polygon !== null,
     areaKm2: polygon ? polygonAreaKm2(polygon) : region ? polygonAreaKm2(bboxToPolygon(region.bbox)) : null,
     place,
     dataThrough: meta?.data_through ?? null,

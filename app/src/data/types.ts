@@ -90,6 +90,8 @@ export interface Selection {
   mode: Mode;
   showSmall: boolean;
   status: "idle" | "loading" | "ready" | "empty" | "error";
+  /** True when the area is a shape (drawn, typed or searched); false for the whole region. */
+  drawn: boolean;
   areaKm2: number | null;
   place: string | null;
   dataThrough: string | null;

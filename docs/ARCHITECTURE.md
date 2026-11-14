@@ -73,6 +73,7 @@ interface Selection {
   mode: Mode;
   showSmall: boolean;
   status: "idle" | "loading" | "ready" | "empty" | "error";
+  drawn: boolean;              // true for a drawn, typed or searched shape; false = whole region
   areaKm2: number | null;      // area of the selection
   place: string | null;        // name of a searched place, or null if drawn
   dataThrough: string | null;  // "YYYY-MM-DD", copied from meta.data_through

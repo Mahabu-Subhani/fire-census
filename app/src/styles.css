@@ -177,3 +177,4 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   .evidence { border: 0; padding: 0; }
   a { color: #000; }
 }
+.map-fallback { min-height: 120px; display: flex; align-items: center; }

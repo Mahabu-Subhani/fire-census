@@ -38,7 +38,36 @@ function cornersToRing(a: [number, number], b: [number, number]): Polygon {
   return bboxToPolygon([Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[0], b[0]), Math.max(a[1], b[1])]);
 }
 
+/** True if the browser can draw a WebGL map. Without it MapLibre throws. */
+export function webglSupported(): boolean {
+  try {
+    if (typeof document === "undefined" || typeof window === "undefined" || !window.WebGLRenderingContext) return false;
+    const canvas = document.createElement("canvas");
+    return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
+/** Shown instead of the map; every other way to choose an area still works. */
+export function MapFallback({ reason }: { reason: string }) {
+  return (
+    <section className="map-panel" aria-label="Map unavailable">
+      <div className="note map-fallback" role="status">
+        <strong>The map cannot be shown in this browser</strong> ({reason}). Everything else works: pick a region,
+        enter coordinates below, and the calendar and downloads use the whole region until you do.
+      </div>
+    </section>
+  );
+}
+
 export default function MapView() {
+  const [failure, setFailure] = useState<string | null>(() => (webglSupported() ? null : "WebGL is not available"));
+  if (failure) return <MapFallback reason={failure} />;
+  return <MapCanvas onFail={setFailure} />;
+}
+
+function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
   const { region } = useSelection();
   const { polygon, setPolygon } = useSelectionActions();
   const container = useRef<HTMLDivElement>(null);
@@ -53,8 +82,16 @@ export default function MapView() {
 
   useEffect(() => {
     if (!container.current) return;
-    // preserveDrawingBuffer lets the map appear in a printed summary.
-    const map = new maplibregl.Map({ container: container.current, style: STYLE_URL, center: [0, 0], zoom: 1, preserveDrawingBuffer: true });
+    let map: MLMap;
+    try {
+      // preserveDrawingBuffer lets the map appear in a printed summary.
+      map = new maplibregl.Map({ container: container.current, style: STYLE_URL, center: [0, 0], zoom: 1, preserveDrawingBuffer: true });
+    } catch (e) {
+      onFail(e instanceof Error ? e.message : "the map could not start");
+      return;
+    }
+    // A lost WebGL context (common on phones under memory pressure) also ends the map.
+    map.getCanvas().addEventListener("webglcontextlost", () => onFail("the graphics context was lost"));
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => {
       for (const id of ["region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
