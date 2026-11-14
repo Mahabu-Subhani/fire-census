@@ -1,5 +1,5 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
-// Plain-language meanings of the words the app uses. The unit comes from
+// Definitions of the terms the app uses. The unit comes from
 // meta.json, never typed here.
 import { monthName } from "../evidence/checks";
 import { useSelection } from "../selection";
@@ -7,20 +7,20 @@ import { useSelection } from "../selection";
 export default function Glossary() {
   const { meta, region } = useSelection();
   const terms: [string, string][] = [
-    ["Hotspot (detection)", "A spot on the ground that a satellite saw as much hotter than its surroundings, usually a fire. One fire can make several hotspots, so this is not a count of fires."],
-    ["Fire activity", `What the harmonized charts count: ${meta?.unit ?? "see the method panel"}. In plain words: how many small squares of land showed a fire on each satellite pass, counted the way the Aqua MODIS satellite would have seen them, so every year is counted the same way.`],
-    ["Harmonized", "Corrected so that the record means the same thing in every year, whichever satellite was flying. Use this to compare years."],
-    ["Raw", "Exactly as the satellites reported, MODIS and VIIRS added together. It jumps in 2012, when the more sensitive VIIRS satellite started, even though the burning did not."],
-    ["Small fires", "Weak fires that only the newer VIIRS satellites can see, from 2012 on. Kept as a separate layer so the extra detail is not lost, and never added into the harmonized count."],
-    ["Terra only", `Months before ${region ? monthName(region.harmonized_from) : "July 2002"}, when only the Terra satellite's morning pass existed. Shown, but not comparable with later years.`],
-    ["Near-real-time", "Data delivered quickly, then replaced by final data after about five months. Recent months can still change."],
-    ["Fire strength (MW)", "Fire radiative power, the heat a fire gives off, in megawatts. Small crop fires are typically a few MW; large wildfires can reach hundreds."],
-    ["Grid cell", `A square about 11 km across (${region?.cell_deg ?? 0.1} degree) used to summarise the map and the downloads.`],
-    ["Zero detections", "No hotspot was seen. A fire can still have burned under cloud or smoke, or between satellite passes."],
+    ["Hotspot (detection)", "A pixel flagged by a satellite as substantially hotter than its surroundings, usually a fire. One fire may produce several hotspots."],
+    ["Fire activity", `Unit of the harmonized record: ${meta?.unit ?? "see Method details"}. Counted as Aqua MODIS would have observed it, so all years are comparable.`],
+    ["Harmonized", "Adjusted to a consistent sensor baseline across all years. Use for comparisons between years."],
+    ["Raw", "MODIS and VIIRS detections as reported, summed. Contains a step in 2012 at VIIRS onset."],
+    ["Small fires", "Low-intensity fires detected only by VIIRS, from 2012. Reported as a separate layer; excluded from the harmonized count."],
+    ["Terra only", `Months before ${region ? monthName(region.harmonized_from) : "July 2002"}, morning Terra overpass only. Not comparable with later years.`],
+    ["Near-real-time", "Provisional data, replaced by standard data after about five months."],
+    ["Fire radiative power (MW)", "Radiant heat output of a fire, in megawatts."],
+    ["Grid cell", `${region?.cell_deg ?? 0.1}° square (about 11 km) used for the map and downloads.`],
+    ["Zero detections", "No hotspot recorded. Fires under cloud or smoke, or between overpasses, are not detected."],
   ];
   return (
-    <details className="glossary" id="glossary">
-      <summary>What the words mean</summary>
+    <section className="glossary" id="glossary" aria-labelledby="glossary-title">
+      <h2 id="glossary-title">Glossary</h2>
       <dl>
         {terms.map(([term, meaning]) => (
           <div key={term}>
@@ -29,6 +29,6 @@ export default function Glossary() {
           </div>
         ))}
       </dl>
-    </details>
+    </section>
   );
 }

@@ -29,10 +29,10 @@ Punjab, which local judges know. 75 words: speak at a brisk, even pace (about
 | 0:00 to 0:03 | Overview, Punjab and Haryana, whole region. App title "FIRE CENSUS" visible top left | "I'm Charulekha, from team Sharmaji Ka Satellite." | 6 |
 | 0:03 to 0:07 | Same view. Move the mouse slowly over the burning calendar | "Our challenge: NASA's MODIS and VIIRS fire records don't match." | 10 |
 | 0:07 to 0:10 | Same view, hold still | "Fire Census: one fire record, whichever satellite was watching." | 9 |
-| 0:10 to 0:16 | Click **Data & methods**, scroll to **Month by month**. Click **RAW** (top right): the line jumps at 2012 | "Added up, Punjab's burning jumps fivefold in 2012. That's the camera, not the fire." | 14 |
+| 0:10 to 0:16 | Click **Data**, scroll to **Monthly time series**. Click **RAW** (top right): the line jumps at 2012 | "Added up, Punjab's burning jumps fivefold in 2012. That's the camera, not the fire." | 14 |
 | 0:16 to 0:20 | Click **HARMONIZED**: the jump disappears. Hold two seconds | "We measured what the older sensor can see, and the jump disappears." | 12 |
-| 0:20 to 0:25 | Click **Overview**: the answer card ("23rd highest of 25 Novembers"), then open **Critical period · has it moved?** | "Pick any area: is this month unusual? Has the season moved?" | 11 |
-| 0:25 to 0:28 | Click **Data & methods**, scroll to **Checks for Punjab and Haryana** showing passed and failed | "Every check shown, pass or fail. When MODIS ends, the record continues." | 12 |
+| 0:20 to 0:25 | Click **Overview**: the answer card ("23rd highest of 25 Novembers"), then open **Fire season timing** | "Pick any area: is this month unusual? Has the season moved?" | 11 |
+| 0:25 to 0:28 | Click **Data**, scroll to **Pre-registered checks: Punjab and Haryana, India** showing passed and failed | "Every check shown, pass or fail. When MODIS ends, the record continues." | 12 |
 
 Start link: https://mahabu-subhani.github.io/fire-census/?r=punjab-haryana
 

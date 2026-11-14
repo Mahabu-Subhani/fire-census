@@ -24,7 +24,7 @@ describe.each(regions.map((r) => [r.id, r]))("EvidencePanel with real data: %s",
     current.drift = read(`${(region as Region).id}/drift.json`) as DriftFile;
     current.areaRows = [{ obs: 28 }, { obs: 30 }, { obs: null }] as CubeRow[];
     const html = renderToString(<EvidencePanel />);
-    expect(html).toContain("Why not carry on with MODIS alone?");
+    expect(html).toContain("Aqua MODIS orbital drift.");
     expect(html).toContain("Clear-view days.");
     for (const c of current.meta!.checks) {
       expect(html).toContain(`<strong>${c.id}<!-- -->. <!-- -->`);

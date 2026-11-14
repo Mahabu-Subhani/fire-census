@@ -206,10 +206,7 @@ export default function BurningCalendar() {
 
   return (
     <ChartFrame
-      title="When does it burn?"
-      lede={diffMode
-        ? "Each square is one month. Orange: more than that month's average. Purple: less."
-        : "Each square is one month, each row a year. Brighter means more fire."}
+      title="Burning calendar"
       exportName={diffMode ? "calendar-difference" : "calendar"}
       notes={notes}
       table={() => ({

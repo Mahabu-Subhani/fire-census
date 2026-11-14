@@ -108,8 +108,7 @@ export default function LandCover() {
 
   return (
     <ChartFrame
-      title="What is burning: crops or wild land?"
-      lede="Each bar splits the fire activity of a month (or year) by the land it burned on."
+      title="Land cover of fire activity"
       mode="harmonized"
       exportName="landcover"
       notes={[sentence, peaks ? `${peaks[0].toUpperCase()}${peaks.slice(1)}.` : "", smallText, lc.method, lc.source]}

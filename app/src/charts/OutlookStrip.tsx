@@ -37,12 +37,12 @@ export default function OutlookStrip() {
         marks: [
           Plot.barY(data, {
             x: "label", y: "median", fill: "var(--bar-neutral)", rx: 4,
-            title: (d) => `${d.label}, history\nTypical (median): ${num(d.median)}\nBad year (90th percentile): ${num(d.p90)}\n${fmtShare(d.share)} of a typical year's activity\n${unit}`,
+            title: (d) => `${d.label}, historical\nMedian: ${num(d.median)}\n90th percentile: ${num(d.p90)}\n${fmtShare(d.share)} of median annual activity\n${unit}`,
             tip: { fontSize: 13, fill: "var(--surface-2)", stroke: "var(--border)" },
           }),
           Plot.tickY(data, { x: "label", y: "p90", stroke: "currentColor", strokeWidth: 2, strokeDasharray: "4,3" }),
-          Plot.text(data, { x: "label", y: "p90", text: (d) => (narrow ? num(d.p90) : `bad year ${num(d.p90)}`), dy: -8, fill: "currentColor", fontWeight: 600 }),
-          Plot.text(data, { x: "label", y: "median", text: (d) => (narrow ? num(d.median) : `typical ${num(d.median)}`), dy: 14, fill: "var(--bg)", fontWeight: 600, filter: (d) => d.median > 0 }),
+          Plot.text(data, { x: "label", y: "p90", text: (d) => (narrow ? num(d.p90) : `90th percentile ${num(d.p90)}`), dy: -8, fill: "currentColor", fontWeight: 600 }),
+          Plot.text(data, { x: "label", y: "median", text: (d) => (narrow ? num(d.median) : `median ${num(d.median)}`), dy: 14, fill: "var(--bg)", fontWeight: 600, filter: (d) => d.median > 0 }),
           Plot.ruleY([0]),
         ],
       });
@@ -52,16 +52,15 @@ export default function OutlookStrip() {
 
   const coming = data.reduce((a, d) => a + d.share, 0);
   const span = o ? `${o.firstYear} to ${o.lastYear}` : "";
-  const peak = o?.peak ? `${MONTH_FULL[o.peak.month - 1]} is usually the busiest month (in ${o.peak.years} of ${o.peak.of} years).` : "";
+  const peak = o?.peak ? `Peak month: ${MONTH_FULL[o.peak.month - 1]} (${o.peak.years} of ${o.peak.of} years).` : "";
   const sentence = data.length
-    ? `In past years, ${data.map((d) => MONTH_NAMES[d.month - 1]).join(" to ")} held ${fmtShare(coming)} of a typical year's activity. ${peak}`
+    ? `${data.map((d) => MONTH_NAMES[d.month - 1]).join("–")}: ${fmtShare(coming)} of median annual activity. ${peak}`
     : "";
   const notes = [`History, not a forecast: what happened in these months in ${span} (harmonized, complete years).`, sentence].filter(Boolean);
 
   return (
     <ChartFrame
-      title="What usually comes next?"
-      lede="The next three months in past years: the bar is a typical year, the dashed mark a bad year. History, not a forecast."
+      title="Three-month climatology"
       mode="harmonized"
       exportName="outlook"
       notes={notes}
