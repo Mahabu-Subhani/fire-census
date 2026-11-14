@@ -1,6 +1,6 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 // Sticky top bar: name, the two views, the Raw / Harmonized switch, theme.
-import { ChecksBadge } from "../evidence/EvidencePanel";
+import { ChecksBadge } from "../evidence/ChecksBadge";
 import { useSelection, useSelectionActions, type View } from "../selection";
 import { useTheme } from "../theme";
 

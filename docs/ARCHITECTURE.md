@@ -212,7 +212,9 @@ Raw FIRMS rows for the region and year, original columns plus `harm_class`
 (`harmonized`, `small` or `excluded`). Used for the "CSV of hotspots" download:
 the app fetches the years in the date range and filters by the drawn area.
 If this is not ready, the CSV download exports the cube rows for the selection,
-which already satisfies "downloadable analytics".
+which already satisfies "downloadable analytics". The app side is built: a "Download hotspots" button appears as
+soon as `<region>/hotspots/<last year>.csv.gz` exists, reads at most 5 years per
+download, and needs at least the columns `latitude`, `longitude` and `acq_date`.
 
 ## FIRMS data notes for the pipeline
 

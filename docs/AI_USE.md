@@ -29,6 +29,7 @@ Add a row whenever an AI tool contributes. Be specific and truthful.
 |---|---|---|---|
 | 12–13 Nov 2026 | Claude (Anthropic) | Read the challenge page and official guides; surveyed public repositories of other teams; proposed and critiqued candidate harmonization approaches; drafted these planning documents | Team, pending |
 | 12–13 Nov 2026 | Gemini (Google) | Critiqued the proposed method and architecture | Team, pending |
+| 14 Nov 2026 | Claude (Anthropic) | Validated the colour ramps (replaced the difference ramp, whose above-average arm had no lightness change), split the bundle so the first load is 66 KB, built the hotspot CSV download with tests and an end-to-end check, updated app/README.md | 8crsk |
 | 14 Nov 2026 | Claude (Anthropic) | Redesigned the app (decision 35): theme, hero and dot grid, two views, scroll and touch motion, exact number formatting across all charts, readable calendar legend, plain-question chart titles, map fixes; edited Person C's chart files for this at 8crsk's request; checked in headless Chrome at 1440 px and 390 px, dark and light | 8crsk |
 | 14 Nov 2026 | Claude (Anthropic) | Reviewed the app against the four audiences in the challenge and wrote the guidance it lacked: live-data notice with a FIRMS link, Start-here guide and examples, glossary, researcher section, map activity layer, area totals, touch sizes | 8crsk |
 | 14 Nov 2026 | Claude (Anthropic) | Added the drawn field, the no-WebGL fallback and error boundaries; wrote make_districts.py (from geoBoundaries) and the district search | 8crsk |

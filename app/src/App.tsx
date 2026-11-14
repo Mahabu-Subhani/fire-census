@@ -2,24 +2,29 @@
 // Page layout. Two views share one selection: "overview" (everyone: the answer,
 // the calendar, the comparison, the outlook) and "research" (every chart, the
 // method and every check, the data). Chart slots hold Person C's components.
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { charts } from "./charts";
 import { formatMonth, useAreaLabel } from "./charts/ChartFrame";
 import CoordinateEntry from "./controls/CoordinateEntry";
 import DateRange from "./controls/DateRange";
 import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
+import HotspotDownload from "./downloads/HotspotDownload";
 import ErrorBoundary from "./ErrorBoundary";
-import EvidencePanel from "./evidence/EvidencePanel";
 import { summaryText } from "./evidence/checks";
 import ForResearchers from "./guide/ForResearchers";
 import Glossary from "./guide/Glossary";
 import Hero from "./layout/Hero";
 import { Reveal } from "./layout/motion";
 import TopBar from "./layout/TopBar";
-import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
 import { unitLabel } from "./stats";
+
+// The map library and the chart library are large; load them after the first screen.
+const MapView = lazy(() => import("./map/MapView"));
+const EvidencePanel = lazy(() => import("./evidence/EvidencePanel"));
+
+const Loading = ({ height }: { height: number }) => <div className="skeleton" style={{ height }} aria-label="Loading" />;
 
 function formatDate(iso: string): string {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -60,6 +65,7 @@ function Controls() {
         <button type="button" className="btn" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
         <button type="button" className="btn" onClick={() => window.print()}>Print</button>
       </div>
+      <HotspotDownload />
       {status === "error" && <p className="note error">Could not load the data: {error}</p>}
       {status === "empty" && cellCount === 0 && (
         <p className="note">This area contains no grid cell (cells are {region?.cell_deg} degree, about 11 km). Draw a larger area.</p>
@@ -189,7 +195,9 @@ export default function App() {
           <aside className="panel" aria-label="Choose an area and dates">
             <AreaPicker />
             <ErrorBoundary name="the map">
-              <MapView />
+              <Suspense fallback={<Loading height={300} />}>
+                <MapView />
+              </Suspense>
             </ErrorBoundary>
             <CoordinateEntry />
             <Controls />
@@ -201,7 +209,9 @@ export default function App() {
               .map(({ id, Component }, i) => (
                 <Reveal key={`${view}-${id}`} id={`chart-${id}`} className={`slot slot-${id}`} delay={i * 60}>
                   <ErrorBoundary name="this chart">
-                    <Component />
+                    <Suspense fallback={<Loading height={260} />}>
+                      <Component />
+                    </Suspense>
                   </ErrorBoundary>
                 </Reveal>
               ))}
@@ -211,7 +221,11 @@ export default function App() {
         {view === "research" && (
           <>
             <ErrorBoundary name="the method and checks panel">
-              <Reveal><EvidencePanel /></Reveal>
+              <Reveal>
+                <Suspense fallback={<Loading height={400} />}>
+                  <EvidencePanel />
+                </Suspense>
+              </Reveal>
             </ErrorBoundary>
             <Reveal><Glossary /></Reveal>
             <ErrorBoundary name="the researchers section">

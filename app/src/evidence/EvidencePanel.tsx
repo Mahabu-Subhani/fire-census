@@ -9,6 +9,8 @@ import type { CurvePoint } from "../data/types";
 import { useSelection, useSelectionActions } from "../selection";
 import { calibrationText, formatValue, isAddedAfter, monthName, shortVersion, summarizeChecks, VERDICT_LABEL } from "./checks";
 
+export { ChecksBadge } from "./ChecksBadge";
+
 /** The shipping reason without a repeat of the level name it often starts with. */
 function reasonText(reason: string | undefined, levelName: string | undefined): string {
   if (!reason) return "";
@@ -58,17 +60,6 @@ function DetectionCurve({ day, night, floorDay }: { day: CurvePoint[]; night: Cu
   }, [day, night, floorDay, width]);
 
   return <div ref={box} className="ev-curve" role="img" aria-label="Detection curve: the chance that Aqua MODIS reported a fire that VIIRS saw, by fire strength, by day and by night" />;
-}
-
-export function ChecksBadge() {
-  const { meta } = useSelection();
-  if (!meta || meta.checks.length === 0) return null;
-  const s = summarizeChecks(meta.checks);
-  return (
-    <a className="checks-badge" href="#evidence">
-      Checks: {s.pass} passed{s.fail ? `, ${s.fail} failed` : ""}{s.notRun ? `, ${s.notRun} not run` : ""}
-    </a>
-  );
 }
 
 export default function EvidencePanel() {

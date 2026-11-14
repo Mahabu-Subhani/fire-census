@@ -1,15 +1,15 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending).
 // Burning calendar: years as rows, months as columns (decision 21), each
 // year's total on the right. Two colour modes: amount (ember ramp) and
-// difference from that calendar month's average (purple, grey, orange; colour-
-// vision safe). Exact values with two decimals on hover and tap, in the legend
+// difference from that calendar month's average (purple below, neutral at
+// average, ember above; validated for colour-vision deficiency, see theme.tsx). Exact values with two decimals on hover and tap, in the legend
 // and in the table: nothing is rounded. Months before harmonized_from are
 // hatched "Terra only, not harmonized". Season band and "you are here" from stats/.
 import * as Plot from "@observablehq/plot";
 import { useId, useMemo, useState } from "react";
 import { useSelection } from "../selection";
 import { fmtDiff, fmtShare, fmtValue, MONTH_NAMES, monthAverages, seasonMonths, toCalendar, unitLabel } from "../stats";
-import { EMBER, useTheme } from "../theme";
+import { DIVERGE, EMBER, useTheme } from "../theme";
 import ChartFrame from "./ChartFrame";
 import RampLegend, { rampColor } from "./RampLegend";
 import { usePlot } from "./usePlot";
@@ -36,9 +36,6 @@ function hatch(id: string): string {
     <rect x="1.5" width="1.5" height="6" fill="#fff" fill-opacity="0.55"/>
   </pattern>`;
 }
-
-/** Below average purple, average grey, above average orange (ColorBrewer PuOr poles, grey middle). */
-const DIVERGING = ["#5e3c99", "#8c8c8c", "#e66101"];
 
 export default function BurningCalendar() {
   const { status, rows, areaRows, mode, meta, region, from, to, dataThrough } = useSelection();
@@ -99,7 +96,7 @@ export default function BurningCalendar() {
   const amountT = (v: number) => Math.sqrt(Math.max(0, v) / max);
   const diffT = (d: number) => 0.5 + 0.5 * Math.sign(d) * Math.sqrt(Math.abs(d) / maxDiff);
   const amountColor = (t: number) => rampColor(ember, t);
-  const diffColor = (t: number) => rampColor(DIVERGING, t);
+  const diffColor = (t: number) => rampColor(DIVERGE[theme], t);
 
   const describe = (d: Cell) =>
     [

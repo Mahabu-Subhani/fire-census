@@ -3,14 +3,17 @@
 // in the views listed. "overview" is everyone's page (the answer itself sits in
 // the hero there); "research" adds every chart. App.tsx never needs to change.
 // Each component takes no props and reads useSelection().
-import type { ComponentType } from "react";
+// Each chart loads on demand, so the first screen does not wait for the chart
+// library (Observable Plot); App.tsx shows a placeholder while one loads.
+import { lazy, type ComponentType } from "react";
 import type { View } from "../selection";
-import ActivitySeries from "./ActivitySeries";
-import BurningCalendar from "./BurningCalendar";
-import MonthComparison from "./MonthComparison";
-import OutlookStrip from "./OutlookStrip";
-import TrendChart from "./TrendChart";
-import UnusualBanner from "./UnusualBanner";
+
+const ActivitySeries = lazy(() => import("./ActivitySeries"));
+const BurningCalendar = lazy(() => import("./BurningCalendar"));
+const MonthComparison = lazy(() => import("./MonthComparison"));
+const OutlookStrip = lazy(() => import("./OutlookStrip"));
+const TrendChart = lazy(() => import("./TrendChart"));
+const UnusualBanner = lazy(() => import("./UnusualBanner"));
 
 export const charts: { id: string; Component: ComponentType; views: View[] }[] = [
   { id: "banner", Component: UnusualBanner, views: ["research"] },
