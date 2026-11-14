@@ -539,3 +539,9 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 .ep-table { width: 100%; }
 .ep-mark td { color: var(--accent-2); }
 .case-study { border-left: 3px solid var(--accent); padding-left: 10px; }
+
+/* Overview panel sections: wide content (the satellites grid, tables) scrolls in its own box instead of stretching the panel. */
+.mf-body { grid-template-columns: minmax(0, 1fr); }
+.mf-body > *, .mf-body .sources, .mf-body .slot { min-width: 0; max-width: 100%; }
+.mf-body .sources { margin: 0; padding: 0; border: 0; background: transparent; }
+.mf-body .sources h2 { display: none; }
