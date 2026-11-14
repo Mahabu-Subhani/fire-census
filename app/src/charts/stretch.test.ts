@@ -7,7 +7,8 @@ import { episodeDates } from "./FireEpisodes";
 import { doyLabel, isClear, mdLabel } from "./SeasonTiming";
 
 const files = import.meta.glob<{ default: unknown }>("../../public/data/**/{regions,meta,season,episodes}.json", { eager: true });
-const has = (path: string) => `../../public/data/${path}` in files;
+// A `null` file means the analysis does not cover that area (pipeline/stretch.py).
+const has = (path: string) => `../../public/data/${path}` in files && files[`../../public/data/${path}`].default !== null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const data = (path: string): any => files[`../../public/data/${path}`].default;
 const regions: { id: string }[] = data("regions.json");

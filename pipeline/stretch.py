@@ -176,15 +176,21 @@ def main() -> None:
         out = APP_DATA / area
         drift_data = drift(area)
         (out / "drift.json").write_text(json.dumps(drift_data, indent=1), encoding="utf-8")
+        # Areas an analysis does not cover get an explicit `null` file: the app hides
+        # the section, and the browser no longer logs a 404 for a missing file.
         if area in SEASONS:
             se = season(area, d)
             (out / "season.json").write_text(json.dumps(se, indent=1), encoding="utf-8")
             summary[area + " season"] = {"trend": se["trend"], "law_2009": se.get("law_2009")}
+        else:
+            (out / "season.json").write_text("null\n", encoding="utf-8")
         if area in EPISODE_AREAS:
             ep = episodes(area, d)
             (out / "episodes.json").write_text(json.dumps(ep, indent=1), encoding="utf-8")
             summary[area + " episodes"] = {"count": ep["count"], "largest": ep["largest"][:3],
                                            "latest": ep["latest"][-2:]}
+        else:
+            (out / "episodes.json").write_text("null\n", encoding="utf-8")
     print(json.dumps(summary, indent=1))
 
 

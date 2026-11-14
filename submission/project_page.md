@@ -44,8 +44,9 @@ Code: https://github.com/Mahabu-Subhani/fire-census (public; opens without signi
 
 Open the link and the first line answers the question a manager asks first.
 For Punjab and Haryana with data to 13 November 2026, November so far (1 to 13
-November) ranks 24th of 25 Novembers, at 0.09 times the median of the same days
-in earlier years. The app ranks first and
+November) ranks 24th of 25 Novembers (likely 22nd to 25th, allowing for the
+harmonization error measured on held-out years), at 0.09 times the median of
+the same days in earlier years. The app ranks first and
 gives the ratio second, because a ratio means nothing where the usual value is
 zero. The current month is never complete, so every earlier year is counted
 over the same days. Where there is too little activity to judge, it says so
@@ -99,9 +100,12 @@ record steps up at 2012 by 1.648 in Córdoba and 1.674 in Punjab and Haryana
 (natural logarithms, about 5.2 and 5.3 times). Counting each square once
 leaves 1.305 and 1.528. The detection curve leaves 0.049 in Córdoba; in Punjab
 and Haryana the hard floor, which we ship there, leaves 0.028. A constant
-conversion ratio removes the step too, but its error follows the mix of weak
-and strong fires from year to year (in Córdoba, 2012 to 2021, rank correlation
--0.76, p = 0.011); the detection curve's does not (0.35, p = 0.33).
+conversion ratio removes the step too when it is fitted on the same years.
+Fitted without them, it does not: in Córdoba the ratio leaves 0.143, over our
+0.10 limit, while the detection curve leaves 0.087. The ratio's error also
+follows the mix of weak and strong fires from year to year (in Córdoba, 2012
+to 2021, rank correlation -0.76, p = 0.011); the detection curve's does not
+(0.35, p = 0.33).
 
 ### How we know it works
 
@@ -113,8 +117,11 @@ app, including the failures. In Córdoba:
   step 0.049 against a limit of 0.10 (C1). A change-point test finds no break
   near 2012 (C1b), and there is no false step in 2016, when no sensor changed (C2).
   Honest caveat: the model's constant is fitted on 2012 to 2017, which overlaps
-  this check. Fitted on 2016 to 2017 only, the step is 0.106, just over the
-  limit. The checks below are fully out of sample.
+  this check. So we repeated it out of sample (C1x, added after results and
+  labelled so): fitted on 2015 to 2021 only, the step is 0.087, a pass, and the
+  constant ratio fails the same test (0.143). Leaving one year out at a time,
+  2012 to 2021, the record is within 10 percent of Aqua in 8 of 10 years. The
+  checks below are fully out of sample.
 - NOAA-20, never used for fitting, reproduces the record: slope 0.951,
   correlation 0.987 (C4). This matters because S-NPP stopped delivering data on
   2 November 2026.
