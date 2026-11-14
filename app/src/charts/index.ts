@@ -6,11 +6,15 @@ import type { ComponentType } from "react";
 import ActivitySeries from "./ActivitySeries";
 import BurningCalendar from "./BurningCalendar";
 import MonthComparison from "./MonthComparison";
+import OutlookStrip from "./OutlookStrip";
+import TrendChart from "./TrendChart";
 import UnusualBanner from "./UnusualBanner";
 
 export const charts: { id: string; Component: ComponentType }[] = [
   { id: "banner", Component: UnusualBanner },
   { id: "calendar", Component: BurningCalendar },
+  { id: "outlook", Component: OutlookStrip },
   { id: "comparison", Component: MonthComparison },
+  { id: "trend", Component: TrendChart },
   { id: "series", Component: ActivitySeries },
 ];
