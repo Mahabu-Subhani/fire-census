@@ -2,6 +2,15 @@
 
 # What a 10 needs on each criterion, and where we stand
 
+> **Read this first (added 15 November, after decision 57).** Written on 14
+> November and not redone. No longer true below: the Chilecito fire is now
+> 13.5 times a normal July (not 8.8), still the 2nd highest of 25; "a measured
+> detection curve instead of a fitted ratio" should read "a measured strength
+> cut-off and a constant per calendar month", because the detection curve
+> ships in no area; and "the two failed checks and C3r" is replaced by what
+> section 6 of `docs/EXPLAINED.md` now says about C3, C3x and Córdoba's yearly
+> error.
+
 Local judging gives 10 points each for Impact, Creativity, Validity,
 Relevance and Presentation. No project is guaranteed 50; this is the list of
 everything within our control that a judge's 10 would require, with its state.

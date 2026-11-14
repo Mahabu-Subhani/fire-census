@@ -47,4 +47,6 @@ Time spent: <minutes>.
 
 ## Notes so far
 
-None yet.
+| File | Question | By | Date |
+|---|---|---|---|
+| `20261115-checks-audit-seasonal-bias.md` | Are the pre-registered checks sound, and can the method pass them honestly? Finds a seasonal bias behind C3 and tests constants per calendar month | Mahabu, with the AI assistant | 15 Nov 2026 |

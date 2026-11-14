@@ -2,6 +2,26 @@
 
 # Local judging: honest self-score and what raises it
 
+> **Read this first (added 15 November, after decision 57).** The table below was
+> written on 14 November and its scores were not redone. These statements in it
+> are no longer true:
+>
+> - "Detection-curve harmonization": the detection curve ships in no area. The
+>   hard floor (fire cells at or above the curve's midpoint) with one constant
+>   per calendar month ships in Córdoba, Chilecito and Punjab and Haryana.
+> - Validity: C3 is no longer a fail under the shipped method (Córdoba 0.117,
+>   Punjab and Haryana 0.148 against 0.15), but the method was changed after
+>   the failure was seen, the pass does not hold under other settings, and the
+>   check on 2020 to 2021 fails in Punjab and Haryana (0.169). In Córdoba the
+>   shipped record is within 0.10 of Aqua in 3 of 10 years leaving one out.
+> - "Two independent burned-area records": both are MODIS-based; say
+>   independent of VIIRS.
+> - The answers to the hard questions below ("You changed a check", "Why trust
+>   the curve?") are replaced by section 11 of `docs/EXPLAINED.md`. The figure
+>   of 9.9 MW against 10.4 MW holds for Córdoba's cut-off only.
+> - `season_punjab-haryana.png` and the week-later-per-decade line still hold
+>   (peak day 6.7 days per decade).
+
 The Bangalore panel scores 10 points each for Impact, Creativity, Validity
 (scientific principles and technical), Relevance (use of data) and
 Presentation: 50 in all. Scored on 14 November, about 17:00, updated about 21:30 after the areas were fixed, against what is
