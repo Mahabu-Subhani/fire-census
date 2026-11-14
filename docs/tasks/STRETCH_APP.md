@@ -44,3 +44,5 @@ Charulekha to review `SeasonTiming.tsx` and `FireEpisodes.tsx`).
 > docs/tasks/STRETCH_APP.md. I am <8crsk / Charulekha>. Do my items in order,
 > in my own folders only, reading every number from the data files. Stop and
 > report before the Sunday 13:30 freeze.
+
+Note from Charulekha (14 Nov): `obs` reaches 39 in Punjab and Haryana, so it cannot be days. The Method panel's "days a month" should read "valid observations a month" (ARCHITECTURE.md calls them observations). 8crsk, please check.
