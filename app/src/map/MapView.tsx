@@ -8,7 +8,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { bboxToPolygon } from "../data/select";
 import { useSelection, useSelectionActions, type Polygon } from "../selection";
-import { fmtValue, unitLabel } from "../stats";
+import { fmtValue, monthsBetween, MONTH_NAMES, unitLabel, value } from "../stats";
 import { EMBER, useTheme, type Theme } from "../theme";
 import { activityCells } from "./activity";
 
@@ -17,6 +17,23 @@ import { activityCells } from "./activity";
 // the fire colours stand out. Tiles exist to zoom 8; the map may zoom past it.
 const GIBS_BLUE_MARBLE =
   "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg";
+
+// NASA GIBS WMS: the VIIRS active-fire detections of one UTC day (NOAA-20 and
+// NOAA-21, 375 m), drawn by NASA as transparent images. Free, no key, CORS open.
+// These are raw detections straight from NASA, updated through the day: not
+// our harmonized record and not an alert service (decision 46).
+const LIVE_LAYERS = "VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_NOAA21_Thermal_Anomalies_375m_All";
+export function liveTiles(day: string): string {
+  return "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0" +
+    `&LAYERS=${LIVE_LAYERS}&STYLES=&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256&FORMAT=image/png&TRANSPARENT=true&TIME=${day}`;
+}
+/** A UTC day as "YYYY-MM-DD", `back` days before today. */
+export function utcDay(back: number, now = new Date()): string {
+  return new Date(now.getTime() - back * 86400000).toISOString().slice(0, 10);
+}
+type Live = "off" | "today" | "yesterday";
+/** Milliseconds per month during playback. */
+const FRAME_MS = 220;
 
 function satelliteStyle(theme: Theme): maplibregl.StyleSpecification {
   return {
@@ -109,7 +126,19 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   const { region, rows, mode, meta } = useSelection();
   const { polygon, setPolygon } = useSelectionActions();
   const [showActivity, setShowActivity] = useState(true);
-  const activity = useMemo(() => (region ? activityCells(rows, mode, region.cell_deg) : null), [rows, mode, region]);
+  const [liveDay, setLiveDay] = useState<Live>("off");
+  // Playback: index into the months of the date range, or null when the map shows the whole range.
+  const months = useMemo(() => (rows.length ? monthsBetween(rows.reduce((m, r) => (r.ym < m ? r.ym : m), rows[0].ym), rows.reduce((m, r) => (r.ym > m ? r.ym : m), rows[0].ym)) : []), [rows]);
+  const [frame, setFrame] = useState<number | null>(null);
+  const [playing, setPlaying] = useState(false);
+  // One colour scale for every frame: the largest single cell-month in the range.
+  const frameMax = useMemo(() => rows.reduce((m, r) => Math.max(m, value(r, mode)), 0), [rows, mode]);
+  const activity = useMemo(() => {
+    if (!region) return null;
+    if (frame === null || !months[frame]) return activityCells(rows, mode, region.cell_deg);
+    const ym = months[frame];
+    return activityCells(rows.filter((r) => r.ym === ym), mode, region.cell_deg, frameMax);
+  }, [rows, mode, region, frame, months, frameMax]);
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
   const [ready, setReady] = useState(false);
@@ -154,6 +183,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
           "fill-opacity": 0.82,
         },
       });
+      map.addSource("live", { type: "raster", tiles: [liveTiles(utcDay(0))], tileSize: 256, attribution: "Live fires: NASA GIBS, VIIRS NOAA-20/21" });
+      map.addLayer({ id: "live", type: "raster", source: "live", layout: { visibility: "none" } });
       map.addLayer({ id: "region-line", type: "line", source: "region", paint: { "line-color": "#6b7280", "line-width": 1.5, "line-dasharray": [2, 2] } });
       map.addLayer({ id: "selection-fill", type: "fill", source: "selection", paint: { "fill-color": "#d9480f", "fill-opacity": 0.12 } });
       map.addLayer({ id: "selection-line", type: "line", source: "selection", paint: { "line-color": "#d9480f", "line-width": 2.5 } });
@@ -215,6 +246,35 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
     (map.getSource("activity") as GeoJSONSource).setData(showActivity && activity ? activity.collection : empty);
   }, [activity, showActivity, ready]);
 
+  // Live NASA detections for one UTC day.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    if (liveDay !== "off") (map.getSource("live") as maplibregl.RasterTileSource).setTiles([liveTiles(utcDay(liveDay === "today" ? 0 : 1))]);
+    map.setLayoutProperty("live", "visibility", liveDay === "off" ? "none" : "visible");
+  }, [liveDay, ready]);
+
+  // Playback: step one month per frame, stop at the end.
+  useEffect(() => {
+    if (!playing) return;
+    const id = window.setInterval(() => {
+      setFrame((f) => {
+        const next = f === null ? 0 : f + 1;
+        if (next >= months.length) {
+          setPlaying(false);
+          return months.length - 1;
+        }
+        return next;
+      });
+    }, FRAME_MS);
+    return () => window.clearInterval(id);
+  }, [playing, months.length]);
+  // A new area, record or range ends playback.
+  useEffect(() => {
+    setPlaying(false);
+    setFrame(null);
+  }, [months]);
+
   // Current selection.
   useEffect(() => {
     const map = mapRef.current;
@@ -269,6 +329,58 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
         <span className="hint" aria-live="polite">{hint}</span>
       </div>
       <div ref={container} className="map" />
+      {frame !== null && months[frame] && (
+        <div className="map-stamp" aria-live="off">
+          {MONTH_NAMES[Number(months[frame].slice(5)) - 1]} {months[frame].slice(0, 4)}
+        </div>
+      )}
+      <div className="map-layers" role="group" aria-label="Map layers">
+        {months.length > 1 && (
+          <div className="ml-row">
+            <button
+              type="button"
+              className="ml-play"
+              aria-pressed={playing}
+              onClick={() => {
+                if (playing) return setPlaying(false);
+                if (frame === null || frame >= months.length - 1) setFrame(0);
+                setShowActivity(true);
+                setPlaying(true);
+              }}
+            >
+              {playing ? "Pause" : "Play"}
+            </button>
+            <input
+              type="range"
+              min={0}
+              max={months.length - 1}
+              value={frame ?? months.length - 1}
+              aria-label="Month shown on the map"
+              onChange={(e) => {
+                setPlaying(false);
+                setFrame(Number(e.target.value));
+              }}
+            />
+            {frame !== null && (
+              <button type="button" onClick={() => { setPlaying(false); setFrame(null); }}>All</button>
+            )}
+          </div>
+        )}
+        <div className="ml-row">
+          <span className="ml-label"><i className="ml-dot" aria-hidden="true" />NASA live fires</span>
+          <div className="seg" role="group" aria-label="Live NASA fire detections">
+            <button type="button" aria-pressed={liveDay === "off"} onClick={() => setLiveDay("off")}>Off</button>
+            <button type="button" aria-pressed={liveDay === "today"} onClick={() => setLiveDay("today")}>Today</button>
+            <button type="button" aria-pressed={liveDay === "yesterday"} onClick={() => setLiveDay("yesterday")}>Yesterday</button>
+          </div>
+        </div>
+        {liveDay !== "off" && (
+          <p className="ml-note">
+            Red dots: every VIIRS fire detection (NOAA-20 and NOAA-21) on {utcDay(liveDay === "today" ? 0 : 1)} UTC
+            {liveDay === "today" ? ", so far today" : ""}, from NASA GIBS. Raw detections, not harmonized; not an alert service.
+          </p>
+        )}
+      </div>
       <div className="map-legend">
         <label className="check">
           <input type="checkbox" checked={showActivity} onChange={(e) => setShowActivity(e.target.checked)} />
@@ -283,7 +395,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
         )}
         {showActivity && activity && (
           <p className="fine-print">
-            Each square is about 11 km across, coloured by its total for the dates shown ({unitLabel(meta, mode)}).
+            Each square is about 11 km across, coloured by its total for {frame !== null && months[frame] ? "the month shown, on one scale for the whole range" : "the dates shown"} ({unitLabel(meta, mode)}).
             {activity.max === 0 && " No activity in this area and date range."}
           </p>
         )}
