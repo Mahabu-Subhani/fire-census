@@ -74,6 +74,61 @@ export interface Meta {
   [key: string]: unknown;
 }
 
+/** One year of <region>/season.json: when the main burning season started, peaked and ended. */
+export interface SeasonYear {
+  year: number;
+  /** "MM-DD" */
+  start: string;
+  peak: string;
+  end: string;
+  start_doy: number;
+  peak_doy: number;
+  end_doy: number;
+  length_days: number;
+  total: number;
+  sensor: string;
+}
+
+export interface TrendRange {
+  days_per_decade: number;
+  lo: number;
+  hi: number;
+}
+
+export interface Season {
+  window: string;
+  years: SeasonYear[];
+  trend: { start: TrendRange; peak: TrendRange; end: TrendRange; length: TrendRange };
+  method?: string;
+  law_2009?: { mean_peak_before: number; mean_peak_after: number; shift_days: number; p_one_sided: number; note: string };
+}
+
+/** <region>/drift.json: overpass times and Aqua against the harmonized record, per year. */
+export interface DriftFile {
+  years: { year: number; overpass_local_time: Record<string, number>; aqua_over_harmonized?: number | null }[];
+  note?: string;
+}
+
+export interface Episode {
+  start: string;
+  end: string;
+  days: number;
+  total: number;
+  peak: number;
+  peak_day: string;
+  sensor: string;
+  rank_total: number;
+  rank_peak: number;
+}
+
+/** <region>/episodes.json: runs of consecutive days with fire, ranked. */
+export interface Episodes {
+  definition: string;
+  count: number;
+  largest: Episode[];
+  latest: Episode[];
+}
+
 /** A closed ring of [lon, lat] points. The last point need not repeat the first. */
 export type Polygon = [number, number][];
 
@@ -95,4 +150,8 @@ export interface Selection {
   areaKm2: number | null;
   place: string | null;
   dataThrough: string | null;
+  /** Whole-region analyses from the pipeline; null where the file does not exist. */
+  season: Season | null;
+  drift: DriftFile | null;
+  episodes: Episodes | null;
 }

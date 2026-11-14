@@ -4,7 +4,7 @@
 // every number from meta.json. Failed and not-run checks are shown as plainly
 // as passed ones.
 import * as Plot from "@observablehq/plot";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import type { CurvePoint } from "../data/types";
 import { useSelection, useSelectionActions } from "../selection";
 import { calibrationText, formatValue, isAddedAfter, monthName, shortVersion, summarizeChecks, VERDICT_LABEL } from "./checks";
@@ -63,8 +63,21 @@ function DetectionCurve({ day, night, floorDay }: { day: CurvePoint[]; night: Cu
 }
 
 export default function EvidencePanel() {
-  const { meta, region } = useSelection();
+  const { meta, region, areaRows, drift } = useSelection();
   const { regions } = useSelectionActions();
+  // Clear-view days per cell and month, where the pipeline filled them in.
+  const obs = useMemo(() => {
+    const v = areaRows.map((r) => r.obs).filter((o): o is number => typeof o === "number").sort((a, b) => a - b);
+    return v.length ? { n: v.length, of: areaRows.length, lo: v[0], mid: v[Math.floor(v.length / 2)], hi: v[v.length - 1] } : null;
+  }, [areaRows]);
+  // Aqua alone against this record: mean of 2012 to 2021 (before its orbit drifted) and the last full year.
+  const aqua = useMemo(() => {
+    const rows = (drift?.years ?? []).filter((y) => typeof y.aqua_over_harmonized === "number");
+    const before = rows.filter((y) => y.year <= 2021).map((y) => y.aqua_over_harmonized as number);
+    const lastFull = rows.filter((y) => y.year < Number((meta?.data_through ?? "9999").slice(0, 4))).pop();
+    if (before.length === 0 || !lastFull || lastFull.year <= 2021) return null;
+    return { before: before.reduce((a, b) => a + b, 0) / before.length, year: lastFull.year, ratio: lastFull.aqua_over_harmonized as number };
+  }, [drift, meta]);
   if (!meta || !region) return null;
   const s = summarizeChecks(meta.checks);
   const floor = meta.floor_mw as { day?: number | null } | undefined;
@@ -108,7 +121,26 @@ export default function EvidencePanel() {
           <strong>Unit.</strong> {meta.unit ?? "Not stated"}. From {monthName(region.harmonized_from)} (Aqua's first full
           month) the calendar counts what Aqua MODIS reported, and from the start of VIIRS it counts what Aqua would have
           reported, computed from VIIRS. Earlier months are marked "Terra only, not harmonized".
+          {typeof meta.unit_note === "string" && <> {meta.unit_note}</>}
         </p>
+        {obs && (
+          <p>
+            <strong>Clear-view days.</strong> In this area a grid cell had a usable view on a median of{" "}
+            <span className="mono">{obs.mid}</span> days a month (lowest <span className="mono">{obs.lo}</span>, highest{" "}
+            <span className="mono">{obs.hi}</span>; from Aqua's daily fire masks, known for{" "}
+            <span className="mono">{obs.n.toLocaleString("en-GB")}</span> of <span className="mono">{obs.of.toLocaleString("en-GB")}</span>{" "}
+            cell-months). The counts are not corrected for missed days: a month under cloud can read low.
+          </p>
+        )}
+        {aqua && (
+          <p>
+            <strong>Why not carry on with MODIS alone?</strong> Aqua's orbit has drifted since 2022, so its afternoon pass
+            comes later each year. Aqua alone gave <span className="mono">{aqua.before.toFixed(2)}</span> times this record on
+            average in 2012 to 2021, and <span className="mono">{aqua.ratio.toFixed(2)}</span> times in {aqua.year}. A
+            MODIS-only calendar would drift with it; this record uses VIIRS from 2012. The pass times are drawn under{" "}
+            <a href="#sources">Do the satellites agree?</a>
+          </p>
+        )}
         <p>
           <strong>Method shipped here: {meta.level_name ?? meta.level_shipped}.</strong> {reasonText(meta.shipping_reason, meta.level_name)}
         </p>

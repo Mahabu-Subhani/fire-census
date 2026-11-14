@@ -532,3 +532,10 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 }
 .app-wide { max-width: none; }
 .mf-body .cf-title { display: none; }
+
+
+/* ---------- Fire episodes, case study ---------- */
+.ep-head { margin: 16px 0 6px; font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+.ep-table { width: 100%; }
+.ep-mark td { color: var(--accent-2); }
+.case-study { border-left: 3px solid var(--accent); padding-left: 10px; }

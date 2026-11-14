@@ -77,6 +77,9 @@ interface Selection {
   areaKm2: number | null;      // area of the selection
   place: string | null;        // name of a searched place, or null if drawn
   dataThrough: string | null;  // "YYYY-MM-DD", copied from meta.data_through
+  season: Season | null;       // <region>/season.json, null if the file does not exist
+  drift: DriftFile | null;     // <region>/drift.json
+  episodes: Episodes | null;   // <region>/episodes.json
 }
 
 function useSelection(): Selection;
@@ -109,7 +112,13 @@ Chart components C builds, each taking no props and reading `useSelection()`:
 | `ActivitySeries` | Monthly time series; range shading; small-fire layer |
 | `MonthComparison` | Latest month against the historical median, with a label |
 | `UnusualBanner` | Alert when the latest month is far above its median |
-| `SeasonTiming` | Stretch goal S1 only |
+| `SeasonTiming` | Season start, peak and end per year with the peak trend (`season.json`) |
+| `FireEpisodes` | Latest and largest fire episodes with ranks (`episodes.json`) |
+
+A chart in `charts/index.ts` may give `available(selection)`; the shell hides
+it when that returns false. The two above are whole-region analyses, so they
+are hidden when an area is drawn or the file is missing.
+
 
 B places these components in the layout and owns everything around them. B
 merges the hook (returning mock rows if needed) and empty placeholder

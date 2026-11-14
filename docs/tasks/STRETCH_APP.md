@@ -7,6 +7,10 @@ The data files are on `main` (`pipeline/stretch.py`). Contract:
 region is selected and its file exists; otherwise hide it. Stop at the Sunday
 13:30 freeze even if unfinished: these are extras.
 
+**Status, 14 November evening:** all six items below are built and live
+(done by 8crsk as team lead, including the two charts in Charulekha's folder;
+Charulekha to review `SeasonTiming.tsx` and `FireEpisodes.tsx`).
+
 ## Charulekha (`app/src/charts/`, `app/src/stats/`)
 
 1. **"Has the burning season moved?"** (`season.json`; Punjab, Córdoba,

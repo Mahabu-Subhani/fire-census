@@ -23,7 +23,7 @@ Two views share one selection; the view is part of the shareable link (`v=resear
 
 | View | For | Shows |
 |---|---|---|
-| Overview | Everyone, first | Hero with the answer for this month, four numbers and the record as a dot grid; the calendar; this month against past years; the next three months from history |
+| Overview | Everyone, first | Hero with the answer for this month, four numbers and the record as a dot grid; the calendar; this month against past years; the next three months from history; for the whole region, when the season starts, peaks and ends and whether it has moved, and the latest fire episodes ranked against all earlier ones |
 | Data & methods | Scientists, judges | The satellite comparison (who was watching, at what local time, who saw each fire), every chart (adds the status panel, the monthly series and the trend), every pre-registered check with its verdict, the method, the glossary, whole files, a data dictionary, a citation and Python and R code |
 
 The left panel (region, district search, map with drawing, coordinates,

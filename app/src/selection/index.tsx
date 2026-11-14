@@ -3,9 +3,9 @@
 // Charts call useSelection() and never load files themselves.
 // Controls call useSelectionActions(). See docs/ARCHITECTURE.md, "Inside the app".
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { loadCube, loadMeta, loadRegions } from "../data/load";
+import { loadCube, loadDrift, loadEpisodes, loadMeta, loadRegions, loadSeason } from "../data/load";
 import { bboxToPolygon, countCellCentres, overlapsBBox, polygonAreaKm2, selectCells } from "../data/select";
-import type { CubeRow, Meta, Mode, Polygon, Region, Selection } from "../data/types";
+import type { CubeRow, DriftFile, Episodes, Meta, Mode, Polygon, Region, Season, Selection } from "../data/types";
 import { buildUrlState, parseUrlState, type View } from "./url";
 
 export type { View } from "./url";
@@ -39,6 +39,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   const [regionId, setRegionId] = useState<string | null>(null);
   const [cube, setCube] = useState<CubeRow[] | null>(null);
   const [meta, setMeta] = useState<Meta | null>(null);
+  const [extras, setExtras] = useState<{ season: Season | null; drift: DriftFile | null; episodes: Episodes | null }>({ season: null, drift: null, episodes: null });
   const [polygon, setPolygonState] = useState<Polygon | null>(null);
   const [place, setPlace] = useState<string | null>(null);
   const [from, setFrom] = useState("");
@@ -72,6 +73,11 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     setError(null);
     setCube(null);
     setMeta(null);
+    setExtras({ season: null, drift: null, episodes: null });
+    // Optional extras never block or fail the page.
+    Promise.all([loadSeason(region.id), loadDrift(region.id), loadEpisodes(region.id)]).then(
+      ([season, drift, episodes]) => !cancelled && setExtras({ season, drift, episodes }),
+    );
     // Not cleared here: React may run this effect twice. Cleared when the user picks a region.
     const url = pendingUrl.current.region === region.id ? pendingUrl.current : {};
     const clampMonth = (m: string | undefined, fallback: string) =>
@@ -130,6 +136,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     areaKm2: polygon ? polygonAreaKm2(polygon) : region ? polygonAreaKm2(bboxToPolygon(region.bbox)) : null,
     place,
     dataThrough: meta?.data_through ?? null,
+    ...extras,
   };
 
   const actions: SelectionActions = {

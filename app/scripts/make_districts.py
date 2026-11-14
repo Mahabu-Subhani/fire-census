@@ -14,7 +14,7 @@ SOURCES = {
     "PAK": ("Pakistan", "geoBoundaries gbOpen PAK ADM2 (2019; geoBoundaries, Wikipedia)", "Public Domain"),
     "ARG": ("Argentina", "geoBoundaries gbOpen ARG ADM2 (2020; Instituto Geografico Nacional, UNHCR, OCHA ROLAC)", "CC BY 3.0 IGO"),
 }
-COUNTRIES_FOR = {"punjab-haryana": ["IND", "PAK"], "cordoba": ["ARG"], "chilecito": ["ARG"]}
+COUNTRIES_FOR = {"punjab-haryana": ["IND", "PAK"], "cordoba": ["ARG"], "chilecito": ["ARG"], "karnataka-south": ["IND"]}
 # Spelling errors in the source, corrected here and listed in docs/REFERENCES.md.
 CORRECTIONS = {"La Roja": "La Rioja"}
 TOLERANCE = 0.002  # degrees, about 200 m
