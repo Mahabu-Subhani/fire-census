@@ -232,6 +232,17 @@ which already satisfies "downloadable analytics". The app side is built: a "Down
 soon as `<region>/hotspots/<last year>.csv.gz` exists, reads at most 5 years per
 download, and needs at least the columns `latitude`, `longitude` and `acq_date`.
 
+### `app/public/data/<region_id>/sources.json`
+
+Written by `app/scripts/make_sources.py` (Person B) from the hotspot files
+above; rerun it whenever they change. An object with `note` and `rows`, one
+row per year and satellite that reported: `year`, `satellite` (Terra, Aqua,
+S-NPP, NOAA-20, NOAA-21), `family` (MODIS or VIIRS), `day` and `night`
+(detections, before any filter), `days_with_detections`, and `day_local_time`
+(mean local solar time of daytime detections, in hours; null if none). Used by
+the "Do the satellites agree?" section. If the file is missing, the section is
+hidden.
+
 ## FIRMS data notes for the pipeline
 
 ### Verified on the FIRMS site, 13 November 2026

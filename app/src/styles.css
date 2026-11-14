@@ -318,12 +318,12 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 }
 
 /* ---------- Method, glossary, researchers ---------- */
-.evidence, .glossary, .researchers {
+.evidence, .glossary, .researchers, .sources {
   margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 26px; box-shadow: var(--shadow);
 }
-.evidence h2, .researchers h2 { margin: 0 0 10px; font-size: 1.5rem; letter-spacing: -0.02em; }
-.evidence h3, .researchers h3 { margin: 24px 0 10px; font-size: 1.02rem; }
+.evidence h2, .researchers h2, .sources h2 { margin: 0 0 10px; font-size: 1.5rem; letter-spacing: -0.02em; }
+.evidence h3, .researchers h3, .sources h3 { margin: 24px 0 10px; font-size: 1.02rem; }
 .ev-lead { font-size: 1.05rem; max-width: 70ch; color: var(--text); }
 .ev-checks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
 .ev-check { display: grid; grid-template-columns: 6.5em 1fr; gap: 12px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
@@ -383,7 +383,7 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   .seg button { padding: 4px 10px; }
   .app { padding: 0 14px; }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .slot, .evidence, .glossary, .researchers { padding: 16px; }
+  .slot, .evidence, .glossary, .researchers, .sources { padding: 16px; }
   .answer-main { font-size: 1.3rem; }
   .ev-checks { grid-template-columns: 1fr; }
   .ev-check { grid-template-columns: 1fr; gap: 4px; }
@@ -412,3 +412,36 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   .slot, .ev-check { break-inside: avoid; box-shadow: none; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- Do the satellites agree? ---------- */
+.sources h4 { margin: 20px 0 10px; font-size: 0.95rem; }
+.src-note { margin: 8px 0; max-width: 78ch; color: var(--muted); font-size: 0.9rem; }
+.src-grid-wrap { overflow-x: auto; padding: 6px 0; }
+.src-grid { display: grid; gap: 4px; min-width: 520px; }
+.src-row { display: flex; align-items: center; gap: 10px; }
+.src-name { flex: none; width: 5.6em; font-size: 0.82rem; color: var(--muted); }
+.src-cells { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; }
+.src-cell { height: 22px; border-radius: 4px; }
+.src-cell-empty { background: transparent; box-shadow: inset 0 0 0 1px var(--border); }
+.src-tick { font-family: var(--font-mono); font-size: 0.62rem; color: var(--faint); white-space: nowrap; }
+.src-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 8px 0 0; font-size: 0.76rem; color: var(--muted); }
+.src-key { display: inline-flex; align-items: center; gap: 6px; }
+.src-key i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.src-findings { margin: 14px 0 0; padding-left: 1.1em; max-width: 78ch; display: grid; gap: 6px; font-size: 0.92rem; }
+.src-details { margin-top: 16px; }
+.src-details summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; }
+.src-details[open] summary { margin-bottom: 10px; }
+.src-run { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.src-run .fine-print { flex-basis: 100%; }
+.src-result { margin-top: 16px; }
+.src-tiers { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; max-width: 760px; }
+.src-tier-head { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; }
+.src-tier-head .mono { font-size: 0.82rem; white-space: nowrap; }
+.src-bar { height: 8px; margin: 6px 0; border-radius: 4px; background: var(--surface-3); overflow: hidden; }
+.src-bar i { display: block; height: 100%; min-width: 2px; border-radius: 4px; background: var(--accent); }
+.src-tiers p { margin: 0; font-size: 0.82rem; color: var(--muted); }
+.src-verdict { margin: 18px 0 0; padding: 12px 14px; max-width: 760px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); font-size: 0.92rem; }
+.src-verdict-agree strong { color: var(--good); }
+.src-verdict-differ { border-color: color-mix(in srgb, var(--bad) 45%, var(--border)); }
+.src-verdict-differ strong { color: var(--bad); }
+.src-rules { margin: 0; padding-left: 1.1em; max-width: 78ch; display: grid; gap: 6px; font-size: 0.88rem; color: var(--muted); }

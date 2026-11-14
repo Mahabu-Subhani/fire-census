@@ -24,7 +24,7 @@ Two views share one selection; the view is part of the shareable link (`v=resear
 | View | For | Shows |
 |---|---|---|
 | Overview | Everyone, first | Hero with the answer for this month, four numbers and the record as a dot grid; the calendar; this month against past years; the next three months from history |
-| Data & methods | Scientists, judges | Every chart (adds the status panel, the monthly series and the trend), every pre-registered check with its verdict, the method, the glossary, whole files, a data dictionary, a citation and Python and R code |
+| Data & methods | Scientists, judges | The satellite comparison (who was watching, at what local time, who saw each fire), every chart (adds the status panel, the monthly series and the trend), every pre-registered check with its verdict, the method, the glossary, whole files, a data dictionary, a citation and Python and R code |
 
 The left panel (region, district search, map with drawing, coordinates,
 dates, downloads) scrolls on its own. With no area drawn, the selection is the
@@ -44,6 +44,7 @@ Nothing is shortened ("12K") or rounded further.
 | `src/controls/` | B | District search, date range, coordinate entry |
 | `src/downloads/` | B | Selection CSV, hotspot CSV |
 | `src/evidence/` | B | Checks and method panel, checks badge |
+| `src/sources/` | B | "Do the satellites agree?": who was watching each year, pass-time drift, who saw each fire |
 | `src/guide/` | B | Glossary, researcher section, live-fire link |
 | `src/layout/` | B | Top bar, hero, dot grid, motion helpers |
 | `src/App.tsx`, `src/styles.css`, `src/theme.tsx` | B | Page layout, design tokens, dark and light theme, colour ramps |
@@ -71,6 +72,14 @@ Nothing is shortened ("12K") or rounded further.
 columns plus `harm_class`). It fetches the years in the date range (at most 5
 per download), keeps the detections inside the area and months chosen, and
 writes the original columns under provenance comment lines.
+
+## Satellite summary
+
+`public/data/<region>/sources.json` comes from `scripts/make_sources.py`, which
+counts the published hotspot files. Rerun it after the pipeline rewrites them:
+`python -I app/scripts/make_sources.py` from the repo root. The rules for the
+section (same fire, agreement, drift) are constants in
+`src/sources/agreement.ts` and decision 38.
 
 ## District files
 

@@ -115,6 +115,12 @@ early warning and emergency response. Points that change our plan:
 | 36 | Fourth area for the local judges | "Bandipur, Nagarhole and BR Hills, Karnataka" (75.8 to 77.8 E, 11.4 to 13.0 N), calibrated on its own. Added after the start and not pre-registered; the same checks and shipping rule apply. Result: no model passes the held-out checks, so the constant ratio ships. Shown as a case study, not a validated region | Mahabu asked for stretch goals; the AI assistant proposed this area for the Bangalore judges and built it. Reason in Mahabu's words: **to be added** |
 | 37 | Stretch analyses | `season.json` (season start, peak, end and trend), `drift.json` (overpass time and Aqua against the record), `episodes.json` (fire episodes ranked) written by `pipeline/stretch.py`. Contract rows proposed in ARCHITECTURE.md; B and C decide whether and how to show them | Same as 36 |
 
+## Comparing the satellites (added 14 November)
+
+| # | Decision | Answer | Why |
+|---|---|---|---|
+| 38 | Rules for the "Do the satellites agree?" section | **Same fire:** same or neighbouring 0.01 degree square, same date, same half of the day (the pipeline's matching rule; decisions 6 to 8 for grid and confidence). **Two VIIRS satellites agree** when the absolute log ratio of their fire cells is at most **0.25**, judged only on at least **30** fire cells each. **A daytime pass has drifted** when its mean local solar time moved more than **30 minutes** from its first usable year. These are display rules for the app; they change no number in the harmonized record and no pre-registered threshold | 8crsk, 14 Nov, as team lead, asked the AI assistant to propose thresholds and build the section. Proposed by the assistant with this evidence: identical VIIRS sensors differ by 0.07 to 0.10 a month in our data (PREREGISTRATION.md, note on C3), so 0.25 is about three times normal scatter; 30 is the minimum sample already pre-registered; Aqua's measured drift is 131 minutes in Punjab, and every VIIRS satellite stays within 19 minutes in all three regions. Reason in 8crsk's own words: **to be added by 8crsk** |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -124,3 +130,4 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | Charulekha | Decisions 32 and 33: minimum activity and default baseline for the status sentence | See rows 32 and 33 |
 | 14 Nov 2026 | 8crsk | Decision 34: plain-language guidance per audience | See row 34 |
 | 14 Nov 2026 | 8crsk | Decision 35: redesign and research view | See row 35 |
+| 14 Nov 2026 | 8crsk | Decision 38: rules for comparing the satellites | See row 38 |
