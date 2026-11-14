@@ -107,6 +107,7 @@ early warning and emergency response. Points that change our plan:
 | # | Decision | Answer | Why |
 |---|---|---|---|
 | 35 | Redesign for non-scientists, and a separate research view | Dark ember design (light theme on request); hero with the answer, four real numbers and the record as a dot grid; two views, Overview (calendar, this month against past years, outlook) and Data & methods (every chart, every check, glossary, data); charts titled as plain questions with a one-line how-to-read; a legend with words and exact values; every number exact (two decimals harmonized, whole numbers raw, ratios two decimals, shares one decimal, no "12K" shortening); the left panel scrolls on its own; scroll and touch animations that respect reduced motion | 8crsk (team lead), 14 Nov: the first screen was text-heavy, numbers were rounded, the legend was unreadable for non-experts and the left column could not be scrolled |
+| 36 | Map-first retro UI | The overview becomes map first: NASA GIBS Blue Marble satellite base map filling the screen, one results panel with the answer always visible and sections that open one at a time, and a small toolbar (download, link, print, method). Retro look: near-black panels, square corners, fire colours for data only, **Arial everywhere**. The slogan hero is removed from the overview; the Data & methods view keeps its page. Replaces the overview layout of decision 35 | Charulekha, 14 Nov, asked for it to go straight to the live site; 8crsk to be told. Reason in her own words: **to be added by Charulekha**. Designed in a mockup with the AI assistant, inspired by NASA FIRMS's map without copying its identity |
 
 ## Change log
 
@@ -117,3 +118,4 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | Charulekha | Decisions 32 and 33: minimum activity and default baseline for the status sentence | See rows 32 and 33 |
 | 14 Nov 2026 | 8crsk | Decision 34: plain-language guidance per audience | See row 34 |
 | 14 Nov 2026 | 8crsk | Decision 35: redesign and research view | See row 35 |
+| 14 Nov 2026 | Charulekha | Decision 36: map-first retro UI, Arial, satellite base map | See row 36 |

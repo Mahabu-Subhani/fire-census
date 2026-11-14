@@ -1,7 +1,5 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
-import "@fontsource-variable/figtree";
-import "@fontsource-variable/jetbrains-mono";
-import "@fontsource/instrument-serif/400-italic.css";
+// Fonts: Arial everywhere (decision 36), so no web fonts are loaded.
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
