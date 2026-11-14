@@ -17,18 +17,49 @@ https://mahabu-subhani.github.io/fire-census/, not from a mock-up.
    VIIRS into one tested record and a free app that answers "is now unusual?"
    for any area.
 
-## Script (68 words; about 27.5 seconds at 2.5 words a second)
+## Script, version 2 (14 November, for the live app after the map-first redesign)
 
-| Time | On screen (live app, laptop, 1280 px wide) | Words spoken | Words |
+Follows the official order in the Project Submission Guide: names and team,
+the challenge, project name and tagline, how it works, the future. Leads with
+Punjab, which local judges know. 75 words: speak at a brisk, even pace (about
+2.7 words a second, about 28 seconds). Narrator: Charulekha.
+
+| Time | On screen (live app, 1280 x 720, start at the link below) | Charulekha says | Words |
 |---|---|---|---|
-| 0:00 to 0:04 | Córdoba selected. Burning calendar, Amount colour, full height | "Since 2012, a sharper satellite has watched fires beside an older one." | 12 |
-| 0:04 to 0:10 | Click **Raw**. Scroll to Monthly activity: the line jumps at "VIIRS joins" | "Add their counts together and burning seems to jump fivefold. That's the camera, not the fire." | 16 |
-| 0:10 to 0:16 | Click **Harmonized**. The jump is gone; hold for two seconds | "Fire Census corrects for what the older sensor can see. Every year now counts the same." | 16 |
-| 0:16 to 0:22 | Switch region to Punjab and Haryana. Scroll to top: status sentence, then the calendar in Difference colour | "Pick any area. Is this month unusual? What usually comes next?" | 11 |
-| 0:22 to 0:28 | Open the checks panel (8crsk's evidence panel) showing pass and fail; end on the app title | "Ten checks, fixed before we opened the data. Every result shown. Fire Census." | 13 |
+| 0:00 to 0:03 | Overview, Punjab and Haryana, whole region. App title "FIRE CENSUS" visible top left | "I'm Charulekha, from team Sharmaji Ka Satellite." | 6 |
+| 0:03 to 0:07 | Same view. Move the mouse slowly over the burning calendar | "Our challenge: NASA's MODIS and VIIRS fire records don't match." | 10 |
+| 0:07 to 0:10 | Same view, hold still | "Fire Census: one fire record, whichever satellite was watching." | 9 |
+| 0:10 to 0:16 | Click **Data & methods**, scroll to **Month by month**. Click **RAW** (top right): the line jumps at 2012 | "Added up, Punjab's burning jumps fivefold in 2012. That's the camera, not the fire." | 14 |
+| 0:16 to 0:20 | Click **HARMONIZED**: the jump disappears. Hold two seconds | "We measured what the older sensor can see, and the jump disappears." | 12 |
+| 0:20 to 0:25 | Click **Overview**: the answer card ("23rd highest of 25 Novembers"), then open **Critical period · has it moved?** | "Pick any area: is this month unusual? Has the season moved?" | 11 |
+| 0:25 to 0:28 | Click **Data & methods**, scroll to **Checks for Punjab and Haryana** showing passed and failed | "Every check shown, pass or fail. When MODIS ends, the record continues." | 12 |
 
-Rehearse with a stopwatch three times before recording. If any take runs over
-28 seconds, cut "What usually comes next?" first.
+Start link: https://mahabu-subhani.github.io/fire-census/?r=punjab-haryana
+
+**If a take runs over 28 seconds,** cut in this order: "Has the season moved?"
+(4 words), then "slowly" moves of the mouse, then "That's the camera, not the
+fire." (6 words). Never cut the names, the challenge or the title: the guide
+asks for them.
+
+**On-screen captions.** Add the spoken words as English subtitles (YouTube
+Studio, Subtitles, type them in). Many judges watch without sound.
+
+**What each line is for (Presentation score).** Lines 1 to 3: the guide's
+opening. Line 4: the problem in one image. Line 5: our method, in plain words.
+Line 6: what an emergency manager gets. Line 7: proof we are honest, and the
+future, because MODIS is ending.
+
+### How to record (Windows, about 20 minutes)
+
+1. Rehearse the words three times with a phone stopwatch.
+2. Open the start link in Chrome, full screen (F11), zoom 100 percent, and
+   click through every shot once so the charts are loaded and cached.
+3. Record with the Xbox Game Bar (Win + Alt + R starts and stops) or OBS. Use
+   a headset microphone in a quiet room.
+4. Do at least three takes; keep the best. Trim the start and end so the file
+   is 30 seconds or less.
+5. Upload to YouTube as **Unlisted**, add the subtitles, then open the link in
+   a private window, logged out, to confirm it plays.
 
 ## Recording checklist
 
