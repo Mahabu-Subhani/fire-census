@@ -244,13 +244,38 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   }, []);
 
   // Region outline and view.
+  // The view is fitted to the region when it is chosen, and fitted again whenever the map's
+  // size changes (layout settling, window or pane resize, phone rotation), unless the user has
+  // panned or zoomed since: a fit made at the wrong size left the map zoomed out on a continent.
+  const userMoved = useRef(false);
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !region) return;
     const rings = region.outline && region.outline.length > 0 ? region.outline : [bboxToPolygon(region.bbox)];
     (map.getSource("region") as GeoJSONSource).setData({ type: "FeatureCollection", features: rings.map((r) => polygonFeature(r)) });
     const [w, s, e, n] = region.bbox;
-    map.fitBounds([[w, s], [e, n]], { padding: framePadding(), duration: 600 });
+    const fit = (duration: number) => map.fitBounds([[w, s], [e, n]], { padding: framePadding(), duration });
+    userMoved.current = false;
+    fit(600);
+    const onUser = (ev: { originalEvent?: unknown }) => { if (ev.originalEvent) userMoved.current = true; };
+    map.on("dragstart", onUser);
+    map.on("zoomstart", onUser);
+    let last = "";
+    const observer = new ResizeObserver(() => {
+      const el = container.current;
+      if (!el) return;
+      const size = `${el.clientWidth}x${el.clientHeight}`;
+      if (size === last) return;
+      last = size;
+      map.resize();
+      if (!userMoved.current && el.clientWidth > 0 && el.clientHeight > 0) fit(0);
+    });
+    if (container.current) observer.observe(container.current);
+    return () => {
+      observer.disconnect();
+      map.off("dragstart", onUser);
+      map.off("zoomstart", onUser);
+    };
   }, [region, ready]);
 
   // Every other study area: its outline and a name tag that switches to it.
@@ -290,6 +315,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
     const e = Math.max(...regions.map((r) => r.bbox[2]));
     const n = Math.max(...regions.map((r) => r.bbox[3]));
     // Extra room at the sides so the name tags, centred on each area, stay on screen.
+    userMoved.current = true;
     const pad = framePadding();
     const wide = window.innerWidth > 860;
     map.fitBounds([[w, s], [e, n]], { padding: { ...pad, left: pad.left + (wide ? 160 : 70), right: pad.right + (wide ? 90 : 50) }, duration: 900, maxZoom: 4 });
