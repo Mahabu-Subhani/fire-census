@@ -6,7 +6,10 @@
 > written on 14 November and its scores were not redone. These statements in it
 > are no longer true:
 >
-> - "Detection-curve harmonization": the detection curve ships in no area. The
+> - "Detection-curve harmonization": the detection curve weights the harmonized
+>   count in no area (it still sets the cut-off and weights the small-fire
+>   layer; what is new in the work is listed in section 11 of
+>   `docs/EXPLAINED.md`, "What is new here?"). The
 >   hard floor (fire cells at or above the curve's midpoint) with one constant
 >   per calendar month ships in Córdoba, Chilecito and Punjab and Haryana.
 > - Validity: C3 is no longer a fail under the shipped method (Córdoba 0.117,

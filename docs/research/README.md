@@ -50,3 +50,4 @@ Time spent: <minutes>.
 | File | Question | By | Date |
 |---|---|---|---|
 | `20261115-checks-audit-seasonal-bias.md` | Are the pre-registered checks sound, and can the method pass them honestly? Finds a seasonal bias behind C3 and tests constants per calendar month | Mahabu, with the AI assistant | 15 Nov 2026 |
+| `20261115-what-is-new-after-the-rebuild.md` | After the rebuild: is the record sound, and what in the work is new? Where the curve is still used; the constants follow the sun; Aqua by season | Mahabu, with the AI assistant | 15 Nov 2026 |

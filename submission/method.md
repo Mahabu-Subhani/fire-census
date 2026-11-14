@@ -18,9 +18,10 @@ jump is the camera, not the fire.
    MODIS's detection curve: weak fires are usually missed, strong ones almost
    always caught. The record counts the fires VIIRS sees at or above the
    midpoint of that curve (the hard floor), so 2025 is measured on the same
-   scale as 2005. The curve itself is not used to weight fires in any area;
-   where it is weak, as in Punjab and Haryana, the midpoint is a cut-off we
-   use, not a measured detection limit.
+   scale as 2005. The curve does not weight that count. It weights the
+   small-fire layer below. Where the curve is weak, as in Punjab and
+   Haryana, the midpoint is a cut-off we use, not a measured detection
+   limit.
 3. *How much the older camera misses changes with the season.* In hot months
    and with different crops, MODIS misses a different share. So the count is
    scaled by a constant fitted for each calendar month, not one for the whole
@@ -28,7 +29,8 @@ jump is the camera, not the fire.
    Haryana's May read about half too high and its October a fifth too low.
 
 **What is kept.** The weak fires only VIIRS can see are not thrown away. They
-form a separate small-fire layer, mostly crop burning.
+form a separate small-fire layer, mostly crop burning: each fire VIIRS sees
+adds its chance of being missed by MODIS, read from the curve.
 
 **How we know it works.** Ten checks were written down before the data was
 opened, and every result is shown, including the ones that failed.

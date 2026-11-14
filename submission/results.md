@@ -6,8 +6,11 @@ Shipped method since 15 November (decision 57): the **hard floor with one
 conversion constant per calendar month**, in Córdoba and neighbouring areas
 (and the Chilecito case study, which borrows Córdoba's calibration) and in
 Punjab and Haryana. The hard floor counts VIIRS fire cells at or above the
-midpoint of the measured curve. **The detection curve itself ships in no
-area**; the ratio ships in Karnataka. This is what the shipping rule gives as
+midpoint of the measured curve. **The detection curve weights the harmonized
+count in no area.** It still does two jobs in every area: its midpoint is
+the cut-off wherever the hard floor ships, and it weights the small-fire
+layer (each VIIRS fire cell adds 1 minus its detection probability; see
+`pipeline/export.py`). The ratio ships in Karnataka. This is what the shipping rule gives as
 first written, with no revised check. Until 15 November the detection curve (Córdoba) and the hard
 floor (Punjab and Haryana) shipped with one year-round constant, under the
 revised check C3r; their values are kept in the ladder below.
@@ -135,8 +138,8 @@ Remaining step at 2012 (0 is perfect) and the month-by-month held-out error
 ## Evidence beyond the checks
 
 - **In Córdoba the floor's cut-off agrees with physics it never saw.** The
-  detection curve ships in no area, but its midpoint is the hard floor's
-  cut-off. Sofiev and Kouznetsov (2026) model MODIS's detection limit as
+  detection curve does not weight the harmonized count, but its midpoint is
+  the hard floor's cut-off. Sofiev and Kouznetsov (2026) model MODIS's detection limit as
   growing with pixel size (by day, 4.44 MW per km² of pixel plus 0.52 MW,
   table 1 of their preprint). At the average size of Aqua's pixels over
   Córdoba (2.23 km²) that gives 10.4 MW. Our curve, built only from whether
@@ -145,6 +148,18 @@ Remaining step at 2012 (0 is perfect) and the month-by-month held-out error
   plateau 0.118: Aqua matches even the strongest VIIRS fire cells about 12
   percent of the time above chance), so the floor there, 4.8 MW, is a cut-off
   we use, not a measured detection limit.
+- **The conversion constants follow the sun.** The twelve daytime constants
+  of the shipped model are lowest in each area's own summer: January in
+  Córdoba, June in Punjab and Haryana, and highest in June and in January.
+  Their rank correlation with the height of the midday sun is -0.99 in
+  Córdoba and -0.78 in Punjab and Haryana (`pipeline/findings.py`). Two
+  areas in opposite hemispheres agreeing fits a physical cause: MODIS misses
+  more against a hotter, brighter background, which is also why its limit
+  is higher by day than by night. Cautions: each constant pools three
+  months, so the twelve values are not independent; season, crop and fire
+  type change together, so this does not separate the causes; in Karnataka,
+  where few fires burn outside January to May, there is no such pattern
+  (-0.22).
 - **A method's error can follow the mix of weak and strong fires.** In
   Córdoba, 2012 to 2021, the hard floor's yearly error follows that mix (rank
   correlation 0.76, p = 0.011) and the ratio's does in the opposite direction
@@ -169,7 +184,8 @@ Remaining step at 2012 (0 is perfect) and the month-by-month held-out error
   percent in Punjab and Haryana since 2022 (3 percent before) and 2.5 percent
   in Córdoba (1 percent less before); log ratios 0.258, 0.028, 0.025 and
   -0.011. A MODIS-only calendar continued past 2022 would mix this in; ours
-  uses VIIRS after 2012 at a steady overpass time.
+  uses VIIRS after 2012 at a steady overpass time. Every figure in this
+  point is printed by `pipeline/findings.py`.
 - **The record reproduces a documented event.** A 2019 study reported that
   Punjab's peak burning day moved from 24 October to 4 November after 2009
   groundwater laws delayed rice planting. Across a record that spans both

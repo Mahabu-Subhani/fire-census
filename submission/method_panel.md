@@ -24,7 +24,7 @@ computed from VIIRS.
 day ({meta.calibration.months}), we asked: did Aqua also report the fire VIIRS
 saw? The answer, by fire strength, is the curve shown. Its midpoint,
 {meta.floor_mw.day} MW by day, is the cut-off the hard floor uses. The curve
-weights fires in no area. Where it is weak (Punjab and Haryana: plateau
+does not weight the harmonized count; it weights the small-fire layer. Where it is weak (Punjab and Haryana: plateau
 0.118) the cut-off is not a measured detection limit; do not call it one.
 
 **Checks.** Ten checks were written down before the data was opened. Each is

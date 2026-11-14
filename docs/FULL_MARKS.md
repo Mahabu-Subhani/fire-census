@@ -7,7 +7,8 @@
 > 13.5 times a normal July (not 8.8), still the 2nd highest of 25; "a measured
 > detection curve instead of a fitted ratio" should read "a measured strength
 > cut-off and a constant per calendar month", because the detection curve
-> ships in no area; and "the two failed checks and C3r" is replaced by what
+> weights the harmonized count in no area (it still sets the cut-off and
+> weights the small-fire layer); and "the two failed checks and C3r" is replaced by what
 > section 6 of `docs/EXPLAINED.md` now says about C3, C3x and Córdoba's yearly
 > error.
 

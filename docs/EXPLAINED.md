@@ -97,7 +97,8 @@ count once.
 
 **Fix: a measured cut-off, the hard floor.** We measure MODIS's detection curve and count only the
 VIIRS fire cells at or above its midpoint. (Until 15 November the curve itself weighted every fire
-in Córdoba. It now ships in no area; see "What ships".)
+in Córdoba. It now weights the harmonized count in no area, but it still sets
+the cut-off and weights the small-fire layer; see "What ships".)
 
 1. Take every fire cell Suomi NPP's VIIRS saw from February 2012 to December
    2017. Each is a fire we know existed, and we know its strength: the fire
@@ -158,7 +159,8 @@ month; the ladder in the app shows all six.
 as first written: the **hard floor with a constant per calendar month** in
 Córdoba, Chilecito (which borrows Córdoba's) and Punjab and Haryana; the
 conversion ratio in Karnataka, where no method passed its held-out checks.
-**The detection curve ships in no area.** In Córdoba it passes the held-out
+**The detection curve weights the harmonized count in no area.** It still does two jobs in every area: its midpoint is the cut-off wherever the hard floor ships, and it weights the small-fire layer (each VIIRS fire cell adds 1 minus its detection probability).
+In Córdoba it passes the held-out
 check better than the floor (0.072 against 0.117) and is steadier year by year,
 but it fails the 2016 placebo (C2, -0.114 against 0.10), and the rule then
 moves to the hard floor. In Punjab and Haryana it fails C3 and C8.
@@ -340,6 +342,23 @@ asked. The fully independent evidence is C4 (NOAA-20) and, in Córdoba, C5.
 ---
 
 ## 11. Questions judges will ask, with answers
+
+**"What is new here?"** Four things, all checkable in the repository. Do not say
+"first ever" of any of them.
+
+1. *A measured detection curve.* We matched every VIIRS fire to Aqua's pass on
+   the same day, and measured chance matches by searching ten squares away.
+   The curve sets the cut-off of the record and weights the small-fire layer.
+2. *A ladder, not one number.* Each cause of the 2012 jump is removed in its
+   own step, and the remaining error of all six variants is published.
+3. *A failed check that became a finding.* Our own pre-registered check
+   failed. Following it showed that the conversion between the sensors
+   follows the season: the constants track the height of the midday sun in
+   two hemispheres (-0.99 in Córdoba, -0.78 in Punjab and Haryana).
+4. *MODIS's dying orbit used as an experiment.* Aqua now passes two hours
+   later. In Punjab's rice season it has seen 48% more than our 13:10 record
+   since 2022, and nothing more in the wheat season. That fits burning
+   having moved later in the day.
 
 **"How is this different from what other teams do?"** Most fit one conversion
 number or a machine-learning model. We measured *why* the sensors differ and
