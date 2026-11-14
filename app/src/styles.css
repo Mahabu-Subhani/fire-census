@@ -193,3 +193,41 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
 .place-list li[aria-selected="true"], .place-list li:hover { background: var(--accent); color: #fff; }
 .fine-print { margin: 0; font-size: 0.75rem; color: var(--muted); }
 @media print { .place-search { display: none; } }
+
+.map-legend { display: grid; gap: 4px; font-size: 0.85rem; }
+.legend-bar { display: flex; align-items: center; gap: 8px; color: var(--muted); flex-wrap: wrap; }
+.legend-ramp { display: inline-block; width: 140px; height: 12px; border-radius: 3px; border: 1px solid var(--border); }
+
+/* Plain-language guidance for first-time visitors. */
+.mode-box { display: grid; gap: 4px; justify-items: end; max-width: 22rem; }
+.mode-help { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: right; }
+@media (max-width: 560px) { .mode-box { justify-items: start; } .mode-help { text-align: left; } }
+.live-notice { border: 1px solid var(--border); border-left: 4px solid var(--focus); background: var(--surface); border-radius: var(--radius); padding: 8px 12px; margin-bottom: 12px; }
+.live-notice p { margin: 0; }
+.start-here { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; }
+.start-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.start-here h2 { margin: 0; font-size: 1.15rem; }
+.steps { margin: 8px 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.paths summary, .glossary summary { cursor: pointer; color: var(--focus); font-weight: 600; }
+.paths dl, .glossary dl { display: grid; gap: 8px; margin: 8px 0 0; }
+.paths dt, .glossary dt { font-weight: 700; }
+.paths dd, .glossary dd { margin: 0; max-width: 75ch; }
+.examples-title { margin: 10px 0 4px; font-weight: 600; }
+.examples { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.link-button { background: none; border: 0; color: var(--focus); text-decoration: underline; padding: 4px 0; min-height: 0; cursor: pointer; }
+.area-total { margin: 0; font-size: 0.9rem; }
+.glossary, .researchers { margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; }
+.researchers h2 { margin: 0 0 8px; }
+.researchers h3 { margin: 16px 0 6px; font-size: 1rem; }
+.copy-box { display: grid; gap: 6px; margin-bottom: 8px; }
+.copy-box pre { margin: 0; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; }
+.copy-box button { justify-self: start; }
+
+/* Gloves, sunlight, small screens: bigger targets and no zoom-on-focus on phones. */
+@media (pointer: coarse) {
+  button, select, input[type="search"], .fields input, .controls select { min-height: 44px; }
+  input, select { font-size: 16px; }
+  .check input { width: 22px; height: 22px; }
+  .link-button { min-height: 44px; }
+}
+@media print { .live-notice, .start-here, .glossary, .researchers, .map-legend .check { display: none !important; } }

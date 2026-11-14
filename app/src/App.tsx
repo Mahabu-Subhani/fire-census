@@ -8,8 +8,13 @@ import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
 import EvidencePanel, { ChecksBadge } from "./evidence/EvidencePanel";
 import ErrorBoundary from "./ErrorBoundary";
+import ForResearchers from "./guide/ForResearchers";
+import Glossary from "./guide/Glossary";
+import LiveNotice from "./guide/LiveNotice";
+import StartHere from "./guide/StartHere";
 import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
+import { unitLabel, value } from "./stats";
 
 function formatDate(iso: string): string {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -29,12 +34,19 @@ function Header() {
         <p className="tagline">One fire record, whichever satellite was watching.</p>
       </div>
       <ChecksBadge />
-      <div className="switch" role="group" aria-label="Record shown">
-        {(["harmonized", "raw"] as const).map((m) => (
-          <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
-            {m === "harmonized" ? "Harmonized" : "Raw"}
-          </button>
-        ))}
+      <div className="mode-box">
+        <div className="switch" role="group" aria-label="Record shown" aria-describedby="mode-help">
+          {(["harmonized", "raw"] as const).map((m) => (
+            <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
+              {m === "harmonized" ? "Harmonized" : "Raw"}
+            </button>
+          ))}
+        </div>
+        <p id="mode-help" className="mode-help">
+          {mode === "harmonized"
+            ? "Comparable across all years, whichever satellite was flying."
+            : "As the satellites reported. Jumps in 2012 when VIIRS starts: do not compare years in this view."}
+        </p>
       </div>
     </header>
   );
@@ -46,6 +58,7 @@ function Controls() {
   const { regions, setRegion, setShowSmall, error, polygon, cellCount } = useSelectionActions();
   const [copied, setCopied] = useState(false);
   const areaLabel = place ?? (polygon ? "Drawn area" : "Whole region");
+  const total = rows.reduce((sum, r) => sum + value(r, mode), 0);
 
   const download = () => {
     if (!region || !meta) return;
@@ -79,10 +92,17 @@ function Controls() {
         {areaKm2 !== null && <>, {Math.round(areaKm2).toLocaleString("en-GB")} km²</>}
         {cellCount !== null && <>, {cellCount.toLocaleString("en-GB")} grid cells</>}
       </p>
+      {status === "ready" && areaKm2 !== null && areaKm2 > 0 && (
+        <p className="area-total">
+          Total for these dates: <strong>{Math.round(total).toLocaleString("en-GB")}</strong>{" "}
+          ({(total / areaKm2 * 1000).toLocaleString("en-GB", { maximumFractionDigits: 1 })} per 1,000 km², for comparing areas of
+          different size), in {unitLabel(meta, mode)}.
+        </p>
+      )}
       <DateRange />
       <label className="check">
         <input type="checkbox" checked={showSmall} onChange={(e) => setShowSmall(e.target.checked)} />
-        Show small fires (seen only by VIIRS, from 2012)
+        Show small fires on the charts (weak fires only the newer VIIRS satellites can see, from 2012)
       </label>
       <div className="actions">
         <button type="button" onClick={download} disabled={!meta || status === "loading"}>Download CSV</button>
@@ -136,6 +156,8 @@ export default function App() {
     <div className="app">
       <Header />
       <PrintHeader />
+      <LiveNotice />
+      <StartHere />
       <main className="layout">
         <div className="left">
           <Controls />
@@ -156,6 +178,10 @@ export default function App() {
       </main>
       <ErrorBoundary name="the method and checks panel">
         <EvidencePanel />
+      </ErrorBoundary>
+      <Glossary />
+      <ErrorBoundary name="the researchers section">
+        <ForResearchers />
       </ErrorBoundary>
       <footer className="app-footer">
         <Freshness />

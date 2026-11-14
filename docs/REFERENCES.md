@@ -23,3 +23,4 @@ Add a row when you add the resource, not at the end.
 | geoBoundaries gbOpen Argentina ADM2 (2020; source Instituto Geográfico Nacional, UNHCR, OCHA ROLAC) | Boundary data | https://www.geoboundaries.org/api/current/gbOpen/ARG/ADM2/ | Department search, Córdoba and Chilecito areas | CC BY 3.0 IGO |
 | geoBoundaries gbOpen Argentina ADM1 | Boundary data | https://www.geoboundaries.org/api/current/gbOpen/ARG/ADM1/ | Province names in labels. We corrected the source's "La Roja" to "La Rioja" | CC BY 2.5 |
 | geoBoundaries project (Runfola et al. 2020, PLoS ONE 15(4): e0231866) | Citation | https://www.geoboundaries.org | Credit for all boundary data above. VERIFY the citation before submission | |
+| NASA FIRMS Fire Map (live) | NASA tool, linked | https://firms.modaps.eosdis.nasa.gov/map/ | "Fires burning now" link for the selected area; our app is a historical record | NASA open data |

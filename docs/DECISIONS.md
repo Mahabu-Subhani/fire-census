@@ -96,6 +96,12 @@ early warning and emergency response. Points that change our plan:
 | 32 | Minimum activity for the status sentence | Say "too little activity to judge" when both the historical median and this month are below **5** (harmonized units, on the same days of the month). Below 5 earlier years, decision 12 still says "not enough history" | Charulekha, 14 Nov. Reason in her own words: **to be added by Charulekha**. The AI assistant laid out three options (this one, a share of active years, no minimum) with evidence from our data: Chilecito, 1 to 5 November, has 0 this year and a median of 0 over 24 years, which ranked as "joint 14th of 25" |
 | 33 | Default baseline for comparisons | **All years** since harmonization (2002 onwards), matching the challenge's "historical median". "Last 10 years" is offered as a switch beside it | Charulekha, 14 Nov. Reason in her own words: **to be added by Charulekha**. Evidence shown: 1 to 5 November medians, all years against last 10, are 2,398 against 2,274 (Punjab and Haryana) and 16 against 12 (Córdoba) |
 
+## User guidance (added 14 November)
+
+| # | Decision | Answer | Why |
+|---|---|---|---|
+| 34 | Plain-language guidance for every audience in the challenge | A "not a live alert service" notice with a link to NASA's live FIRMS map for the area; a Start-here guide with three steps, a path per audience (emergency teams, firefighters, land managers, scientists) and example views; the meaning of Raw and Harmonized under the switch; a glossary; total and per-1,000 km² activity for the area; a fire-activity layer on the map; a For-researchers section (citation, whole files, data dictionary, Python and R); 44 px touch targets on phones | 8crsk (team lead), 14 Nov: the challenge names four audiences and the UI served mainly the analyst |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -103,3 +109,4 @@ early warning and emergency response. Points that change our plan:
 | 13 Nov 2026 | Mahabu | Accepted the AI-recommended defaults above | To start on time; team to review |
 | 14 Nov 2026 | All three | Decision 28: app vision and contract fields | See row 28 |
 | 14 Nov 2026 | Charulekha | Decisions 32 and 33: minimum activity and default baseline for the status sentence | See rows 32 and 33 |
+| 14 Nov 2026 | 8crsk | Decision 34: plain-language guidance per audience | See row 34 |

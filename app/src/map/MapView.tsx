@@ -5,9 +5,11 @@
 //   polygon: tap each corner, then tap the first point or press Finish.
 import maplibregl, { type GeoJSONSource, type Map as MLMap, type MapMouseEvent } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { bboxToPolygon } from "../data/select";
 import { useSelection, useSelectionActions, type Polygon } from "../selection";
+import { unitLabel } from "../stats";
+import { ACTIVITY_RAMP, activityCells } from "./activity";
 
 // OpenFreeMap: free OpenStreetMap vector tiles, no key (see docs/REFERENCES.md).
 const STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
@@ -68,8 +70,10 @@ export default function MapView() {
 }
 
 function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
-  const { region } = useSelection();
+  const { region, rows, mode, meta } = useSelection();
   const { polygon, setPolygon } = useSelectionActions();
+  const [showActivity, setShowActivity] = useState(true);
+  const activity = useMemo(() => (region ? activityCells(rows, mode, region.cell_deg) : null), [rows, mode, region]);
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
   const [ready, setReady] = useState(false);
@@ -94,7 +98,16 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
     map.getCanvas().addEventListener("webglcontextlost", () => onFail("the graphics context was lost"));
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => {
-      for (const id of ["region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
+      for (const id of ["activity", "region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
+      map.addLayer({
+        id: "activity-fill",
+        type: "fill",
+        source: "activity",
+        paint: {
+          "fill-color": ["interpolate", ["linear"], ["get", "t"], ...ACTIVITY_RAMP.flatMap((c, i) => [i / (ACTIVITY_RAMP.length - 1), c])],
+          "fill-opacity": 0.75,
+        },
+      });
       map.addLayer({ id: "region-line", type: "line", source: "region", paint: { "line-color": "#6b7280", "line-width": 1.5, "line-dasharray": [2, 2] } });
       map.addLayer({ id: "selection-fill", type: "fill", source: "selection", paint: { "fill-color": "#d9480f", "fill-opacity": 0.12 } });
       map.addLayer({ id: "selection-line", type: "line", source: "selection", paint: { "line-color": "#d9480f", "line-width": 2.5 } });
@@ -144,6 +157,13 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
     const [w, s, e, n] = region.bbox;
     map.fitBounds([[w, s], [e, n]], { padding: 24, duration: 600 });
   }, [region, ready]);
+
+  // Fire activity per cell for the area and dates shown.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    (map.getSource("activity") as GeoJSONSource).setData(showActivity && activity ? activity.collection : empty);
+  }, [activity, showActivity, ready]);
 
   // Current selection.
   useEffect(() => {
@@ -199,6 +219,25 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
         <span className="hint" aria-live="polite">{hint}</span>
       </div>
       <div ref={container} className="map" />
+      <div className="map-legend">
+        <label className="check">
+          <input type="checkbox" checked={showActivity} onChange={(e) => setShowActivity(e.target.checked)} />
+          Show where it burned
+        </label>
+        {showActivity && activity && activity.max > 0 && (
+          <div className="legend-bar" aria-label={`Colour scale from low to ${Math.round(activity.max).toLocaleString("en-GB")}`}>
+            <span>Less</span>
+            <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ACTIVITY_RAMP.join(", ")})` }} />
+            <span>More (up to {Math.round(activity.max).toLocaleString("en-GB")} per cell)</span>
+          </div>
+        )}
+        {showActivity && activity && (
+          <p className="fine-print">
+            Each square is one grid cell (about 11 km), coloured by its total over the dates chosen, in {unitLabel(meta, mode)}.
+            {activity.max === 0 && " No activity in this area and date range."}
+          </p>
+        )}
+      </div>
     </section>
   );
 }
