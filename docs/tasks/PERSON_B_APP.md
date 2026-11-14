@@ -1,4 +1,5 @@
 # Person B (8crsk): app foundation, map and controls
+> **Prompts for each phase:** `docs/prompts/PERSON_B.md`. **Current decisions:** `docs/DECISIONS.md` (it overrides anything below marked DECIDE). **Also read:** `docs/PREREGISTRATION.md` and `docs/RESEARCHER_EXPERIENCE.md`, written after this checklist; where they add work (checks panel, per-chart downloads, shareable link, small-fire layer as core, the Chilecito case study), the phase prompts include it.
 
 The web app is shared between two people. You build the **foundation**: the
 project, deployment, data loading, map, area and date selection, downloads and

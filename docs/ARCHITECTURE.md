@@ -130,13 +130,30 @@ in APPROACH.md is internal to the pipeline. DECIDE 0.05 if files stay small.
   "level_shipped": "L2",
   "floor_mw": { "day": null, "night": null },
   "ladder": [ { "level": "L0", "step_ratio": null } ],
-  "tests": [ { "id": "T1", "pass": null, "value": null, "threshold": null } ],
+  "checks": [
+    { "id": "C1", "name": "No seam at 2012", "value": null,
+      "threshold": "absolute value at most 0.10",
+      "verdict": "not run", "note": "" }
+  ],
+  "curve": { "day": [ { "frp": null, "p": null, "p_lo": null, "p_hi": null } ],
+             "night": [] },
+  "data_version": "0.1.0",
+  "code_commit": "",
   "generated_at": "2026-11-14T00:00:00Z",
   "sources": ["MODIS C6.1 (MCD14ML / MCD14DL)", "VIIRS 375 m S-NPP, NOAA-20, NOAA-21"]
 }
 ```
 
 `null` values above are placeholders. Real values come only from the pipeline.
+
+`checks` holds one entry per check in `docs/PREREGISTRATION.md` (C0 to C8).
+`verdict` is exactly one of `pass`, `fail` or `not run`. `curve` holds the
+points of the detection curve for the method panel; it is empty if the hard
+floor shipped. The older name `tests` is replaced by `checks`.
+
+Optional cube field, present only if the observation-aware step is completed:
+`obs` (integer or null), the number of valid clear observations of the cell in
+that month. The app must treat a missing or null `obs` as "unknown", never as zero.
 
 ### `app/public/data/<region_id>/hotspots/<YYYY>.csv.gz` (stretch goal)
 

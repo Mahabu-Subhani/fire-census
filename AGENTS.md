@@ -20,6 +20,11 @@ harmonization method that is physically explained and tested, not a black-box ra
 5. `docs/AI_USE.md`: how AI assistance must be labelled.
 6. `docs/STRETCH.md`: optional ambitious goals, only after the Saturday 19:30 checkpoint.
 7. `docs/DECISIONS.md`: the answer to every item marked DECIDE elsewhere. It overrides them.
+8. `docs/PREREGISTRATION.md`: the checks and thresholds, fixed before the data was opened. Never edit a threshold.
+9. `docs/RESEARCHER_EXPERIENCE.md`: what each kind of visitor must be able to do on the site.
+10. `docs/handoffs/`: the newest note for your person, if any.
+
+Ready-made prompts per person and phase are in `docs/prompts/`.
 
 Person A is Mahabu Subhani (data, science and technical writing). The web app is
 split: Person B is 8crsk (app foundation, map and controls) and Person C is

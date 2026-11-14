@@ -1,4 +1,5 @@
 # Person A (Mahabu Subhani): data and science
+> **Prompts for each phase:** `docs/prompts/PERSON_A.md`. **Current decisions:** `docs/DECISIONS.md` (it overrides anything below marked DECIDE). **Also read:** `docs/PREREGISTRATION.md` and `docs/RESEARCHER_EXPERIENCE.md`, written after this checklist; where they add work (checks panel, per-chart downloads, shareable link, small-fire layer as core, the Chilecito case study), the phase prompts include it.
 
 You own `pipeline/` and `data/`, and you write the files in `app/public/data/`.
 Everything else in the project depends on your output, so ship something small

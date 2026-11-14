@@ -1,4 +1,5 @@
 # Person C (Charulekha Rajesh): charts, demo and submission
+> **Prompts for each phase:** `docs/prompts/PERSON_C.md`. **Current decisions:** `docs/DECISIONS.md` (it overrides anything below marked DECIDE). **Also read:** `docs/PREREGISTRATION.md` and `docs/RESEARCHER_EXPERIENCE.md`, written after this checklist; where they add work (checks panel, per-chart downloads, shareable link, small-fire layer as core, the Chilecito case study), the phase prompts include it.
 
 The web app is shared between two people. 8crsk (Person B) builds the
 foundation: deployment, map, controls and data loading. You build the
