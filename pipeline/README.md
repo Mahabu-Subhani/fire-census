@@ -7,7 +7,29 @@ record, runs the pre-registered checks, and writes every file the app reads.
 Method and results: `NOTES.md` (Phase 1), `NOTES_PHASE2.md`, `NOTES_PHASE3.md`,
 and `submission/results.md`.
 
-## What you need
+## The short way: rebuild from the files in this repository
+
+The app ships every detection inside each area, with the reason any of them
+was left out (`app/public/data/<area>/hotspots/`). `from_hotspots.py` turns
+those files back into the cleaned tables, so steps 4 to 7, 8e, 9 and 10 below
+run with no NASA request, no account and no download:
+
+```bash
+cd pipeline
+python from_hotspots.py     # work/<area>.parquet and <area>_with_low_conf.parquet, 1 min
+python harmonize.py && python validate.py && python loyo.py
+python sensitivity.py && python evidence.py && python export.py && python stretch.py && python figures.py
+```
+
+Without `FIRE_DATA` set, the work files go to `data/` in the repository
+(git-ignored). What this route cannot recompute is carried over unchanged from
+the files already in `app/public/data/`: clear-view days (`obs`) and the
+burned-area checks C6 and C6m. Run on 14 November from a fresh clone: every
+check value of every method in all four areas matched the published
+`meta.json`, and the Punjab, Chilecito and Karnataka cubes matched byte for
+byte (Córdoba: the one cell-month described under "Reproduction test").
+
+## What you need (the full way, from the FIRMS archive)
 
 - Python 3.11 or newer (developed on 3.14, Windows 11).
 - About 4 GB of free disk for raw and intermediate data, plus about 4 GB if you
@@ -48,7 +70,7 @@ Times are from a 32 GB Windows laptop.
 | 1b. Exact outlines (Punjab and Haryana) | `$PY make_areas.py` | `pipeline/areas/<area>.json` (in git) | 5 s |
 | 2. Clean, cut out the areas (and clip to an outline) | `$PY clean.py` | `$FIRE_DATA/work/<area>.parquet`, `clean_report.json` | 30 s |
 | 3. Raw record figures | `$PY raw_jump.py` | `submission/figures/raw_jump_<area>.png` | 20 s |
-| 4. Harmonize (fire cells, detection curve, floor, ratio) | `$PY harmonize.py` | `work/<area>_{cells,weights,series,daily}.parquet`, `curves.json` | 30 s |
+| 4. Harmonize (fire cells, detection curve, floor, ratio) | `$PY harmonize.py` | `work/<area>_{cells,weights,series}.parquet`, `curves.json` | 30 s |
 | 5. Pre-registered checks | `$PY validate.py` | `work/checks.json` | 10 s |
 | 6. Sensitivity and orbit drift | `$PY sensitivity.py` | `work/sensitivity.json`, copies in `$FIRE_DATA-sens/` | 4 min |
 | 7. Reviewer objections, C5, drift figure | `$PY evidence.py` | `work/evidence.json`, `figures/orbit_drift.png` | 30 s |
@@ -70,6 +92,15 @@ Tests, from the repository root:
 $FIRE_DATA/venv/Scripts/python -m pytest pipeline/tests -q
 ```
 
+| Test file | Tests | Needs the downloaded data |
+|---|---|---|
+| `tests/test_clean.py` | The cleaned tables: rows conserved, inside the area, mission dates, pixel sizes | Yes (skipped without it) |
+| `tests/test_method.py` | The method on simulated fires with a known answer: the code gets a known detection curve back, the curve record stays within 5 percent when the mix of weak and strong fires changes, one constant ratio is off by more than 30 percent in the same cases; the step statistic, the change-point test and the shipping rule; one test for each error corrected on 14 November (hard-floor constant, daily series for C7, change-point check on too few months) | No |
+| `tests/test_docs_numbers.py` | `README.md` and `submission/results.md` quote the values in `app/public/data/<area>/meta.json` | No |
+
+The last two run in a fresh clone. Simulated fires test the code and the
+logic; they are not evidence about real fires and are not a pre-registered check.
+
 Without step 8, `export.py` writes `obs` as null and the app treats it as
 unknown. `export.py` reads `pipeline/shipping.json` to decide which model fills
 `harm` in each area; change that file only through a recorded decision
@@ -88,7 +119,8 @@ unknown. `export.py` reads `pipeline/shipping.json` to decide which model fills
 | `sensitivity.py` | Reruns steps 4 and 5 with one setting changed at a time; Aqua against the record before and after its orbit drift |
 | `evidence.py` | Tests of reviewer objections; check C5 against the published detection limits; the drift figure |
 | `obs.py` | Clear-view days per cell and month from Aqua's daily fire masks |
-| `export.py` | The app's data files in the contract shape (`docs/ARCHITECTURE.md`) |
+| `from_hotspots.py` | Rebuilds the cleaned tables from the hotspot files shipped with the app (the short way above) |
+| `export.py` | The app's data files in the contract shape (`docs/ARCHITECTURE.md`); carries over `obs`, C5, C6 and C6m from the published files when their inputs are absent |
 | `figures.py` | Figures for the method panel and the project page |
 | `hotspots.py` | Per-year hotspot files: original FIRMS columns plus `harm_class`, `harm_reason`, `detect_prob` |
 | `shipping.json` | Which model ships in each area, and why |
