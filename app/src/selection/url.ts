@@ -3,8 +3,8 @@
 // the query string, so opening the link restores the same view.
 import type { Mode, Polygon } from "../data/types";
 
-/** Overview for everyone; research adds every chart, the method and the data. */
-export type View = "overview" | "research";
+/** Overview for everyone; research adds every chart, the method and the data; ask is the question bar alone. */
+export type View = "overview" | "research" | "ask";
 
 export interface UrlState {
   region?: string;
@@ -42,7 +42,8 @@ export function parseUrlState(search: string): UrlState {
   const mode = q.get("m");
   if (mode === "raw" || mode === "harmonized") state.mode = mode;
   if (q.get("s") === "1") state.small = true;
-  if (q.get("v") === "research") state.view = "research";
+  const view = q.get("v");
+  if (view === "research" || view === "ask") state.view = view;
   return state;
 }
 
@@ -57,6 +58,6 @@ export function buildUrlState(state: Required<Omit<UrlState, "place" | "polygon"
   q.set("to", state.to);
   q.set("m", state.mode);
   if (state.small) q.set("s", "1");
-  if (state.view === "research") q.set("v", "research");
+  if (state.view === "research" || state.view === "ask") q.set("v", state.view);
   return `?${q.toString()}`;
 }

@@ -108,3 +108,26 @@ Leaving one year out at a time over 2012 to 2021, the shipped model is within
 0.10 of Aqua in 8 of 10 years in Córdoba (largest miss 0.181, in 2013) and in
 8 of 10 in Punjab and Haryana (largest 0.132). Chilecito borrows Córdoba's
 model and cannot be tested this way.
+
+### 14 November 2026, about 23:30 IST: correction to results reported above (drafted by the AI assistant; decision 54, made on Mahabu's instruction)
+
+No threshold and no definition is changed. An error in the code was found and
+fixed (`pipeline/NOTES_PHASE3.md`, "Corrections after an independent read of
+the code"): the hard floor's constant was fitted on a different rule from the
+one it was applied with. Values in the notes above that change:
+
+- **C3, hard floor, Punjab and Haryana (the clipped area): 0.169, fail.** It
+  had been reported as 0.144, pass, and the shipped method there was said to
+  pass every pre-registered check that applies to it. That is withdrawn.
+  Under the original C3 the constant ratio ships in both calibrated areas;
+  under C3r (decision 30) the detection curve ships in Córdoba and the hard
+  floor in Punjab and Haryana, as this file's note of 12:30 already said.
+- **C3r, hard floor:** Córdoba -0.077, Punjab and Haryana -0.042. Both pass.
+- **C1x table, hard floor column:** Córdoba +0.058 pass, Punjab and Haryana
+  +0.023 pass, Karnataka +0.003 pass. Leave-one-year-out for the shipped model
+  in Punjab and Haryana: 8 of 10 within 0.10, largest 0.129.
+- **C7** is now computed on the shipped model: +8.2 days, p = 0.0009.
+- **C1b** is reported as "not run" where fewer months are available than the
+  test needs to reach p < 0.05 at all (Chilecito, 4 months).
+- **C8** is read on the daytime curve, as before; the check row now states
+  that the night curve would be over the limit.

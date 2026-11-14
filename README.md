@@ -44,8 +44,8 @@ regions, not worldwide.
 
 | Step at 2012 (1.0 = no jump) | Córdoba | Punjab and Haryana |
 |---|---|---|
-| Raw record | about 5.2× | about 5.4× |
-| After harmonization | 1.05× | 1.00× |
+| Raw record | about 5.2× | about 5.3× |
+| After harmonization | 1.05× | 0.98× |
 
 ## How we tested it, including what failed
 
@@ -56,13 +56,19 @@ Ten checks and their limits were written down before the data was analysed
   reproduces the record (slope 0.951, correlation 0.987), the curve is stable
   when resampled.
 - **Caveat on the 2012 check:** the fitted constant overlaps the test window.
-  Fitted out of sample, the step is 0.106 against a limit of 0.10.
-- **Failed:** the month-by-month held-out check (0.207 against 0.15). We added
-  a two-year-total check afterwards and report both.
+  Refitted without those years (check C1x, added afterwards and labelled so:
+  fitted on 2015 to 2021, tested on 2012 to 2015) the step is 0.087 against a
+  limit of 0.10, a pass, while a plain conversion ratio fails the same test
+  (0.143). On a shorter fit, 2016 to 2017 only, the curve is just over (0.106).
+- **Failed:** the month-by-month held-out check (0.207 against 0.15). A plain
+  conversion ratio passes this one (0.120), so under the rule as first written
+  the ratio would ship. We added a two-year-total check afterwards, ship the
+  curve under it, and report both verdicts.
 - **Failed:** the comparison with ESA burned area in Córdoba. Aqua alone fails
   it the same way.
 - **Weaker regions:** Punjab's curve was too unstable to ship, so a simpler
-  threshold is used there. Chilecito and Karnataka fail several checks and are
+  threshold is used there; it fails the same month-by-month check (0.169) and
+  passes the two-year one. Chilecito and Karnataka fail several checks and are
   labelled in the app.
 
 Full limits: [submission/limits.md](submission/limits.md).
@@ -75,7 +81,22 @@ App (Node 20 or newer):
 cd app && npm install && npm run dev
 ```
 
-Tests: `npm test` in `app/`. Rebuilding the data from FIRMS archive files:
+Tests: `npm test` in `app/`.
+
+**Check our numbers yourself, from this repository alone.** Every detection we
+used ships with the app, so the method can be rerun with no NASA account and
+no download (Python 3.11 or newer, about 15 minutes):
+
+```bash
+pip install duckdb pandas pyarrow numpy scipy scikit-learn pytest
+```
+
+```bash
+cd pipeline && python from_hotspots.py && python harmonize.py && python validate.py && python loyo.py
+```
+
+`validate.py` prints every check for every method; they match the Checks panel
+in the app. Rebuilding from the original FIRMS archive files, and the tests:
 [pipeline/README.md](pipeline/README.md).
 
 ## Team

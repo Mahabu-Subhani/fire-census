@@ -18,6 +18,10 @@ from config import AREAS, WORK  # noqa: E402
 FIRST_DATE = {"Terra": "2000-11-01", "Aqua": "2002-07-01", "S-NPP": "2012-01-20",
               "NOAA-20": "2018-04-01", "NOAA-21": "2023-03-01"}
 con = duckdb.connect()
+# These checks read the cleaned tables, which are not in git. Without them (a fresh clone
+# before clean.py has run) they are skipped; test_method.py and test_docs_numbers.py still run.
+pytestmark = pytest.mark.skipif(not (WORK / "clean_report.json").exists(),
+                                reason="needs the cleaned tables: run pipeline/clean.py first")
 
 
 @pytest.fixture(scope="module")

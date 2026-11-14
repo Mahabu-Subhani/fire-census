@@ -20,4 +20,10 @@ Atmosphere Near real-time Capability for Earth observations (LANCE)."
 
 Partner agency context: the challenge was authored by CONAE (Argentina). We
 cite its hotspot service as context and use one of its places, Córdoba, as the
-lead region. No CONAE or ESA data was processed.
+lead region. No CONAE data was processed. Two ESA datasets were: Fire_cci
+burned area v5.1 (CEDA archive; check C6) and WorldCover 2021 (Microsoft
+Planetary Computer; land cover of fire cells).
+
+Dates: the FIRMS archive files end on 5 Nov 2026; `pipeline/refresh.py` added
+6 to 13 Nov 2026 from the FIRMS area API (MODIS, NOAA-20 and NOAA-21; Suomi
+NPP stopped on 2 Nov 2026).

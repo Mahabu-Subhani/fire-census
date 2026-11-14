@@ -40,6 +40,10 @@ CHECKS = [
     ("C8", "Curve is stable under resampling", "90% range at most 50% of the midpoint"),
 ]
 MODEL_NAMES = {"S0": "Detection curve", "L2": "Hard floor", "L1r": "Constant ratio (fallback)"}
+# How the shipped model turns VIIRS into the unit; ends the sentence in meta.unit_note.
+UNIT_HOW = {"S0": "the detection curve",
+            "L2": "the hard floor (only fires at or above MODIS's detection limit are counted)",
+            "L1r": "one constant conversion ratio"}
 
 
 def verdict_of(ok: bool) -> str:
@@ -52,6 +56,38 @@ def git_commit() -> str:
                               capture_output=True, text=True).stdout.strip()
     except OSError:
         return ""
+
+
+def previous_export(area_id: str) -> tuple[dict, pd.DataFrame | None]:
+    """The check rows and `obs` values of the export already in the repo.
+
+    obs (Aqua fire masks), C5 (published limits) and C6, C6m (burned area) need
+    downloads that a rebuild from the shipped hotspot files (from_hotspots.py)
+    does not have. When their work files are absent, the values already
+    published are carried over unchanged instead of being written as "not run".
+    """
+    out = APP_DATA / area_id
+    rows, obs = {}, None
+    if (out / "meta.json").exists():
+        rows = {c["id"]: c for c in json.loads((out / "meta.json").read_text(encoding="utf-8"))["checks"]}
+    if (out / "cube.json").exists():
+        obs = pd.DataFrame(json.loads((out / "cube.json").read_text(encoding="utf-8")))[["lon", "lat", "ym", "obs"]]
+        obs = obs.dropna(subset=["obs"])
+    return rows, obs
+
+
+def carried(prev: dict, cid: str, borrowed: str, stale: str = "") -> dict:
+    """A previously published check row, as export.py's `got`, without the borrowed-calibration suffix.
+
+    `stale` (shipping.json, "carried_note") is added when the carried value was computed
+    before a correction to the record and has not been recomputed since.
+    """
+    row = prev.get(cid)
+    if not row or row.get("verdict") == "not run":
+        return {}
+    note = (row.get("note") or "").replace(borrowed, "").replace(stale, "").strip() if stale else \
+        (row.get("note") or "").replace(borrowed, "").strip()
+    return {"value": row.get("value"), "verdict": row["verdict"], "note": (note + " " + stale).strip()}
 
 
 def display(df: pd.DataFrame) -> pd.DataFrame:
@@ -68,7 +104,11 @@ def keep_dates(df: pd.DataFrame, date_filter) -> pd.DataFrame:
     return df[date_filter(pd.to_datetime(df["acq_date"])).to_numpy()]
 
 
-def build_cube(area: str, model: str, variant: str, rel_sd: float, date_filter=None) -> pd.DataFrame:
+REL_SD_KEY = {"S0": "rel_sd_k", "L2": "rel_sd_k_floor", "L1r": "rel_sd_k_ratio"}
+
+
+def build_cube(area: str, model: str, variant: str, rel_sd: dict, date_filter=None) -> pd.DataFrame:
+    """rel_sd: relative spread of the shipped model's constant, {"D": day, "N": night}."""
     key = ["lon", "lat", "ym"]
     cells = display(keep_dates(pd.read_parquet(WORK / f"{area}_cells.parquet"), date_filter))
     raw = keep_dates(pd.read_parquet(WORK / f"{area}.parquet", columns=["cx", "cy", "acq_date", "sensor"]),
@@ -85,19 +125,23 @@ def build_cube(area: str, model: str, variant: str, rel_sd: float, date_filter=N
     w = display(keep_dates(pd.read_parquet(WORK / f"{area}_weights.parquet"), date_filter))
     col = f"{model}_{variant}"
     w["w"], w["w2"], w["sm"] = w[col], w[col] ** 2, 1.0 - w[f"p_{variant}"]
-    per = w.groupby(key + ["satellite"])[["w", "w2", "sm"]].sum().reset_index()
+    w["wd"], w["wn"] = w["w"].where(w["dn"] == "D", 0.0), w["w"].where(w["dn"] == "N", 0.0)
+    per = w.groupby(key + ["satellite"])[["w", "w2", "sm", "wd", "wn"]].sum().reset_index()
     lo = per["satellite"].map(lambda s: VIIRS_OPS[s][0])
     hi = per["satellite"].map(lambda s: VIIRS_OPS[s][1])
     per = per[(per["ym"] >= lo) & (per["ym"] <= hi)]
     n_ops = per["ym"].map(lambda m: sum(a <= m <= b for a, b in VIIRS_OPS.values()))
     per["w"], per["sm"], per["w2"] = per["w"] / n_ops, per["sm"] / n_ops, per["w2"] / n_ops ** 2
-    v = per.groupby(key)[["w", "w2", "sm"]].sum()
+    per["wd"], per["wn"] = per["wd"] / n_ops, per["wn"] / n_ops
+    v = per.groupby(key)[["w", "w2", "sm", "wd", "wn"]].sum()
 
     cube = cube.join(v, how="outer").fillna(0.0).reset_index()
     late = cube["ym"] >= VIIRS_START
     early = cube["ym"] < HARMONIZED_FROM
     cube["harm"] = np.where(late, cube["w"], np.where(early, cube["terra"], cube["aqua"]))
-    sd = np.where(late, np.sqrt(cube["w2"] + (rel_sd * cube["w"]) ** 2), 0.0)
+    # Counting noise of the cells, plus the uncertainty of the day and of the night constant.
+    sd = np.where(late, np.sqrt(cube["w2"] + (rel_sd["D"] * cube["wd"]) ** 2
+                                + (rel_sd["N"] * cube["wn"]) ** 2), 0.0)
     cube["harm_lo"] = np.clip(cube["harm"] - 1.645 * sd, 0, None)
     cube["harm_hi"] = cube["harm"] + 1.645 * sd
     cube["small"] = np.where(late, cube["sm"], 0.0)
@@ -118,7 +162,10 @@ def main() -> None:
         donor = curves["transfer"].get(area_id, area_id)
         fits = curves["areas"][donor]
         fd, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
-        cube = build_cube(area_id, model, variant, fd["rel_sd_k"])
+        prev_rows, prev_obs = previous_export(area_id)
+        borrowed = f"curve and constants borrowed from {donor}; too few fires here to calibrate"
+        rel_sd = {"D": fd[REL_SD_KEY[model]], "N": fn[REL_SD_KEY[model]]}
+        cube = build_cube(area_id, model, variant, rel_sd)
 
         # Freshness and month-to-date (contract fields added 14 Nov, docs/APP_VISION.md).
         dates = pd.read_parquet(WORK / f"{area_id}.parquet", columns=["acq_date", "is_nrt"])
@@ -126,7 +173,7 @@ def main() -> None:
         through = dates["acq_date"].max()
         nrt_from = dates.loc[dates["is_nrt"], "acq_date"].min().strftime("%Y-%m")
         mon, day = through.month, through.day
-        part = build_cube(area_id, model, variant, fd["rel_sd_k"],
+        part = build_cube(area_id, model, variant, rel_sd,
                           date_filter=lambda d: (d.dt.month == mon) & (d.dt.day <= day))
         cube = cube.merge(part[["lon", "lat", "ym", "harm"]].rename(columns={"harm": "mtd"}),
                           on=["lon", "lat", "ym"], how="left")
@@ -136,11 +183,14 @@ def main() -> None:
 
         # Optional `obs`: mean clear-view days per 1 km pixel, from Aqua's daily fire masks (obs.py).
         obs_file = WORK / f"obs_{area_id}.parquet"
-        if obs_file.exists():
-            obs = pd.read_parquet(obs_file)[["lon", "lat", "ym", "obs"]]
+        if obs_file.exists() or prev_obs is not None:
+            obs = pd.read_parquet(obs_file)[["lon", "lat", "ym", "obs"]] if obs_file.exists() else prev_obs
             obs["lon"], obs["lat"] = obs["lon"].round(3), obs["lat"].round(3)
             cube["lon"], cube["lat"] = cube["lon"].round(3), cube["lat"].round(3)
             cube = cube.merge(obs, on=["lon", "lat", "ym"], how="left")
+            # obs cannot exceed the days in the month. Values above it came from dates counted twice
+            # in obs.py (fixed there on 14 Nov; January is still up to 3 days high until it is rerun).
+            cube["obs"] = np.minimum(cube["obs"], pd.to_datetime(cube["ym"] + "-01").dt.days_in_month)
         else:
             cube["obs"] = np.nan
 
@@ -161,7 +211,7 @@ def main() -> None:
         for cid, cname, threshold in CHECKS:
             got = dict(mine.get(cid, {}))
             if cid == "C7" and "C7" in res:
-                got = {"value": res["C7"]["value"], "verdict": res["C7"]["verdict"]}
+                got = {"value": res["C7"][model]["value"], "verdict": res["C7"][model]["verdict"]}
             if cid == "C5" and (WORK / "evidence.json").exists():
                 c5 = json.loads((WORK / "evidence.json").read_text(encoding="utf-8"))["c5"].get(donor)
                 if c5:
@@ -173,6 +223,8 @@ def main() -> None:
                            "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. "
                                    f"At the mean Aqua pixel size over this area the published day limit is "
                                    f"{dd['published_at_mean_pixel_MW']} MW"}
+            if cid == "C5" and not (WORK / "evidence.json").exists():
+                got = carried(prev_rows, cid, borrowed) or got
             if cid == "C6":
                 c6_file = WORK / "c6.json"
                 c6 = json.loads(c6_file.read_text(encoding="utf-8")).get(area_id) if c6_file.exists() else None
@@ -184,15 +236,16 @@ def main() -> None:
                                     f"itself changed, and our record differs from Aqua's by {c6['seam_share']}. "
                                     f"ESA months missing: {', '.join(c6['missing_months']) or 'none'}")}
                 else:
-                    got = {"value": None, "verdict": "not run",
-                           "note": "ESA Fire_cci burned area not processed"}
+                    got = carried(prev_rows, cid, borrowed, choice.get("carried_note", "")) or {
+                        "value": None, "verdict": "not run", "note": "ESA Fire_cci burned area not processed"}
             if cid == "C6m":
                 f6 = WORK / "c6m.json"
                 c = json.loads(f6.read_text(encoding="utf-8")).get(area_id) if f6.exists() else None
                 got = ({"value": c["value"], "verdict": c["verdict"],
                         "note": (f"{c['note']}. 2013 to 2025: {c['value_2013_2025']}. Aqua alone, with no sensor "
                                  f"change: {c['aqua_only_same_statistic']}. Raw record: {c['raw_record_same_statistic']}")}
-                       if c else {"value": None, "verdict": "not run", "note": "MCD64A1 not processed"})
+                       if c else carried(prev_rows, cid, borrowed, choice.get("carried_note", ""))
+                       or {"value": None, "verdict": "not run", "note": "MCD64A1 not processed"})
             if cid == "C8" and model != "S0":
                 got = dict(res["checks"]["S0"].get("C8", {}))
                 got["note"] = "applies to the detection curve, which is used for the small-fire layer"
@@ -202,7 +255,7 @@ def main() -> None:
                         "C6": "burned-area data not yet obtained",
                         "C7": "defined for Punjab and Haryana only"}.get(cid, "")
             if donor != area_id:
-                note = (note + " " if note else "") + f"curve and constants borrowed from {donor}; too few fires here to calibrate"
+                note = (note + " " if note else "") + borrowed
             check_rows.append({"id": cid, "name": cname, "value": got.get("value"), "threshold": threshold,
                                "verdict": got.get("verdict", "not run"), "note": note.strip()})
 
@@ -214,7 +267,7 @@ def main() -> None:
             "unit": "Aqua-equivalent fire cells",
             "unit_note": ("One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. "
                           "Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua "
-                          "would have reported, computed from VIIRS with the detection curve."),
+                          "would have reported, computed from VIIRS with " + UNIT_HOW[model] + "."),
             "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
             "calibration": {"variant": variant, "months": curves["calibration"][variant],
                             "reference_pair": "Aqua MODIS and S-NPP VIIRS", "area": donor},
@@ -237,8 +290,10 @@ def main() -> None:
             "generated_at": now,
             "data_through": through.strftime("%Y-%m-%d"),
             "nrt_from": nrt_from,
-            "sources": ["MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
-                        "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"],
+            "sources": ["MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; "
+                        "near-real-time from the FIRMS area API for the latest days",
+                        "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; "
+                        "near-real-time from the FIRMS area API for the latest days"],
         }
         (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
         region = {"id": area_id, "name": name, "bbox": [west, south, east, north],

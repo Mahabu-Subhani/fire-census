@@ -18,6 +18,7 @@ import pandas as pd
 from scipy import stats
 
 from config import AREAS, WORK
+from harmonize import VIIRS_OPS
 
 MODELS = ["S0", "L2", "L1r", "cells"]       # cells = level L1 (no weighting, no constant)
 VARIANTS = ["A", "B"]
@@ -61,6 +62,14 @@ def pettitt(x: np.ndarray):
     return int(np.abs(u).argmax()), float(min(1.0, 2 * np.exp(-6 * k ** 2 / (n ** 3 + n ** 2))))
 
 
+def pettitt_can_reject(n: int, alpha: float = 0.05) -> bool:
+    """Whether a series of n values can give p < alpha at all (the cleanest possible step, in the middle)."""
+    if n < 2:
+        return False
+    k_max = (n // 2) * (n - n // 2)
+    return bool(2 * np.exp(-6 * k_max ** 2 / (n ** 3 + n ** 2)) < alpha)
+
+
 def verdict(ok: bool) -> str:
     return "pass" if ok else "fail"
 
@@ -77,11 +86,16 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
 
     m = (ser.index >= "2005-01") & (ser.index <= "2019-12") & (r >= MIN_CELLS)
     ratio = (h[m] / r[m])
-    t, p = pettitt(ratio.to_numpy())
-    at = ratio.index[t]
-    bad = p < 0.05 and "2011-07" <= at <= "2012-12"
-    out["C1b"] = {"value": f"p={p:.3f} at {at}", "verdict": verdict(not bad),
-                  "note": f"{int(m.sum())} months with at least {MIN_CELLS} Aqua fire cells"}
+    if pettitt_can_reject(int(m.sum())):
+        t, p = pettitt(ratio.to_numpy())
+        at = ratio.index[t]
+        bad = p < 0.05 and "2011-07" <= at <= "2012-12"
+        out["C1b"] = {"value": f"p={p:.3f} at {at}", "verdict": verdict(not bad),
+                      "note": f"{int(m.sum())} months with at least {MIN_CELLS} Aqua fire cells"}
+    else:                      # too few months for the test to reach p < 0.05: a pass would say nothing
+        out["C1b"] = {"value": None, "verdict": "not run",
+                      "note": f"only {int(m.sum())} months with at least {MIN_CELLS} Aqua fire cells: "
+                              "too few for the test to find a change point at p < 0.05"}
 
     c2a = step(h, *W2016) - step(r, *W2016)
     c2b = step(h, *W2008) - step(r, *W2008)
@@ -120,21 +134,48 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
                      "note": f"{int(m4.sum())} months"}
 
     if model == "S0":
-        f = fits[f"{variant}_D"]
+        f, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
         width = (f["f50_hi"] - f["f50_lo"]) / f["f50"]
+        night_width = (fn["f50_hi"] - fn["f50_lo"]) / fn["f50"]
+        night_share = fn["n_aqua_cells"] / max(fn["n_aqua_cells"] + f["n_aqua_cells"], 1)
         out["C8"] = {"value": f"midpoint {f['f50']:.1f} MW, 90% range {f['f50_lo']:.1f} to {f['f50_hi']:.1f} "
                               f"(width {100 * width:.0f}% of midpoint)",
-                     "verdict": verdict(width <= 0.50), "note": "daytime curve"}
+                     "verdict": verdict(width <= 0.50),
+                     "note": f"daytime curve. The night curve, read the same way, would be over the limit "
+                             f"({100 * night_width:.0f}%); night fires are {100 * night_share:.1f}% of the "
+                             f"reference fire cells in the fitting years"}
     return out
 
 
-def peak_shift(area: str, variant: str) -> dict:
-    """Check C7: activity-weighted median day of year of Oct-Nov burning."""
-    d = pd.read_parquet(WORK / f"{area}_daily.parquet")
-    d["acq_date"] = pd.to_datetime(d["acq_date"])
-    d = d.set_index("acq_date").fillna(0.0)
-    act = d["aqua"].where(d.index < "2012-02-01", d[f"V_S0_{variant}"])
-    aqua_only = d["aqua"]
+def daily_series(area: str, model: str, variant: str) -> tuple[pd.Series, pd.Series]:
+    """(harmonized, Aqua alone) activity per day for one model.
+
+    Harmonized is Aqua fire cells before February 2012 and the model's VIIRS value after:
+    the mean over the VIIRS satellites operating that month, where a satellite that flew
+    and saw nothing counts as zero, as in the monthly series.
+    """
+    cells = pd.read_parquet(WORK / f"{area}_cells.parquet", columns=["satellite", "acq_date"])
+    cells["acq_date"] = pd.to_datetime(cells["acq_date"])
+    aqua = cells[cells["satellite"] == "Aqua"].groupby("acq_date").size().astype(float)
+    col = f"{model}_{variant}"
+    w = pd.read_parquet(WORK / f"{area}_weights.parquet", columns=["satellite", "acq_date", col])
+    w["acq_date"] = pd.to_datetime(w["acq_date"])
+    per = w.groupby(["acq_date", "satellite"])[col].sum().unstack()
+    days = pd.date_range(min(aqua.index.min(), per.index.min()), max(aqua.index.max(), per.index.max()), freq="D")
+    per, ym = per.reindex(days), days.strftime("%Y-%m")
+    for sat, (lo, hi) in VIIRS_OPS.items():
+        if sat in per:
+            ok = (ym >= lo) & (ym <= hi)
+            per.loc[~ok, sat] = np.nan
+            per.loc[ok, sat] = per.loc[ok, sat].fillna(0.0)
+    viirs = per.mean(axis=1, skipna=True).fillna(0.0)
+    aqua = aqua.reindex(days).fillna(0.0)
+    return aqua.where(days < "2012-02-01", viirs), aqua
+
+
+def peak_shift(area: str, variant: str, model: str) -> dict:
+    """Check C7: activity-weighted median day of year of Oct-Nov burning, on one model's record."""
+    act, aqua_only = daily_series(area, model, variant)
     res = {}
     for name, s in (("harmonized", act), ("aqua_only", aqua_only)):
         peaks = {}
@@ -186,8 +227,8 @@ def main() -> None:
                                "held_out": checks[m]["C3"]["value"]})
             entry = {"checks": checks, "ladder": ladder, "ship": shipping(checks),
                      "ship_revised": shipping(checks, "C3r")}
-            if area == "punjab-haryana":
-                entry["C7"] = peak_shift(area, variant)
+            if area == "punjab-haryana":      # one result per model; export.py shows the shipped model's
+                entry["C7"] = {m: peak_shift(area, variant, m) for m in ("S0", "L2", "L1r")}
             result[area]["variants"][variant] = entry
     (WORK / "checks.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
 
@@ -200,8 +241,8 @@ def main() -> None:
             for model in ("S0", "L2", "L1r"):
                 line = "; ".join(f"{k} {v['verdict']} ({v['value']})" for k, v in e["checks"][model].items())
                 print(f"  {model}: {line}")
-            if "C7" in e:
-                print("  C7:", e["C7"]["verdict"], e["C7"]["value"])
+            for model, c7 in e.get("C7", {}).items():
+                print(f"  C7 {model}:", c7["verdict"], c7["value"])
 
 
 if __name__ == "__main__":

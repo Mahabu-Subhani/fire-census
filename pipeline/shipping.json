@@ -9,7 +9,8 @@
     "punjab-haryana": {
       "model": "L2",
       "variant": "A",
-      "reason": "Hard floor. Since Punjab was clipped to Punjab, Haryana and Chandigarh (decision 44) it passes every pre-registered check that applies to it, including the original held-out check C3 (0.144 against 0.15), so it ships under the original rule. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship."
+      "reason": "Hard floor. Passes C0, C1, C1b, C2, C3r and C4. Fails the original held-out check C3 (0.169 against 0.15), as in Cordoba; it ships under the revised check C3r, which it passes (0.042 against 0.10). Both verdicts are shown. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship. Until 14 Nov the floor's constant was fitted on whole strength bins, which made the record 4.6 percent too high and C3 read 0.144; fixed.",
+      "carried_note": "Computed before the 14 Nov correction of the hard-floor constant. The correction lowers the record after 2012 by 4.6 percent, which moves this value by about -0.05; still inside the limit. Not yet recomputed with the burned-area data."
     },
     "chilecito": {
       "model": "S0",

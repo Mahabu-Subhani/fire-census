@@ -85,7 +85,10 @@ def main() -> None:
         ba = ba[ba.get("error").isna()] if "error" in ba else ba
         ba.drop(columns=[c for c in ("error",) if c in ba]).to_parquet(cache, index=False)
     ba["year"] = ba["ym"].str[:4].astype(int)
-    annual_ba = ba.groupby("year")[list(AREAS)].sum()
+    # A year with missing burned-area months would be compared with a full year of fire cells
+    # (found 14 Nov: 2019 lacks October to December). Only complete years are used.
+    complete = ba.groupby("year")["ym"].nunique()
+    annual_ba = ba.groupby("year")[list(AREAS)].sum().loc[complete[complete == 12].index]
 
     shipping = json.loads((REPO / "pipeline" / "shipping.json").read_text(encoding="utf-8"))["areas"]
     result = {}

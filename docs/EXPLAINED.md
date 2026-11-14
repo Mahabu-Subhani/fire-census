@@ -160,27 +160,34 @@ Step values are natural logarithms: 0.05 is about 5%; 1.65 is about 5.2 times.
 | Check | Question | Córdoba | Punjab and Haryana |
 |---|---|---|---|
 | C0 | Does the raw record really jump? (must be over 0.5) | Pass, 1.648 | Pass, 1.674 |
-| C1 | Is the jump gone after harmonizing? (at most 0.10) | Pass, 0.049 | Pass, 0.028 |
+| C1 | Is the jump gone after harmonizing? (at most 0.10) | Pass, 0.049 | Pass, -0.016 |
 | C1b | Any statistical break near 2012? | Pass, none | Pass, none |
 | C2 | Any false jump in 2016, when nothing changed? | Pass, -0.089 | Pass, -0.057 |
-| C3 | Held-out 2018-19, month by month (at most 0.15) | **Fail**, 0.207 | **Pass**, 0.144 |
-| C3r | Held-out 2018-19, two-year total (at most 0.10), added after results | Pass, -0.072 | Pass, 0.003 |
+| C3 | Held-out 2018-19, month by month (at most 0.15) | **Fail**, 0.207 | **Fail**, 0.169 |
+| C3r | Held-out 2018-19, two-year total (at most 0.10), added after results | Pass, -0.072 | Pass, -0.042 |
 | C4 | Does NOAA-20 alone, never used for fitting, give the same record? | Pass, slope 0.951, correlation 0.987 | Pass, 1.024, 0.995 |
 | C5 | Does the curve agree with published MODIS detection limits? | Pass | Pass |
 | C6 | Stable against ESA burned area? (at most 0.25) | **Fail**, -0.440 | Pass, -0.104 |
 | C6m | Same with NASA MCD64A1, added after results | **Fail**, -0.392 | Pass, -0.036 |
-| C7 | Did Punjab's burning peak move later after 2009? (5+ days) | | Pass, 8.1 days, p = 0.0009 |
+| C7 | Did Punjab's burning peak move later after 2009? (5+ days) | | Pass, 8.2 days, p = 0.0009 |
 | C8 | Is the curve stable when resampled? (range at most 50%) | Pass, 38% | **Fail**, 62% (the curve; the hard floor ships here) |
 
 ### The two failures, and how to explain them
 
-**C3 (held-out months), Córdoba only.** In Punjab and Haryana the hard floor
-passes it (0.144). In Córdoba: two satellites passing at different times disagree
+**C3 (held-out months), both areas.** Until late on 14 November we said Punjab
+and Haryana's hard floor passed it (0.144). That was a bug in how the floor's
+constant was fitted (it made the record there 4.6% too high); fixed, it fails
+at 0.169. If a judge saw the old number, say exactly this. Two satellites passing at different times disagree
 by about 20% in a typical month even in the years we fitted on (0.18 to 0.23),
 and two *identical* VIIRS satellites disagree by 7-10%. So the 0.15 limit was
-below what any two satellites can achieve month by month. We kept the fail,
-wrote a dated note, and added C3r on the two-year total. **All three methods
-pass C3r, so it does not favour ours.** Say this first, before a judge asks.
+tight for a monthly statistic. Do not say "no method could pass it": in
+Córdoba the plain ratio does pass it (0.120), and under the rule as first
+written the ratio would ship there. We kept the fail, wrote a dated note, and
+added C3r on the two-year total. **All three methods pass C3r, so it does not
+favour ours.** What favours the curve is different evidence: out of sample the
+ratio leaves a 2012 step of 0.143 (fail) against the curve's 0.087 (C1x), and
+the ratio's yearly error follows the mix of weak and strong fires while the
+curve's does not. Say this first, before a judge asks.
 
 **C6 (ESA burned area).** In Córdoba, fire cells per km² burned are 36% lower
 after 2012. But **Aqua alone, which never changed sensor, gives -0.427** on the
@@ -193,7 +200,9 @@ follows Aqua closely. The raw record would be +1.289.
 
 The constant in each method is fitted on 2012-2017, which overlaps C1's
 window, so passing C1 is partly built in. Fitted on 2016-2017 only, the step
-is 0.106 for Córdoba's curve, just over the limit. The fully independent
+is 0.106 for Córdoba's curve, just over the limit. Fitted on 2015-2021 (check
+C1x, added later) it is 0.087, a pass, and the plain ratio fails that test
+(0.143). Say both numbers if asked. The fully independent
 evidence is C4 (NOAA-20), C3r (2018-19) and C5 (physics).
 
 ---
@@ -235,8 +244,8 @@ evidence is C4 (NOAA-20), C3r (2018-19) and C5 (physics).
   to 4 November after 2009 groundwater laws delayed rice planting. Same result
   for three different season windows.
 - **Córdoba's season peak moved later** by about 10 days per decade (2.7 to 16).
-- **Punjab's detected burning fell sharply:** 14,142 fire cells in the 2020
-  season, 1,677 in 2024, 737 in 2025. Caveat: satellites pass around 13:30, and
+- **Punjab's detected burning fell sharply:** 13,521 fire cells in the 2020
+  season, 1,605 in 2024, 706 in 2025. Caveat: satellites pass around 13:30, and
   burning reportedly moved to the evening, so this is *detected* burning.
 - **The author's Chilecito fire** (27 to 31 July 2026): July 2026 is 8.8 times
   the median July, 2nd highest of 25, and the 11th largest of 238 fire

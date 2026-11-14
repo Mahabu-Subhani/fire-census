@@ -14,6 +14,7 @@ import DateRange from "./controls/DateRange";
 import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
 import HotspotDownload from "./downloads/HotspotDownload";
+import AskLanding from "./ask/AskLanding";
 import ErrorBoundary from "./ErrorBoundary";
 import { isCaseStudy } from "./evidence/checks";
 import ForResearchers from "./guide/ForResearchers";
@@ -391,6 +392,15 @@ function Research() {
 
 export default function App() {
   const { view } = useSelectionActions();
+  // The question bar alone (decision 55); Enter sets the selection and opens the overview.
+  if (view === "ask") {
+    return (
+      <>
+        <TopBar />
+        <AskLanding />
+      </>
+    );
+  }
   return (
     <>
       <TopBar />

@@ -3,7 +3,7 @@
   "level_name": "Constant ratio (fallback)",
   "shipping_reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 20 to 32 percent more than any harmonized version), so the constant-ratio fallback ships. The detection curve passed C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.112). Region added after the start (decision 36); not pre-registered.",
   "unit": "Aqua-equivalent fire cells",
-  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve.",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with one constant conversion ratio.",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
@@ -41,9 +41,9 @@
     },
     {
       "level": "L2 hard floor",
-      "step_2012": -0.196,
-      "placebo_2016": "+0.084",
-      "held_out": 0.269
+      "step_2012": -0.102,
+      "placebo_2016": "+0.081",
+      "held_out": 0.174
     },
     {
       "level": "S0 detection curve",
@@ -172,7 +172,7 @@
     "L2": {
       "C0": "pass",
       "C1": "fail",
-      "C1b": "fail",
+      "C1b": "pass",
       "C2": "pass",
       "C3": "fail",
       "C3r": "fail",
@@ -757,13 +757,13 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "4940239",
-  "generated_at": "2026-11-14T16:09:26Z",
+  "code_commit": "8b0ea58",
+  "generated_at": "2026-11-14T18:14:07Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
-    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
-    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
+    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days",
+    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days"
   ],
   "month_log_sd": 0.354
 }

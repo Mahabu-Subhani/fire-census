@@ -14,10 +14,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from config import AREAS, FIGURES, WORK
+from config import AREAS, FIGURES, REPO, WORK
 
 INK, GREY = "#1b2230", "#8a93a3"
 C = {"raw": "#b8400f", "S0": "#1f5f8b", "L1r": "#8c6d1f", "L2": "#2a7f62", "R": "#222222"}
+MODEL = {"S0": "detection curve", "L2": "hard floor", "L1r": "constant ratio"}
+
+
+def shipped_model(area: str) -> str:
+    """The model that fills the record in this area (pipeline/shipping.json)."""
+    return json.loads((REPO / "pipeline" / "shipping.json").read_text(encoding="utf-8"))["areas"][area]["model"]
 
 
 def yearly(area: str) -> pd.DataFrame:
@@ -38,8 +44,13 @@ def fig_series(area: str, name: str) -> None:
     fig, ax = plt.subplots(figsize=(9, 4.2))
     ax.plot(y.index, y["L0"], color=C["raw"], lw=1.6, ls="--", marker="o", ms=3,
             label="Raw: all sensors' detections added")
-    ax.plot(y.index, y["S0"], color=C["S0"], lw=2.2, marker="o", ms=3, label="Harmonized: detection curve")
-    ax.plot(y.index, y["L1r"], color=C["L1r"], lw=1.4, marker="o", ms=3, label="Harmonized: constant ratio")
+    # The thick line is the record the app shows for this area; one other method is drawn for comparison.
+    ship = shipped_model(area)
+    other = "L1r" if ship != "L1r" else "S0"
+    ax.plot(y.index, y[ship], color=C["S0"], lw=2.2, marker="o", ms=3,
+            label=f"Harmonized, as shipped here: {MODEL[ship]}")
+    ax.plot(y.index, y[other], color=C["L1r"], lw=1.4, marker="o", ms=3,
+            label=f"For comparison: {MODEL[other]}")
     ax.plot(y.index, y["R"], color=C["R"], lw=1.0, ls=":", label="Aqua MODIS alone (reference)")
     ax.axvline(2011.6, color=GREY, lw=0.8)
     ax.text(2011.75, ax.get_ylim()[1] * 0.95, "VIIRS starts", color=GREY, fontsize=8, va="top")

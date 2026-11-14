@@ -1,6 +1,7 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending).
 // The answer on top (docs/APP_VISION.md, Q1): is the current month unusual
-// here? Rank first, ratio second, month to date, on the harmonized record
+// here? When the period chosen is a single month, the answer is about that
+// month instead (decision 56). Rank first, ratio second, month to date, on the harmonized record
 // (the raw record has no month-to-date and a false jump in 2012).
 // Minimum activity (decision 32) and baseline (decision 33) from stats/.
 // useMonthStatus() is shared with the hero, so both always say the same thing.
@@ -56,17 +57,26 @@ export interface MonthStatus {
   rangeText: string;
 }
 
+/** The month to judge when the chosen period is exactly one month; otherwise null (the newest month is judged). */
+export function askedMonth(from: string, to: string): { year: number; month: number } | null {
+  if (!from || from !== to) return null;
+  const [year, month] = parseYm(from);
+  return { year, month };
+}
+
 export function useMonthStatus(): MonthStatus {
-  const { status, areaRows, region, dataThrough, meta } = useSelection();
+  const { status, areaRows, region, dataThrough, meta, from, to } = useSelection();
   const baseline = useBaseline();
-  const month = dataThrough ? parseYm(dataThrough.slice(0, 7))[1] : null;
+  const asked = askedMonth(from, to);
+  const month = asked ? asked.month : dataThrough ? parseYm(dataThrough.slice(0, 7))[1] : null;
+  const year = asked?.year;
   const sigma = typeof meta?.month_log_sd === "number" ? meta.month_log_sd : null;
   const c = useMemo(
     () =>
       region && month
-        ? compareMonth({ areaRows, month, mode: "harmonized", baseline, harmonizedFrom: region.harmonized_from, dataThrough, sigma })
+        ? compareMonth({ areaRows, month, year, mode: "harmonized", baseline, harmonizedFrom: region.harmonized_from, dataThrough, sigma })
         : null,
-    [areaRows, month, baseline, region, dataThrough, sigma],
+    [areaRows, month, year, baseline, region, dataThrough, sigma],
   );
   const empty = { when: "", headline: "", ratioText: "", detail: "", verdict: null, verdictText: null, alert: false, provisional: "", valueText: null, medianText: null, rangeText: "" };
   if (status === "loading" || status === "idle") return { state: "loading", ...empty };
@@ -77,6 +87,9 @@ export function useMonthStatus(): MonthStatus {
   const n = c.baselineYears.length;
   const span = n ? ` (${c.baselineYears[0]} to ${c.baselineYears[n - 1]})` : "";
   const earlier = `${n} earlier ${name}s${span}`;
+  // "This month" only when it is the newest month of the record.
+  const newest = dataThrough !== null && `${c.year}-${String(month).padStart(2, "0")}` === dataThrough.slice(0, 7);
+  const subject = newest ? "This month" : `${name} ${c.year}`;
   let headline = "";
   let ratioText = "";
   let detail = "";
@@ -87,19 +100,19 @@ export function useMonthStatus(): MonthStatus {
     const range = formatRankRange(c.rankRange);
     rangeText = range ? `likely ${range}` : "";
     const pct = sigma ? Math.round((Math.exp(sigma) - 1) * 100) : null;
-    detail = `This month ${num(c.value!)}; median of ${earlier} ${num(c.median!)}.${c.toDay ? ` Every year counts days 1 to ${c.toDay} only.` : ""}` +
+    detail = `${subject} ${num(c.value!)}; median of ${earlier} ${num(c.median!)}.${c.toDay ? ` Every year counts days 1 to ${c.toDay} only.` : ""}` +
       (range && pct !== null
         ? ` Allowing for the harmonization error (about ${pct} percent in a single month, measured on held-out years), the rank is ${range} in 9 cases out of 10.`
         : "");
   } else if (c.status === "too-little") {
     headline = "Insufficient data";
-    detail = `This month ${num(c.value!)} and the median of ${earlier} ${num(c.median!)} are both below ${MIN_ACTIVITY}.`;
+    detail = `${subject} ${num(c.value!)} and the median of ${earlier} ${num(c.median!)} are both below ${MIN_ACTIVITY}.`;
   } else if (c.status === "not-enough-history") {
     headline = "Insufficient history";
     detail = `Only ${earlier} in the harmonized record; at least ${MIN_HISTORY_YEARS} are needed.`;
   } else {
     headline = "No data";
-    detail = "The month-to-date count is missing for this month.";
+    detail = newest ? "The month-to-date count is missing for this month." : `${name} ${c.year} is not in the harmonized record.`;
   }
   const ym = `${c.year}-${String(month).padStart(2, "0")}`;
   return {

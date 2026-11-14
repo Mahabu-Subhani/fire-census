@@ -197,8 +197,9 @@ in APPROACH.md is internal to the pipeline. DECIDE 0.05 if files stay small.
 
 `checks` holds one entry per check in `docs/PREREGISTRATION.md` (C0 to C8).
 `verdict` is exactly one of `pass`, `fail` or `not run`. `curve` holds the
-points of the detection curve for the method panel; it is empty if the hard
-floor shipped. The older name `tests` is replaced by `checks`.
+points of the detection curve for the method panel. It is filled in every
+area, also where the hard floor or the ratio ships, because the curve still
+defines the small-fire layer there. The older name `tests` is replaced by `checks`.
 
 `unit` labels the harmonized value (`harm`, `harm_lo`, `harm_hi`, `small`,
 `mtd`). `unit_raw` labels the raw value (`raw_modis + raw_viirs`), which counts

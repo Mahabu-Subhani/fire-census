@@ -34,7 +34,7 @@ def main() -> None:
             print(f"  {m} C1 fitted on 2016-17 only: {b['checks'][m]['C1']['value']}")
         print("  ladder:", [(x["level"], x["step_2012"]) for x in a["ladder"]])
         if "C7" in a:
-            print("  C7:", a["C7"]["value"])
+            print("  C7:", {m: c["value"] for m, c in a["C7"].items()})
         for dn in ("D", "N"):
             f = curves["areas"][area][f"A_{dn}"]
             print(f"  curve {dn}: S-NPP cells {f['n_snpp_cells']}, Aqua {f['n_aqua_cells']}, matched {f['match_rate']:.3f}, "

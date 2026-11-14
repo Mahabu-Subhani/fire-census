@@ -82,6 +82,28 @@ describe("compareMonth", () => {
     expect(c.verdict).toBe("far-above");
   });
 
+  it("compares an asked year's month with the years before it, on full months (decision 56)", () => {
+    const c = compareMonth({ ...base, areaRows: novembers(), month: 11, year: 2023, mode: "harmonized" });
+    expect(c.year).toBe(2023);
+    expect(c.toDay).toBeNull();
+    expect(c.value).toBe(80);
+    expect(c.baselineYears).toEqual([2016, 2017, 2018, 2019, 2020, 2021, 2022]);
+    expect(c.median).toBe(40);
+    expect(c.rank).toEqual({ rank: 1, of: 8, tied: false });
+    expect(c.years.every((d) => d.year <= 2023)).toBe(true);
+  });
+
+  it("an asked month that is the newest one is still month to date", () => {
+    const c = compareMonth({ ...base, areaRows: novembers(), month: 11, year: 2026, mode: "harmonized" });
+    expect(c.toDay).toBe(5);
+    expect(c.value).toBe(7.5);
+  });
+
+  it("has no data for an asked month outside the harmonized record", () => {
+    expect(compareMonth({ ...base, areaRows: novembers(), month: 11, year: 2010, mode: "harmonized" }).status).toBe("no-data");
+    expect(compareMonth({ ...base, areaRows: novembers(), month: 12, year: 2026, mode: "harmonized" }).status).toBe("no-data");
+  });
+
   it("uses last year for a month that has not come yet this year", () => {
     const c = compareMonth({ ...base, areaRows: [row("2025-12", { harm: 7 })], month: 12, mode: "harmonized" });
     expect(c.year).toBe(2025);

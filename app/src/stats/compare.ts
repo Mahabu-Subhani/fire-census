@@ -81,10 +81,15 @@ function latestYm(rows: CubeRow[]): string | null {
  * harmonized record compares days 1 to D of every year (`mtd`). The raw
  * record has no month-to-date field, so raw mode compares the last complete
  * year of that month instead and sets `skippedIncomplete`.
+ *
+ * With `year`, that year's month is compared with the years before it
+ * (decision 56): what the visitor gets when the period is a single month.
  */
 export function compareMonth(opts: {
   areaRows: CubeRow[];
   month: number;
+  /** Compare this year's month; left out, the most recent one. */
+  year?: number;
   mode: Mode;
   baseline: Baseline;
   harmonizedFrom: string;
@@ -103,10 +108,12 @@ export function compareMonth(opts: {
   const day = dataThrough ? Number(dataThrough.slice(8, 10)) : null;
   const incomplete = day !== null && day < daysInMonth(ly, lm);
 
-  let year = month < lm ? ly : month > lm ? ly - 1 : ly;
+  let year = opts.year ?? (month < lm ? ly : month > lm ? ly - 1 : ly);
   let skippedIncomplete = false;
-  const useMtd = month === lm && incomplete && mode === "harmonized";
-  if (month === lm && incomplete && mode === "raw") {
+  // Month to date applies only to the newest month of the record.
+  const newest = month === lm && year === ly;
+  const useMtd = newest && incomplete && mode === "harmonized";
+  if (newest && incomplete && mode === "raw") {
     year = ly - 1;
     skippedIncomplete = true;
   }
