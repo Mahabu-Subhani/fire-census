@@ -18,7 +18,7 @@ import json
 
 import duckdb
 
-from config import AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, REQUESTS, WORK
+from config import AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, WORK, folder_info
 
 SAT_NAMES = {"Terra": "Terra", "Aqua": "Aqua", "T": "Terra", "A": "Aqua",
              "SNPP": "S-NPP", "N": "S-NPP", "N20": "NOAA-20", "N21": "NOAA-21"}
@@ -30,7 +30,7 @@ def load_all(con: duckdb.DuckDBPyConnection) -> None:
     parts = []
     for folder in sorted(RAW.iterdir()):
         req = folder.name.split("_")[-1]
-        country, family, _ = REQUESTS[req]
+        country, family = folder_info(folder.name)
         for csv in sorted(folder.glob("fire_*.csv")):
             is_nrt = "nrt" in csv.name
             cols = [r[0] for r in con.execute(

@@ -43,6 +43,7 @@ Times are from a 32 GB Windows laptop.
 
 | Step | Command | Writes | Time |
 |---|---|---|---|
+| 0. Bring data up to date (before submitting) | `$PY refresh.py` | `$FIRE_DATA/raw/NRTAPI_<country>_<sensor>_<source>/` from the FIRMS area API, from the day after the last date held to yesterday; needs `FIRMS_MAP_KEY` in `.env` | 1 min |
 | 1. Inventory of raw files | `$PY inventory.py` | prints a table (copied into NOTES.md) | 1 min |
 | 2. Clean, cut out the three areas | `$PY clean.py` | `$FIRE_DATA/work/<area>.parquet`, `clean_report.json` | 30 s |
 | 3. Raw record figures | `$PY raw_jump.py` | `submission/figures/raw_jump_<area>.png` | 20 s |
@@ -83,7 +84,18 @@ unknown. `export.py` reads `pipeline/shipping.json` to decide which model fills
 | `figures.py` | Figures for the method panel and the project page |
 | `hotspots.py` | Per-year hotspot files: original FIRMS columns plus `harm_class`, `harm_reason`, `detect_prob` |
 | `shipping.json` | Which model ships in each area, and why |
+| `refresh.py` | Near-real-time detections after the archive ends (FIRMS area API, at most 5 days per call; S-NPP not requested since it stopped on 2 Nov 2026) |
 | `obs_probe.py` | One-off: sizes of the fire-mask files before downloading |
+
+## Reproduction test (14 November)
+
+A fresh clone of the repository, run from the raw FIRMS files through steps 2,
+4, 5, 6, 7 and 9, reproduced every value in all three `meta.json` files and in
+the Punjab and Chilecito cubes exactly. In Córdoba 46,154 of 46,155 cell-months
+matched; one (September 2024, cell -64.75, -31.95) differed by 0.01 in `harm`
+and 0.05 in `small`, most likely because DuckDB sums in parallel, so a fire
+cell's total power can land on the other side of a bin edge. No check verdict
+changed.
 
 ## Known limits
 

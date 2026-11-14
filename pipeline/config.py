@@ -40,3 +40,16 @@ INTERNAL_CELL_DEG = 0.01   # decision 6
 DISPLAY_CELL_DEG = 0.1     # decision 16
 HARMONIZED_FROM = "2002-07"  # Aqua's first full month
 MODIS_MIN_CONFIDENCE = 30  # decision 8
+
+
+def folder_info(name: str) -> tuple[str, str]:
+    """(country, sensor family) for a raw folder.
+
+    Archive folders end in a FIRMS request id (DL_FIRE_M-C61_845406).
+    Folders written by refresh.py are named NRTAPI_<country>_<family>_<source>.
+    """
+    if name.startswith("NRTAPI_"):
+        _, country, family, _source = name.split("_", 3)
+        return country, family
+    country, family, _ = REQUESTS[name.split("_")[-1]]
+    return country, family

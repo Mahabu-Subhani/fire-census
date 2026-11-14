@@ -7,7 +7,7 @@ Run: python pipeline/inventory.py   (prints Markdown; paste into pipeline/NOTES.
 
 import duckdb
 
-from config import RAW, REQUESTS
+from config import RAW, folder_info
 
 
 def main() -> None:
@@ -16,7 +16,7 @@ def main() -> None:
     print("|---|---|---|---|---|---|---|---|---|---|---|")
     for folder in sorted(RAW.iterdir()):
         req = folder.name.split("_")[-1]
-        country, family, _ = REQUESTS[req]
+        country, family = folder_info(folder.name)
         for csv in sorted(folder.glob("fire_*.csv")):
             src = f"read_csv('{csv.as_posix()}', all_varchar=true, header=true)"
             cols = [r[0] for r in con.execute(f"describe select * from {src}").fetchall()]

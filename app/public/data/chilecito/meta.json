@@ -741,9 +741,9 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "83b4118",
-  "generated_at": "2026-11-14T10:01:59Z",
-  "data_through": "2026-11-05",
+  "code_commit": "a00ac52",
+  "generated_at": "2026-11-14T10:11:26Z",
+  "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",

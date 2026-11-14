@@ -20,7 +20,7 @@ import json
 import duckdb
 import pandas as pd
 
-from config import APP_DATA, AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, REPO, REQUESTS, WORK
+from config import APP_DATA, AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, REPO, WORK, folder_info
 
 FIRMS_COLS = ["latitude", "longitude", "brightness", "scan", "track", "acq_date", "acq_time", "satellite",
               "instrument", "confidence", "version", "bright_t31", "frp", "daynight", "type"]
@@ -32,7 +32,7 @@ def load(con, country: str) -> None:
     parts = []
     for folder in sorted(RAW.iterdir()):
         req = folder.name.split("_")[-1]
-        c, family, _ = REQUESTS[req]
+        c, family = folder_info(folder.name)
         if c != country:
             continue
         for csv in sorted(folder.glob("fire_*.csv")):

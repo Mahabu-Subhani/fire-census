@@ -143,7 +143,7 @@ def peak_shift(area: str, variant: str) -> dict:
             if w.sum() <= 0:
                 continue
             cum = w.cumsum() / w.sum()
-            peaks[year] = int(cum.index[(cum >= 0.5).argmax()].dayofyear)
+            peaks[year] = int(cum.index[(cum >= 0.5).argmax()].day_of_year)
         early = [v for y, v in peaks.items() if 2003 <= y <= 2008]
         late = [v for y, v in peaks.items() if 2010 <= y <= 2019]
         shift = float(np.mean(late) - np.mean(early))
