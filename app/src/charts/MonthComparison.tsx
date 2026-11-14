@@ -1,30 +1,34 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending).
 // One calendar month against the same month in every earlier year: a bar per
 // year, the median and 90th percentile as labelled lines, the compared year
-// highlighted. Uses areaRows, so narrowing the date range does not change it.
+// highlighted. Uses areaRows, so narrowing the date range does not change it,
+// except that a period of exactly one month opens on that month (decision 56).
 import * as Plot from "@observablehq/plot";
 import { useMemo, useState } from "react";
 import { useSelection } from "../selection";
 import { compareMonth, fmtTick, fmtValue, formatRank, parseYm, unitLabel } from "../stats";
 import { BASELINE_TEXT, useBaseline } from "./baseline";
 import ChartFrame from "./ChartFrame";
-import { BaselineSwitch, MONTH_FULL } from "./UnusualBanner";
+import { askedMonth, BaselineSwitch, MONTH_FULL } from "./UnusualBanner";
 import { usePlot } from "./usePlot";
 
 export default function MonthComparison() {
-  const { status, areaRows, region, dataThrough, mode, meta } = useSelection();
+  const { status, areaRows, region, dataThrough, mode, meta, from, to } = useSelection();
+  const asked = askedMonth(from, to);
   const baseline = useBaseline();
   const latest = dataThrough ? parseYm(dataThrough.slice(0, 7))[1] : 12;
   const [chosen, setChosen] = useState<number | null>(null);
-  const month = chosen ?? latest;
+  const month = chosen ?? asked?.month ?? latest;
+  // The asked year only while its own month is shown; another month picked here is the most recent one.
+  const year = asked && month === asked.month ? asked.year : undefined;
   const name = MONTH_FULL[month - 1];
   const unit = unitLabel(meta, mode);
   const num = (v: number) => fmtValue(v, mode);
 
   const c = useMemo(
     () =>
-      region ? compareMonth({ areaRows, month, mode, baseline, harmonizedFrom: region.harmonized_from, dataThrough }) : null,
-    [areaRows, month, mode, baseline, region, dataThrough],
+      region ? compareMonth({ areaRows, month, year, mode, baseline, harmonizedFrom: region.harmonized_from, dataThrough }) : null,
+    [areaRows, month, year, mode, baseline, region, dataThrough],
   );
 
   const bars = useMemo(() => {
