@@ -3,3 +3,5 @@
 export * from "./rows";
 export * from "./summary";
 export * from "./compare";
+export * from "./trend";
+export * from "./outlook";
