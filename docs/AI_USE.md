@@ -29,6 +29,7 @@ Add a row whenever an AI tool contributes. Be specific and truthful.
 |---|---|---|---|
 | 12–13 Nov 2026 | Claude (Anthropic) | Read the challenge page and official guides; surveyed public repositories of other teams; proposed and critiqued candidate harmonization approaches; drafted these planning documents | Team, pending |
 | 12–13 Nov 2026 | Gemini (Google) | Critiqued the proposed method and architecture | Team, pending |
+| 14 Nov 2026 | Claude (Anthropic) | Wrote the app controls (coordinates, date range, small-fire switch, CSV download, shareable link) and the Checks and Method panel built from meta.json, with tests that render it from the real data | 8crsk |
 | 14 Nov 2026 | Claude (Anthropic) | Wrote the first app shell in app/ (data loading, selectCells and its tests, the useSelection() hook, map with area drawing, layout, placeholder charts) and the Pages deploy workflow | 8crsk |
 | 14 Nov 2026 | Claude (Anthropic) | Drafted docs/APP_VISION.md (user questions, gaps against existing tools, a first-principles reading of the challenge text) and the contract fields it needs. The team chose to adopt it (decision 28); the first-principles additions await a team decision (29) | 8crsk, team |
 | 14 Nov 2026 | Claude (Anthropic) | Phase 1 and 2 pipeline code (inventory, cleaning, harmonization, checks, export, figures) and the notes in pipeline/; proposed the revised check C3r and recommended shipping the detection curve. Mahabu chose (DECISIONS.md, 30) | Mahabu |

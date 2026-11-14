@@ -40,7 +40,8 @@ export type Verdict = "pass" | "fail" | "not run";
 export interface Check {
   id: string;
   name: string;
-  value: number | null;
+  /** A number, or text when the pipeline reports several numbers (for example "slope 1.024, correlation 0.995"). */
+  value: number | string | null;
   threshold: string;
   verdict: Verdict;
   note: string;

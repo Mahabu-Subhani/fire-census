@@ -5,6 +5,7 @@ import { charts } from "./charts";
 import CoordinateEntry from "./controls/CoordinateEntry";
 import DateRange from "./controls/DateRange";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
+import EvidencePanel, { ChecksBadge } from "./evidence/EvidencePanel";
 import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
 
@@ -25,6 +26,7 @@ function Header() {
         <h1>Fire Census</h1>
         <p className="tagline">One fire record, whichever satellite was watching.</p>
       </div>
+      <ChecksBadge />
       <div className="switch" role="group" aria-label="Record shown">
         {(["harmonized", "raw"] as const).map((m) => (
           <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
@@ -125,6 +127,7 @@ export default function App() {
           ))}
         </div>
       </main>
+      <EvidencePanel />
       <footer className="app-footer">
         <Freshness />
         <p>

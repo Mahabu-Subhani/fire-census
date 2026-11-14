@@ -1,0 +1,102 @@
+// AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
+// Turns meta.json into what the Checks and Method panels show. All numbers
+// come from meta.json; this file only formats them.
+import type { Check, Meta, Region, Verdict } from "../data/types";
+
+export const VERDICT_LABEL: Record<Verdict, string> = { pass: "Passed", fail: "Failed", "not run": "Not run" };
+
+/** A check added after the results were seen (for example C3r). */
+export function isAddedAfter(check: Check): boolean {
+  return /after results/i.test(`${check.name} ${check.note}`);
+}
+
+export function summarizeChecks(checks: Check[]) {
+  const count = (v: Verdict) => checks.filter((c) => c.verdict === v).length;
+  return {
+    pass: count("pass"),
+    fail: count("fail"),
+    notRun: count("not run"),
+    preRegistered: checks.filter((c) => !isAddedAfter(c)).length,
+    addedAfter: checks.filter(isAddedAfter).length,
+  };
+}
+
+/** "8 passed, 2 failed, 1 not run" (zero counts left out). */
+export function summaryText(checks: Check[]): string {
+  const s = summarizeChecks(checks);
+  const parts = [
+    s.pass ? `${s.pass} passed` : "",
+    s.fail ? `${s.fail} failed` : "",
+    s.notRun ? `${s.notRun} not run` : "",
+  ].filter(Boolean);
+  return parts.length ? parts.join(", ") : "no checks";
+}
+
+/** Show a value as the pipeline wrote it; round long numbers to 3 decimals. */
+export function formatValue(value: unknown): string {
+  if (value === null || value === undefined || value === "") return "none";
+  if (typeof value === "number") return Number.isInteger(value) ? String(value) : value.toFixed(3);
+  return String(value);
+}
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+export function monthName(ym: string): string {
+  const [y, m] = ym.split("-").map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
+}
+
+interface Calibration {
+  months?: string[];
+  reference_pair?: string;
+  area?: string;
+}
+
+export function calibrationOf(meta: Meta): Calibration {
+  const c = meta.calibration;
+  return c && typeof c === "object" ? (c as Calibration) : {};
+}
+
+function floorOf(meta: Meta): { day: number | null; night: number | null } {
+  const f = meta.floor_mw as { day?: number | null; night?: number | null } | undefined;
+  return { day: f?.day ?? null, night: f?.night ?? null };
+}
+
+/**
+ * The always-visible plain-language summary, worded for the level that
+ * shipped (Person A's text in submission/method_panel.md, adapted per level).
+ */
+export function shortVersion(meta: Meta): string {
+  const opening =
+    "Newer VIIRS satellites see far more fire hotspots than the older MODIS, so a simple count jumps in 2012. " +
+    "We express everything in what MODIS would have seen";
+  const closing = " Weaker fires only VIIRS can see are kept in the small-fire layer.";
+  const floor = floorOf(meta);
+  const constants = meta.constants as { day?: number; night?: number } | undefined;
+  switch (meta.level_shipped) {
+    case "S0":
+      return `${opening}, using a curve of how likely MODIS is to catch a fire of each strength.${closing}`;
+    case "L2":
+      return floor.day !== null && floor.night !== null
+        ? `${opening}: from 2012 we count only the VIIRS fire cells strong enough for MODIS to have caught them, above ${floor.day} MW by day and ${floor.night} MW by night.${closing}`
+        : `${opening}: from 2012 we count only the VIIRS fire cells strong enough for MODIS to have caught them.${closing}`;
+    case "L1r":
+      return constants?.day !== undefined && constants?.night !== undefined
+        ? `${opening}, by scaling VIIRS fire cells with one constant ratio measured where both satellites flew (${constants.day} by day, ${constants.night} by night).`
+        : `${opening}, by scaling VIIRS fire cells with one constant ratio measured where both satellites flew.`;
+    default:
+      return `${opening}. Method: ${meta.level_name ?? meta.level_shipped}.`;
+  }
+}
+
+/** Where the calibration came from, including when an area borrows another's. */
+export function calibrationText(meta: Meta, region: Region, regions: Region[]): string {
+  const c = calibrationOf(meta);
+  const span = c.months && c.months.length === 2 ? `${monthName(c.months[0])} to ${monthName(c.months[1])}` : "the overlap years";
+  const pair = c.reference_pair ?? "Aqua MODIS and Suomi NPP VIIRS";
+  if (c.area && c.area !== region.id) {
+    const source = regions.find((r) => r.id === c.area)?.name ?? c.area;
+    return `This area has too few fires of its own, so it uses the calibration of ${source}: ${pair}, ${span}.`;
+  }
+  return `Calibrated on this region: ${pair}, ${span}.`;
+}
