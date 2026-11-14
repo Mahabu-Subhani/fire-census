@@ -43,8 +43,9 @@ Code: https://github.com/Mahabu-Subhani/fire-census [CHECK the repository is pub
 ### What it does
 
 Open the link and the first line answers the question a manager asks first.
-For Punjab and Haryana on 5 November 2026 it reads: "November 2026 so far (1 to
-5 Nov): lowest of 25 Novembers, 0.06 times the median." The app ranks first and
+For Punjab and Haryana with data to 13 November 2026, November so far (1 to 13
+November) ranks 23rd of 25 Novembers, at 0.11 times the median of the same days
+in earlier years. The app ranks first and
 gives the ratio second, because a ratio means nothing where the usual value is
 zero. The current month is never complete, so every earlier year is counted
 over the same days. Where there is too little activity to judge, it says so
@@ -111,6 +112,9 @@ app, including the failures. In Córdoba:
 - The raw record really jumps at 2012 (C0), and the harmonized one does not:
   step 0.049 against a limit of 0.10 (C1). A change-point test finds no break
   near 2012 (C1b), and there is no false step in 2016, when no sensor changed (C2).
+  Honest caveat: the model's constant is fitted on 2012 to 2017, which overlaps
+  this check. Fitted on 2016 to 2017 only, the step is 0.106, just over the
+  limit. The checks below are fully out of sample.
 - NOAA-20, never used for fitting, reproduces the record: slope 0.951,
   correlation 0.987 (C4). This matters because S-NPP stopped delivering data on
   2 November 2026.
@@ -136,9 +140,18 @@ delayed rice planting, and across both sensors our median burning day moves
 
 The Chilecito area, the fire the challenge author shows, borrows Córdoba's
 calibration because it has too few fires of its own. There it fails the 2012
-step check (C1) and the NOAA-20 check (C4), and the app says so. [CHECK with
-Mahabu: the July 2026 figure for Chilecito; results.md says 6.0 times the
-median, the app's data now gives 8.8 times, 2nd highest of 25.]
+step check (C1) and the NOAA-20 check (C4), and the app says so. Its July 2026
+fire stands out: 8.8 times the median July, the 2nd highest of 25 Julys, and
+the 11th largest of 238 fire episodes there since 2002.
+
+A fourth area, the forests of Bandipur, Nagarhole and BR Hills in Karnataka,
+was added late as a case study and was not pre-registered. No method passes
+its held-out checks, so the simple ratio is used there and the app labels it.
+
+The harmonized record also shows that Punjab and Haryana's rice-residue
+burning season has moved later by about 7 days per decade (peak day: 6.7 days
+per decade, 90 percent range 5.7 to 8.3) without getting longer, and the trend
+runs straight through 2012, when the record switches from MODIS to VIIRS.
 
 ### Why it matters
 
@@ -206,20 +219,21 @@ with its reason in `docs/DECISIONS.md`.
 ## NASA data used
 
 - **MODIS Collection 6.1 active fire locations** (MCD14ML standard, MCD14DL
-  near-real-time), Terra and Aqua, 1 November 2000 to 5 November 2026, from the
-  NASA FIRMS archive. Fire detections before VIIRS, and the reference for
+  near-real-time), Terra and Aqua, 1 November 2000 to 5 November 2026 from the
+  NASA FIRMS archive, and to 13 November 2026 from the FIRMS area API. Fire detections before VIIRS, and the reference for
   calibration.
 - **VIIRS 375 m active fire locations, Collection 2,** standard and
   near-real-time, Suomi NPP, NOAA-20 and NOAA-21, 20 January 2012 to 5 November
-  2026, from the NASA FIRMS archive. Fire detections from 2012; the harmonized
+  2026 from the NASA FIRMS archive, and NOAA-20 and NOAA-21 to 13 November 2026
+  from the FIRMS area API (Suomi NPP stopped on 2 November 2026). Fire detections from 2012; the harmonized
   record.
 - **MYD14A1 Collection 6.1,** Aqua daily 1 km fire mask, July 2002 to November
   2026, from NASA LP DAAC through earthaccess. Clear-view days per cell and month.
 
-"We acknowledge the use of data and imagery from NASA's Fire Information for
-Resource Management System (FIRMS) (https://earthdata.nasa.gov/firms), part of
-NASA's Earth Science Data and Information System (ESDIS)." [CHECK the wording
-on the FIRMS site.]
+"We acknowledge the use of data and/or imagery from NASA's Fire Information
+for Resource Management System (FIRMS) (https://www.earthdata.nasa.gov/data/tools/firms),
+part of NASA's Land, Atmosphere Near real-time Capability for Earth observations
+(LANCE)." Wording as on NASA Earthdata's FIRMS page, 14 November 2026.
 
 ## Space agency partner data and other references
 
@@ -228,11 +242,14 @@ as context and lead with one of its places, Córdoba. No CONAE or ESA data was
 processed.
 
 - NASA FIRMS: https://www.earthdata.nasa.gov/data/tools/firms
-- Sofiev, M. and Kouznetsov, R. (2026), Geoscientific Model Development 19,
-  10123: published MODIS detection limits used in check C5. [CHECK the full
-  citation with Mahabu.]
-- The 2019 study of Punjab's later burning peak used in check C7. [CHECK: add
-  the full citation from Mahabu.]
+- Sofiev, M. and Kouznetsov, R. (2026): Observation operator and detection
+  limits for MODIS and VIIRS Fire Radiative Power products, Geoscientific Model
+  Development, 19, 10123–10142, https://doi.org/10.5194/gmd-19-10123-2026.
+  Published MODIS detection limits used in check C5.
+- Balwinder-Singh, McDonald, A. J., Srivastava, A. K. and Gerard, B. (2019):
+  Tradeoffs between groundwater conservation and air pollution from
+  agricultural fires in northwest India, Nature Sustainability, 2, 580–583.
+  Punjab's later burning peak, used in check C7.
 - Cividis colour map: Nuñez, Anderton and Renslow (2018), PLOS ONE,
   doi:10.1371/journal.pone.0199239. [CHECK the citation.]
 - geoBoundaries district boundaries, OpenStreetMap data (© OpenStreetMap
@@ -250,10 +267,10 @@ processed.
 |---|---|
 | Demo video link (public, opens in a private window) | Charulekha |
 | Repository public? Check in a private window | 8crsk |
-| Chilecito July 2026: 6.0 times (results.md) or 8.8 times (app data)? | Mahabu |
-| Full citations for Sofiev and Kouznetsov (2026) and the 2019 Punjab study | Mahabu |
-| FIRMS acknowledgement wording on the live site | Mahabu |
+| Chilecito July 2026: 8.8 times, 2nd of 25 (resolved) | Mahabu, done |
+| Full citations for Sofiev and Kouznetsov (2026) and the 2019 Punjab study (added) | Mahabu, done |
+| FIRMS acknowledgement wording (updated from the Earthdata FIRMS page) | Mahabu, done |
 | Tools list confirmed (no `submission/tools.md` yet) | 8crsk |
-| Python libraries (pipeline/requirements.txt) and earthaccess are not yet in docs/REFERENCES.md | Mahabu |
-| "Ten checks" wording: ten written in advance (C0 to C8 with C1b), plus C3r added after; confirm the count in PREREGISTRATION.md | Mahabu |
+| Python libraries and earthaccess in docs/REFERENCES.md (added) | Mahabu, done |
+| "Ten checks" wording: confirmed, ten written in advance (C0, C1, C1b, C2 to C8), plus C3r added after | Mahabu, done |
 | Numbers that come from the live app (Punjab November, Córdoba trend) change as data updates: re-read them from the app on the day of submission | Charulekha |

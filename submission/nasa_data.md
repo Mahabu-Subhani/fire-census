@@ -11,11 +11,11 @@
 Requests: FIRMS archive requests 845406 to 845413 (whole of India and
 Argentina), submitted 13 Nov 2026.
 
-Acknowledgement (as FIRMS asks): "We acknowledge the use of data and imagery
-from NASA's Fire Information for Resource Management System (FIRMS)
-(https://earthdata.nasa.gov/firms), part of NASA's Earth Science Data and
-Information System (ESDIS)." **VERIFY** the current wording on the FIRMS site
-before submission.
+Acknowledgement (wording on NASA Earthdata's FIRMS page, 14 Nov 2026): "We
+acknowledge the use of data and/or imagery from NASA's Fire Information for
+Resource Management System (FIRMS)
+(https://www.earthdata.nasa.gov/data/tools/firms), part of NASA's Land,
+Atmosphere Near real-time Capability for Earth observations (LANCE)."
 
 Partner agency context: the challenge was authored by CONAE (Argentina). We
 cite its hotspot service as context and use one of its places, Córdoba, as the
