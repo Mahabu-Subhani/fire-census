@@ -82,6 +82,13 @@ early warning and emergency response. Points that change our plan:
 | 28 | App vision | `docs/APP_VISION.md` is the plan for what the app answers. Stack unchanged (decisions 15 to 20). Contract fields `mtd`, `data_through`, `nrt_from`, and hook fields `areaKm2`, `place`, `dataThrough` added to `docs/ARCHITECTURE.md` | Agreed by all three, reported by 8crsk. Reason in the team's own words: <to add> |
 | 29 | First-principles additions | The section "First principles" in `docs/APP_VISION.md` (baseline window, downloads, hotspot CSV, trends, keeping the data current) | **Proposed, not yet agreed.** Needs all three |
 
+## After the Phase 2 results (14 November 2026)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 30 | Held-out check and what ships | Adopt the revised held-out check C3r (two-year total, at most 0.10) beside the original C3, as proposed in the dated note in `PREREGISTRATION.md`. Ship the **detection curve** for Córdoba and Chilecito and the **hard floor** for Punjab and Haryana. Both C3 and C3r verdicts are published | Mahabu, 14 Nov. Reason in his own words: **to be added by Mahabu**. The AI assistant laid out the options and evidence (`pipeline/NOTES_PHASE2.md`) and recommended this one |
+| 31 | Method changes from APPROACH.md | Matched detection instead of histogram ratio; cell FRP as the sum of detections; floor applied to VIIRS cells only; pre-2012 series is all Aqua fire cells | Built by the AI assistant during Phase 2 with reasons in `pipeline/NOTES_PHASE2.md`. **Awaiting Mahabu's confirmation** |
+
 ## Change log
 
 | Date | Who | Change | Reason |

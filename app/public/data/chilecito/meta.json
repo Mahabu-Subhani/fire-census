@@ -1,7 +1,7 @@
 {
-  "level_shipped": "L1r",
-  "level_name": "Constant ratio (fallback)",
-  "shipping_reason": "Case-study area with too few fires to calibrate; uses Cordoba's constants and the same model as Cordoba.",
+  "level_shipped": "S0",
+  "level_name": "Detection curve",
+  "shipping_reason": "Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there.",
   "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
   "calibration": {
     "variant": "A",
@@ -17,8 +17,8 @@
     "night": 6.86
   },
   "constants": {
-    "day": 0.3465,
-    "night": 0.0906
+    "day": 0.7319,
+    "night": 0.2624
   },
   "ladder": [
     {
@@ -62,7 +62,7 @@
     {
       "id": "C1",
       "name": "No seam at 2012",
-      "value": 0.602,
+      "value": 0.29,
       "threshold": "absolute value at most 0.10",
       "verdict": "fail",
       "note": "curve and constants borrowed from cordoba; too few fires here to calibrate"
@@ -70,7 +70,7 @@
     {
       "id": "C1b",
       "name": "No change point at 2012 (Pettitt)",
-      "value": "p=1.000 at 2016-08",
+      "value": "p=1.000 at 2017-10",
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
       "verdict": "pass",
       "note": "4 months with at least 30 Aqua fire cells curve and constants borrowed from cordoba; too few fires here to calibrate"
@@ -78,9 +78,9 @@
     {
       "id": "C2",
       "name": "No seam at placebo dates (2016, 2008)",
-      "value": "2016: -0.549; 2008: +0.000",
+      "value": "2016: -0.054; 2008: +0.000",
       "threshold": "absolute value at most 0.10 at both",
-      "verdict": "fail",
+      "verdict": "pass",
       "note": "2008 is zero by construction: H equals the Aqua reference before 2012 curve and constants borrowed from cordoba; too few fires here to calibrate"
     },
     {
@@ -92,9 +92,17 @@
       "note": "only 0 months with at least 30 Aqua fire cells curve and constants borrowed from cordoba; too few fires here to calibrate"
     },
     {
+      "id": "C3r",
+      "name": "Held-out years, two-year total (revised after results)",
+      "value": null,
+      "threshold": "absolute log ratio at most 0.10",
+      "verdict": "not run",
+      "note": "only 0 months with at least 30 Aqua fire cells curve and constants borrowed from cordoba; too few fires here to calibrate"
+    },
+    {
       "id": "C4",
       "name": "NOAA-20 alone reproduces the record",
-      "value": "slope 0.987, correlation 0.892",
+      "value": "slope 0.979, correlation 0.889",
       "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
       "verdict": "fail",
       "note": "103 months curve and constants borrowed from cordoba; too few fires here to calibrate"
@@ -129,7 +137,7 @@
       "value": "midpoint 9.9 MW, 90% range 8.6 to 12.3 (width 38% of midpoint)",
       "threshold": "90% range at most 50% of the midpoint",
       "verdict": "pass",
-      "note": "applies to the detection curve, which is used for the small-fire layer curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "daytime curve curve and constants borrowed from cordoba; too few fires here to calibrate"
     }
   ],
   "all_models": {
@@ -139,6 +147,7 @@
       "C1b": "pass",
       "C2": "pass",
       "C3": "not run",
+      "C3r": "not run",
       "C4": "fail",
       "C8": "pass"
     },
@@ -148,6 +157,7 @@
       "C1b": "pass",
       "C2": "fail",
       "C3": "not run",
+      "C3r": "not run",
       "C4": "fail"
     },
     "L1r": {
@@ -156,6 +166,7 @@
       "C1b": "pass",
       "C2": "fail",
       "C3": "not run",
+      "C3r": "not run",
       "C4": "fail"
     }
   },
@@ -728,8 +739,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "e3f10f3",
-  "generated_at": "2026-11-14T05:36:17Z",
+  "code_commit": "11ddeb1",
+  "generated_at": "2026-11-14T05:43:02Z",
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
     "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"

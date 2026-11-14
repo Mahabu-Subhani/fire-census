@@ -84,5 +84,9 @@ All would pass, so the revision does not favour one model over another.
 **What it would change.** Under C3r the shipping rule gives the detection curve
 for Córdoba (and Chilecito, which borrows it) and the hard floor for Punjab and
 Haryana, where the curve still fails C8. Under the original C3 the constant
-ratio ships everywhere. Until Mahabu decides, `pipeline/shipping.json` follows
-the original rule.
+ratio ships everywhere.
+
+**Decision, 14 November 2026:** Mahabu adopted C3r (DECISIONS.md, decision 30).
+`pipeline/shipping.json` now follows the revised rule. The app's Checks panel
+and `meta.json` show C3 with its fail verdict and C3r beside it, labelled as
+added after results.
