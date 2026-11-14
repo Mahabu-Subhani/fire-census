@@ -23,6 +23,7 @@ import { unitLabel } from "./stats";
 // The map library and the chart library are large; load them after the first screen.
 const MapView = lazy(() => import("./map/MapView"));
 const EvidencePanel = lazy(() => import("./evidence/EvidencePanel"));
+const SourcesPanel = lazy(() => import("./sources/SourcesPanel"));
 
 const Loading = ({ height }: { height: number }) => <div className="skeleton" style={{ height }} aria-label="Loading" />;
 
@@ -220,6 +221,13 @@ export default function App() {
         </main>
         {view === "research" && (
           <>
+            <ErrorBoundary name="the satellites section">
+              <Reveal>
+                <Suspense fallback={<Loading height={300} />}>
+                  <SourcesPanel />
+                </Suspense>
+              </Reveal>
+            </ErrorBoundary>
             <ErrorBoundary name="the method and checks panel">
               <Reveal>
                 <Suspense fallback={<Loading height={400} />}>
