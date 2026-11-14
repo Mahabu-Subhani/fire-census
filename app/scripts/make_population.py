@@ -48,9 +48,38 @@ def read_worldpop(path: Path):
     return a, float(tie[3]), float(tie[4]), float(scale[0])
 
 
-def grid_population(pop, west0, north0, px, bbox, step):
-    """Population summed into a step-degree grid over bbox: array [row south to north, column west to east]."""
+def snap(bbox, step):
+    """The region box widened to whole squares, so square centres match cube.json (multiples of step plus half)."""
     w, s, e, n = bbox
+    k = 1e-9
+    return (math.floor(w / step + k) * step, math.floor(s / step + k) * step,
+            math.ceil(e / step - k) * step, math.ceil(n / step - k) * step)
+
+
+def inside(lon, lat, rings):
+    """Boolean mask [lat, lon]: pixel centres inside any ring (even-odd ray casting), as the pipeline clips."""
+    X, Y = np.meshgrid(lon, lat)
+    out = np.zeros(X.shape, dtype=bool)
+    for ring in rings:
+        xs = np.array([p[0] for p in ring])
+        ys = np.array([p[1] for p in ring])
+        xj, yj = np.roll(xs, 1), np.roll(ys, 1)
+        hit = np.zeros(X.shape, dtype=bool)
+        for x1, y1, x2, y2 in zip(xs, ys, xj, yj):
+            if y1 == y2:
+                continue
+            crosses = ((y1 > Y) != (y2 > Y)) & (X < (x2 - x1) * (Y - y1) / (y2 - y1) + x1)
+            hit ^= crosses
+        out |= hit
+    return out
+
+
+def grid_population(pop, west0, north0, px, bbox, step, outline=None):
+    """Population summed into a step-degree grid over the snapped box: (array [row south to north, column west to east], snapped box).
+
+    With an outline, only 1 km pixels whose centre is inside it count.
+    """
+    w, s, e, n = snap(bbox, step)
     nx, ny = round((e - w) / step), round((n - s) / step)
     c0 = max(0, math.floor((w - west0) / px))
     c1 = min(pop.shape[1], math.ceil((e - west0) / px))
@@ -59,12 +88,14 @@ def grid_population(pop, west0, north0, px, bbox, step):
     sub = pop[r0:r1, c0:c1]
     lon = west0 + (np.arange(c0, c1) + 0.5) * px
     lat = north0 - (np.arange(r0, r1) + 0.5) * px
+    if outline:
+        sub = np.where(inside(lon, lat, outline), sub, 0.0)
     ix = np.floor((lon - w) / step + 1e-9).astype(int)
     iy = np.floor((lat - s) / step + 1e-9).astype(int)
     ok_x, ok_y = (ix >= 0) & (ix < nx), (iy >= 0) & (iy < ny)
     sub = sub[np.ix_(ok_y, ok_x)]
     flat = (iy[ok_y][:, None] * nx + ix[ok_x][None, :]).ravel()
-    return np.bincount(flat, weights=sub.ravel(), minlength=nx * ny).reshape(ny, nx)
+    return np.bincount(flat, weights=sub.ravel(), minlength=nx * ny).reshape(ny, nx), (w, s, e, n)
 
 
 def main() -> None:
@@ -83,15 +114,18 @@ def main() -> None:
             cache[iso] = read_worldpop(folder / f"{iso}_ppp_2020_1km_Aggregated_UNadj.tif")
         pop, west0, north0, px = cache[iso]
         bbox, step = reg["bbox"], reg["cell_deg"]
-        grid = grid_population(pop, west0, north0, px, bbox, step)
-        squares = [[round(bbox[0] + (ix + 0.5) * step, 2), round(bbox[1] + (iy + 0.5) * step, 2), int(round(grid[iy, ix]))]
+        # Areas clipped to an exact outline (Punjab and Haryana) count only the people inside it.
+        grid, box = grid_population(pop, west0, north0, px, bbox, step, reg.get("outline"))
+        squares = [[round(box[0] + (ix + 0.5) * step, 2), round(box[1] + (iy + 0.5) * step, 2), int(round(grid[iy, ix]))]
                    for iy in range(grid.shape[0]) for ix in range(grid.shape[1]) if grid[iy, ix] >= 0.5]
         doc = {
             "source": SOURCE,
             "population_year": 2020,
             "square_deg": step,
             "method": (f"People per {step} degree square (the cube.json grid), from the 1 km WorldPop map: each "
-                       "population pixel counts whole in the square holding its centre. The 2020 map is used for "
+                       "population pixel counts whole in the square holding its centre"
+                       + (", and only pixels whose centre is inside the area's exact outline count" if reg.get("outline") else "")
+                       + ". The 2020 map is used for "
                        "every year, so changes over time show where fires burned, not population change."),
             "region_population": int(round(grid.sum())),
             "squares": squares,
