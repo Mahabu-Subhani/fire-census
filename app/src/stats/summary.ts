@@ -46,6 +46,58 @@ export function rank(x: number, list: number[]): Rank | null {
   return { rank: 1 + list.filter((v) => v > x).length, of: list.length, tied: equal > 1 };
 }
 
+/** A value in a rank list, and whether it carries the harmonization error. */
+export interface UncertainValue {
+  value: number;
+  uncertain: boolean;
+}
+
+/** Seeded generator (mulberry32), so the same data always gives the same range. */
+function rng(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * 90 percent range of the rank of `current` (1 = highest) among `others` when
+ * every uncertain value is off by a log-normal factor with standard deviation
+ * `sigma` (natural log), independently. `sigma` is the out-of-sample monthly
+ * scatter of the harmonized record against Aqua (pipeline/loyo.py). Values
+ * before 2012 are Aqua itself and are not perturbed. Null without a usable sigma.
+ */
+export function rankRange(
+  current: UncertainValue,
+  others: UncertainValue[],
+  sigma: number | null | undefined,
+  draws = 2000,
+): { lo: number; hi: number } | null {
+  if (!sigma || !(sigma > 0) || current.value <= 0) return null;
+  const rand = rng(20261114);
+  const normal = () => Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+  const jitter = (v: UncertainValue) => (v.uncertain && v.value > 0 ? v.value * Math.exp(sigma * normal()) : v.value);
+  const ranks: number[] = [];
+  for (let i = 0; i < draws; i++) {
+    const x = jitter(current);
+    let r = 1;
+    for (const o of others) if (jitter(o) > x) r++;
+    ranks.push(r);
+  }
+  ranks.sort((a, b) => a - b);
+  return { lo: ranks[Math.floor(0.05 * (draws - 1))], hi: ranks[Math.ceil(0.95 * (draws - 1))] };
+}
+
+/** "21st to 24th", or "" when the range is a single place. */
+export function formatRankRange(r: { lo: number; hi: number } | null): string {
+  if (!r || r.lo === r.hi) return "";
+  return `${ordinal(r.lo)} to ${ordinal(r.hi)}`;
+}
+
 export function ordinal(n: number): string {
   const tens = n % 100;
   if (tens >= 11 && tens <= 13) return `${n}th`;

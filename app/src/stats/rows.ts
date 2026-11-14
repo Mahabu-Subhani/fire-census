@@ -34,7 +34,7 @@ export function parseYm(ym: string): [number, number] {
   return [Number(ym.slice(0, 4)), Number(ym.slice(5, 7))];
 }
 
-function ymOf(year: number, month: number): string {
+export function ymOf(year: number, month: number): string {
   return `${year}-${String(month).padStart(2, "0")}`;
 }
 

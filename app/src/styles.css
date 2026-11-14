@@ -516,6 +516,7 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 .mf-tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 6px; border: 1px solid var(--accent); color: var(--accent-2); }
 .mf-when { margin: 0; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .mf-headline { margin: 6px 0 0; font-size: 1.05rem; font-weight: 600; line-height: 1.25; }
+.mf-range { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
 .mf-verdict { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .mf-verdict.alert { color: var(--accent-2); }
 .mf-sec {

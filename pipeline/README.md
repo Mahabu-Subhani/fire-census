@@ -57,6 +57,7 @@ Times are from a 32 GB Windows laptop.
 | 8b2. NASA burned area, check C6m | `$PY mcd64.py` | `work/mcd64_monthly.parquet`, `work/c6m.json` | 5 min (network) |
 | 8c. Land cover at fire cells | `$PY landcover.py` | `work/landcover.json` | 7 min (network) |
 | 8d. Stretch analyses | `$PY stretch.py` (after step 9) | `app/public/data/<area>/{season,drift,episodes}.json`, season figures | 1 min |
+| 8e. Out-of-sample checks | `$PY loyo.py` (after step 4) | `work/loyo.json`: check C1x, leave-one-year-out, monthly scatter for the rank range | 3 min |
 | 9. App data | `$PY export.py` | `app/public/data/regions.json`, `<area>/cube.json`, `<area>/meta.json` | 1 min |
 | 10. Figures | `$PY figures.py` | `submission/figures/*.png` | 20 s |
 | 11. Hotspot files | `$PY hotspots.py` | `app/public/data/<area>/hotspots/<year>.csv.gz` | 2 min |

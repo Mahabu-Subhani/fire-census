@@ -199,6 +199,7 @@ function Answer() {
         <>
           <p className="mf-when">{s.when}</p>
           <p className="mf-headline">{headline}</p>
+          {s.rangeText && <p className="mf-range">{s.rangeText}, allowing for the harmonization error</p>}
           {s.verdictText && <p className={`mf-verdict${s.alert ? " alert" : ""}`}>{s.verdictText}</p>}
         </>
       ) : (

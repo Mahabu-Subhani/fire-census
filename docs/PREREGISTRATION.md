@@ -90,3 +90,21 @@ ratio ships everywhere.
 `pipeline/shipping.json` now follows the revised rule. The app's Checks panel
 and `meta.json` show C3 with its fail verdict and C3r beside it, labelled as
 added after results.
+
+### 14 November 2026, about 22:30 IST: out-of-sample C1 (check C1x, added after results)
+
+C1 fits its constant on 2012 to 2017 and tests on 2012 to 2015, so part of its
+pass is in-sample. Check C1x repeats C1's statistic with the model fitted on
+February 2015 to December 2021 only. It does not replace C1 and does not change
+what ships. Results (`pipeline/loyo.py`, `WORK/loyo.json`):
+
+| Area | Detection curve | Hard floor | Constant ratio |
+|---|---|---|---|
+| Córdoba | +0.087 pass | +0.059 pass | +0.143 **fail** |
+| Punjab and Haryana | +0.016 pass | +0.024 pass | +0.005 pass |
+| Karnataka (case study) | +0.012 pass | +0.011 pass | -0.007 pass |
+
+Leaving one year out at a time over 2012 to 2021, the shipped model is within
+0.10 of Aqua in 8 of 10 years in Córdoba (largest miss 0.181, in 2013) and in
+8 of 10 in Punjab and Haryana (largest 0.132). Chilecito borrows Córdoba's
+model and cannot be tested this way.

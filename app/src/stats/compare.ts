@@ -3,8 +3,11 @@
 // monthly series. Comparisons use areaRows, so they do not change when the
 // user narrows the date range.
 import type { CubeRow, Mode } from "../data/types";
-import { monthHistory, parseYm, value, type YearValue } from "./rows";
-import { median, p90, rank, type Rank } from "./summary";
+import { monthHistory, parseYm, value, ymOf, type YearValue } from "./rows";
+import { median, p90, rank, rankRange, type Rank } from "./summary";
+
+/** First month of the VIIRS-based record; earlier harmonized values are Aqua itself. */
+export const VIIRS_FROM = "2012-02";
 
 export type Baseline = "all" | "last10";
 
@@ -55,6 +58,8 @@ export interface MonthCompare {
   median: number | null;
   p90: number | null;
   rank: Rank | null;
+  /** 90% range of the rank allowing for the harmonization error; null when not computed. */
+  rankRange: { lo: number; hi: number } | null;
   ratio: number | null;
   verdict: Verdict | null;
 }
@@ -84,11 +89,13 @@ export function compareMonth(opts: {
   baseline: Baseline;
   harmonizedFrom: string;
   dataThrough: string | null;
+  /** Out-of-sample monthly log scatter of the harmonized record (meta.month_log_sd). */
+  sigma?: number | null;
 }): MonthCompare {
-  const { areaRows, month, mode, baseline, harmonizedFrom, dataThrough } = opts;
+  const { areaRows, month, mode, baseline, harmonizedFrom, dataThrough, sigma } = opts;
   const empty: MonthCompare = {
     status: "no-data", month, year: null, toDay: null, skippedIncomplete: false, value: null,
-    years: [], baselineYears: [], median: null, p90: null, rank: null, ratio: null, verdict: null,
+    years: [], baselineYears: [], median: null, p90: null, rank: null, rankRange: null, ratio: null, verdict: null,
   };
   const lastYm = dataThrough ? dataThrough.slice(0, 7) : latestYm(areaRows);
   if (!lastYm) return empty;
@@ -123,6 +130,14 @@ export function compareMonth(opts: {
     median: med,
     p90: p90(values),
     rank: rank(current.value, [...values, current.value]),
+    rankRange:
+      mode === "harmonized"
+        ? rankRange(
+            { value: current.value, uncertain: ymOf(year, month) >= VIIRS_FROM },
+            earlier.map((d) => ({ value: d.value as number, uncertain: ymOf(d.year, month) >= VIIRS_FROM })),
+            sigma,
+          )
+        : null,
   };
   if (med < MIN_ACTIVITY && current.value < MIN_ACTIVITY) return { ...result, status: "too-little" };
   return {

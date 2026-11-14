@@ -7,7 +7,7 @@
 import { useMemo } from "react";
 import { useSelection } from "../selection";
 import {
-  compareMonth, fmtValue, formatRank, formatRatio, MIN_ACTIVITY, MIN_HISTORY_YEARS, parseYm, VERDICT_TEXT,
+  compareMonth, fmtValue, formatRank, formatRankRange, formatRatio, MIN_ACTIVITY, MIN_HISTORY_YEARS, parseYm, VERDICT_TEXT,
   type Baseline,
 } from "../stats";
 import { BASELINE_TEXT, setBaseline, useBaseline } from "./baseline";
@@ -52,20 +52,23 @@ export interface MonthStatus {
   /** This month and the median, exact; null when there is nothing to compare. */
   valueText: string | null;
   medianText: string | null;
+  /** "likely 21st to 24th": 90% range allowing for the harmonization error; "" when not computed. */
+  rangeText: string;
 }
 
 export function useMonthStatus(): MonthStatus {
   const { status, areaRows, region, dataThrough, meta } = useSelection();
   const baseline = useBaseline();
   const month = dataThrough ? parseYm(dataThrough.slice(0, 7))[1] : null;
+  const sigma = typeof meta?.month_log_sd === "number" ? meta.month_log_sd : null;
   const c = useMemo(
     () =>
       region && month
-        ? compareMonth({ areaRows, month, mode: "harmonized", baseline, harmonizedFrom: region.harmonized_from, dataThrough })
+        ? compareMonth({ areaRows, month, mode: "harmonized", baseline, harmonizedFrom: region.harmonized_from, dataThrough, sigma })
         : null,
-    [areaRows, month, baseline, region, dataThrough],
+    [areaRows, month, baseline, region, dataThrough, sigma],
   );
-  const empty = { when: "", headline: "", ratioText: "", detail: "", verdict: null, verdictText: null, alert: false, provisional: "", valueText: null, medianText: null };
+  const empty = { when: "", headline: "", ratioText: "", detail: "", verdict: null, verdictText: null, alert: false, provisional: "", valueText: null, medianText: null, rangeText: "" };
   if (status === "loading" || status === "idle") return { state: "loading", ...empty };
   if (!c || !month || c.year === null) return { state: "none", ...empty, headline: "No data" };
 
@@ -77,10 +80,17 @@ export function useMonthStatus(): MonthStatus {
   let headline = "";
   let ratioText = "";
   let detail = "";
+  let rangeText = "";
   if (c.status === "ok") {
     headline = `${formatRank(c.rank!)} ${name}s`;
     ratioText = c.ratio !== null ? `${formatRatio(c.ratio)} times the median` : "the median is 0";
-    detail = `This month ${num(c.value!)}; median of ${earlier} ${num(c.median!)}.${c.toDay ? ` Every year counts days 1 to ${c.toDay} only.` : ""}`;
+    const range = formatRankRange(c.rankRange);
+    rangeText = range ? `likely ${range}` : "";
+    const pct = sigma ? Math.round((Math.exp(sigma) - 1) * 100) : null;
+    detail = `This month ${num(c.value!)}; median of ${earlier} ${num(c.median!)}.${c.toDay ? ` Every year counts days 1 to ${c.toDay} only.` : ""}` +
+      (range && pct !== null
+        ? ` Allowing for the harmonization error (about ${pct} percent in a single month, measured on held-out years), the rank is ${range} in 9 cases out of 10.`
+        : "");
   } else if (c.status === "too-little") {
     headline = "Insufficient data";
     detail = `This month ${num(c.value!)} and the median of ${earlier} ${num(c.median!)} are both below ${MIN_ACTIVITY}.`;
@@ -104,6 +114,7 @@ export function useMonthStatus(): MonthStatus {
     provisional: meta?.nrt_from && ym >= meta.nrt_from ? "Provisional: near-real-time data that may still change." : "",
     valueText: c.value !== null && c.value !== undefined ? num(c.value) : null,
     medianText: c.median !== null && c.median !== undefined ? num(c.median) : null,
+    rangeText,
   };
 }
 

@@ -78,6 +78,14 @@
       "note": "145 months with at least 30 Aqua fire cells"
     },
     {
+      "id": "C1x",
+      "name": "No seam at 2012, out of sample (added after results)",
+      "threshold": "absolute log ratio at most 0.10",
+      "value": "+0.087",
+      "verdict": "pass",
+      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Leaving one year out at a time (2012 to 2021): 8 of 10 years within 0.10, mean -0.009, largest 0.181."
+    },
+    {
       "id": "C2",
       "name": "No seam at placebo dates (2016, 2008)",
       "value": "2016: -0.089; 2008: +0.000",
@@ -756,5 +764,6 @@
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
     "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
-  ]
+  ],
+  "month_log_sd": 0.244
 }

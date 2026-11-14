@@ -252,6 +252,11 @@ def main() -> None:
         size = (out / "cube.json").stat().st_size / 1e6
         print(f"{area_id}: model {model} variant {variant}, {len(rows):,} rows, cube.json {size:.2f} MB")
     (APP_DATA / "regions.json").write_text(json.dumps(regions, indent=2, ensure_ascii=False), encoding="utf-8")
+    if (WORK / "loyo.json").exists():      # keep check C1x and month_log_sd (decision 50)
+        from loyo import patch_meta
+        patch_meta()
+    else:
+        print("WORK/loyo.json missing: run loyo.py, then loyo.py --patch-meta, or C1x and the rank range disappear")
 
 
 if __name__ == "__main__":
