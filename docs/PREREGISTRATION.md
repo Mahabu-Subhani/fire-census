@@ -52,3 +52,37 @@ source before the verdict is reported.
 - Anything about fires hidden by cloud or smoke for all sensors.
 - Anything outside the processed regions.
 - That the record is consistent with Terra's morning overpass.
+
+---
+
+## Notes added after results
+
+### 14 November 2026, about 12:30 IST: check C3 (drafted by the AI assistant; awaiting Mahabu's decision)
+
+The thresholds above are unchanged. This note records what was found and
+proposes a revised reading, as the first paragraph of this file requires.
+
+**Original verdict stands as recorded.** C3 fails for the detection curve and
+the hard floor in both calibration areas (Córdoba 0.207 and 0.284; Punjab and
+Haryana 0.267 and 0.291; threshold 0.15).
+
+**Why the threshold looks badly chosen.** C3 is a monthly scatter statistic.
+Inside the calibration years it is already 0.178 (Córdoba) and 0.231 (Punjab)
+for the detection curve, and between two identical VIIRS sensors it is 0.07 to
+0.10. A threshold of 0.15 sits between the noise of identical sensors and the
+noise of a calibrated pair, so no model could be expected to pass it. Details:
+`pipeline/NOTES_PHASE2.md`, "Why C3 failed".
+
+**Proposed revised check C3r,** to be reported beside C3, never instead of it:
+aggregate bias over the held-out years, the absolute value of
+ln(sum of H_VIIRS / sum of H_Aqua) over 2018 to 2019, at most 0.10. This
+measures what C3 was meant to: whether the harmonized record drifts from the
+reference outside the calibration years. Values: Córdoba detection curve 0.072,
+hard floor 0.071, constant ratio 0.064; Punjab and Haryana 0.034, 0.022, 0.031.
+All would pass, so the revision does not favour one model over another.
+
+**What it would change.** Under C3r the shipping rule gives the detection curve
+for Córdoba (and Chilecito, which borrows it) and the hard floor for Punjab and
+Haryana, where the curve still fails C8. Under the original C3 the constant
+ratio ships everywhere. Until Mahabu decides, `pipeline/shipping.json` follows
+the original rule.

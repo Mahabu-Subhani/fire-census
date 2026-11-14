@@ -1,0 +1,20 @@
+{
+  "note": "Which model fills `harm` for each area. Set by the pre-registered shipping rule in docs/PREREGISTRATION.md. Change only by a recorded team decision (docs/DECISIONS.md).",
+  "areas": {
+    "cordoba": {
+      "model": "L1r",
+      "variant": "A",
+      "reason": "Pre-registered rule: the detection curve and the hard floor both failed check C3 (held-out years), so the constant-ratio fallback ships. The curve passed C0, C1, C1b, C2, C4 and C8."
+    },
+    "punjab-haryana": {
+      "model": "L1r",
+      "variant": "A",
+      "reason": "Pre-registered rule: the detection curve failed C3 and C8 and the hard floor failed C3, so the constant-ratio fallback ships. Note that the fallback itself fails C1b and C3 here."
+    },
+    "chilecito": {
+      "model": "L1r",
+      "variant": "A",
+      "reason": "Case-study area with too few fires to calibrate; uses Cordoba's constants and the same model as Cordoba."
+    }
+  }
+}
