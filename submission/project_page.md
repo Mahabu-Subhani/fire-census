@@ -36,7 +36,7 @@ every result is published, including the ones that failed.
 ## Link to final project
 
 App: https://mahabu-subhani.github.io/fire-census/
-Code: https://github.com/Mahabu-Subhani/fire-census [CHECK the repository is public]
+Code: https://github.com/Mahabu-Subhani/fire-census (public; opens without signing in, checked 14 Nov)
 
 ## Detailed description
 
