@@ -84,6 +84,7 @@ function Controls() {
       <div className="actions">
         <button type="button" onClick={download} disabled={!meta || status === "loading"}>Download CSV</button>
         <button type="button" onClick={copyLink}>{copied ? "Link copied" : "Copy link to this view"}</button>
+        <button type="button" onClick={() => window.print()}>Print summary</button>
       </div>
       {status === "loading" && <p className="note">Loading the record for this region…</p>}
       {status === "error" && <p className="note error">Could not load the data: {error}</p>}
@@ -93,6 +94,24 @@ function Controls() {
       {status === "empty" && cellCount !== 0 && (
         <p className="note">No detections in this area and date range. Zero detections does not prove there was no fire.</p>
       )}
+    </div>
+  );
+}
+
+/** Shown only on paper: what the printout shows and how to get back to it. */
+function PrintHeader() {
+  const { region, from, to, mode, place, areaKm2, dataThrough } = useSelection();
+  const { polygon } = useSelectionActions();
+  if (!region) return null;
+  const area = place ?? (polygon ? "Drawn area" : "Whole region");
+  return (
+    <div className="print-only print-header">
+      <p>
+        <strong>{region.name}</strong>: {area}
+        {areaKm2 !== null && <>, {Math.round(areaKm2).toLocaleString("en-GB")} km²</>}. {formatMonth(from)} to {formatMonth(to)}.{" "}
+        {mode === "raw" ? "Raw record" : "Harmonized record"}.{dataThrough && <> Data to {formatDate(dataThrough)}.</>}
+      </p>
+      <p>Printed {formatDate(new Date().toISOString().slice(0, 10))}. This view online: {window.location.href}</p>
     </div>
   );
 }
@@ -113,6 +132,7 @@ export default function App() {
   return (
     <div className="app">
       <Header />
+      <PrintHeader />
       <main className="layout">
         <div className="left">
           <Controls />

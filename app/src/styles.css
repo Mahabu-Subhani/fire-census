@@ -159,3 +159,21 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   .ev-check { grid-template-columns: 1fr; gap: 4px; }
   .checks-badge { margin-left: 0; }
 }
+
+/* Printed summary: one column, no controls, the view's description on top. */
+.print-only { display: none; }
+@media print {
+  @page { margin: 12mm; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .print-only { display: block; }
+  .print-header { border-bottom: 1px solid #999; margin-bottom: 8px; }
+  .print-header p { margin: 2px 0; }
+  .app { max-width: none; padding: 0; }
+  .layout { grid-template-columns: 1fr; }
+  .left { position: static; }
+  .toolbar, .controls, .coords, .switch, .checks-badge, .cf-actions, .maplibregl-ctrl-top-right, .ev-detail summary { display: none !important; }
+  .map { height: 9cm; break-inside: avoid; }
+  .slot, .ev-check { break-inside: avoid; border-color: #999; }
+  .evidence { border: 0; padding: 0; }
+  a { color: #000; }
+}

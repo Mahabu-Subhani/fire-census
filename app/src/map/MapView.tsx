@@ -53,7 +53,8 @@ export default function MapView() {
 
   useEffect(() => {
     if (!container.current) return;
-    const map = new maplibregl.Map({ container: container.current, style: STYLE_URL, center: [0, 0], zoom: 1 });
+    // preserveDrawingBuffer lets the map appear in a printed summary.
+    const map = new maplibregl.Map({ container: container.current, style: STYLE_URL, center: [0, 0], zoom: 1, preserveDrawingBuffer: true });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => {
       for (const id of ["region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
