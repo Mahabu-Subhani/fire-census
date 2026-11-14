@@ -39,6 +39,7 @@ Add a row whenever an AI tool contributes. Be specific and truthful.
 | 14 Nov 2026 | Claude (Anthropic) | Wrote app/src/stats/ (value, toCalendar, monthHistory with month-to-date, median, rank, 90th percentile, with tests), ChartFrame, the usePlot helper and the BurningCalendar chart, and checked it at 400 px and 1280 px in headless Chrome | Charulekha Rajesh (pending) |
 | 14 Nov 2026 | Claude (Anthropic) | Added the `unit_raw` label to pipeline/export.py, the three meta.json files and the contract in docs/ARCHITECTURE.md, at Mahabu's request | Mahabu (pending) |
 | 14 Nov 2026 | Claude (Anthropic) | CA2 for Person C: status sentence (rank, ratio, month to date, baseline switch), MonthComparison, season band and you-are-here marker on the calendar, ActivitySeries, CSV/PNG/SVG export through ChartFrame, the stats behind them with tests, and an adversarial self-review. Laid out options and evidence for decisions 32 and 33; Charulekha chose | Charulekha Rajesh (pending) |
+| 14 Nov 2026 | Claude (Anthropic) | CA3 for Person C: trend (Sen's slope, Mann-Kendall), outlook strip, calendar difference mode and month totals, with tests. Assembled submission/project_page.md from the team's drafts; drafted the demo script, pitch candidates, recording and submission checklists, judge answers and app labels | Charulekha Rajesh (pending) |
 
 ## The team's own decisions
 
