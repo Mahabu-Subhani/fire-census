@@ -194,6 +194,7 @@ def main() -> None:
             "level_name": MODEL_NAMES[model],
             "shipping_reason": choice["reason"],
             "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+            "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
             "calibration": {"variant": variant, "months": curves["calibration"][variant],
                             "reference_pair": "Aqua MODIS and S-NPP VIIRS", "area": donor},
             "floor_mw": {"day": round(fd["f50"], 2), "night": round(fn["f50"], 2)},

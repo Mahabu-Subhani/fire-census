@@ -3,6 +3,7 @@
   "level_name": "Hard floor",
   "shipping_reason": "Hard floor. The detection curve fails C8 here (its midpoint is too uncertain), so the rule moves to the hard floor, which passes C0, C1, C1b, C2, C3r and C4. Fails the original C3 (0.291). Both verdicts are shown.",
   "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+  "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
     "months": [
