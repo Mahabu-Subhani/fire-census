@@ -192,3 +192,55 @@ Punjab and Haryana -0.036, Chilecito -0.237, Karnataka +0.374.
 Land cover now uses Suomi NPP fire cells from 2012 to 2025 (6,000 per area),
 not 2021 alone: Karnataka is 40 percent tree cover (28 to 56 percent by year),
 not the 2021 figure of 29 percent.
+
+## Corrections after an independent read of the code (14 November, about 23:30)
+
+AI-assisted: found by a second, independent AI read of `pipeline/`, each item
+then confirmed on the data by rebuilding the record from the shipped hotspot
+files (`from_hotspots.py`). Reviewed by: Mahabu Subhani (pending).
+
+1. **Hard-floor constant (changes Punjab and Haryana's record).** `k_floor`
+   was fitted on whole strength bins (bin centre at or above the midpoint) but
+   applied to each cell's own strength. In Punjab and Haryana, daytime, 257,686
+   cells were counted against a constant fitted on 246,372: the record after
+   2012 was 4.6 percent too high. Fixed in `harmonize.py` (and `loyo.py`, which
+   had the bin rule on both sides). Day constant 0.3881 to 0.3711, night 0.205
+   to 0.221. Hard floor, Punjab and Haryana, before and after: C1 0.028 to
+   -0.016; C1b p 1.00 to 0.32 (pass); C2 -0.060 unchanged; **C3 0.144 (pass) to
+   0.169 (fail)**; C3r 0.003 to -0.042 (pass); C4 unchanged; C1x 0.024 to 0.023.
+   The shipping rule now gives the ratio under the original C3 and the hard
+   floor under C3r (decision 30), as it did before the area was clipped.
+   Season totals fall by the same 4.6 percent (2020: 13,521; 2024: 1,605; 2025:
+   706); timing results are unchanged (peak +6.7 days per decade). Drift:
+   ln(Aqua / harmonized) 0.023 before 2022, 0.105 after. Córdoba, Chilecito
+   (curve) and Karnataka (ratio) records are unchanged; their hard-floor rows in
+   the ladder moved slightly (Córdoba 0.066 to 0.062).
+2. **Check C7 ran on the wrong record.** It used the detection curve's daily
+   series in every area, and that series lost any day on which VIIRS saw fire
+   and Aqua saw none (2,237 of 4,760 days from February 2012, about 1 percent
+   of October to November activity). It now uses the shipped model and the
+   same daily series as `stretch.py`: +8.2 days (was +8.1), p = 0.0009.
+3. **C1b said "pass" where it could not fail.** Chilecito has 4 usable months;
+   the test cannot reach p < 0.05 below about 11. Now "not run" there.
+4. **Ranges (`harm_lo`, `harm_hi`)** used the detection curve's daytime
+   constant spread for every model and for night cells. Each model now has its
+   own, for day and night.
+5. **C8 is read on the daytime curve.** The night curve would be over the
+   limit (Córdoba 72 percent, Punjab and Haryana 86, Karnataka 54). The check
+   row now says so. Verdicts unchanged.
+6. **Hotspot files** labelled S-NPP detections of 20 to 31 January 2012 and
+   1 to 2 November 2026 as used, though the record does not use S-NPP in those
+   months (985 rows across the four areas). Relabelled "excluded" with the
+   reason, in `hotspots.py` and in the shipped files.
+7. **`obs`** counted the first days of January twice (`obs.py` fixed; data
+   capped at the days in the month, not yet recomputed).
+8. **C6** included 2019 with three ESA months missing (`firecci.py` now uses
+   complete years; value not yet recomputed). C6 and C6m for Punjab and Haryana
+   predate item 1 (about -0.05 each when recomputed; still inside the limit).
+9. **`refresh.py`** took the last fetched date across all sources, so a run
+   that stopped after one sensor could leave a gap in the others. Now per source.
+10. **Figures.** `harmonized_<area>.png` drew the detection curve in every
+    area; it now draws the model that ships there.
+
+Sensitivity, rerun: every verdict is unchanged under all five alternative
+settings in both calibrated areas (before item 1, two Punjab verdicts moved).
