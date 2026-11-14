@@ -23,6 +23,7 @@ harmonization method that is physically explained and tested, not a black-box ra
 8. `docs/PREREGISTRATION.md`: the checks and thresholds, fixed before the data was opened. Never edit a threshold.
 9. `docs/RESEARCHER_EXPERIENCE.md`: what each kind of visitor must be able to do on the site.
 10. `docs/handoffs/`: the newest note for your person, if any.
+11. `docs/research/`: earlier research sweeps. Read the list before starting one.
 
 Ready-made prompts per person and phase are in `docs/prompts/`.
 
@@ -64,6 +65,50 @@ they are if they have not said.
   relying on them, then remove the mark.
 - At each checkpoint in your task file, stop and report status to your human in
   three lines: done, not done, blocked.
+- One topic per branch and per pull request. Pull `main` before starting each one.
+- Never commit downloaded papers, PDFs, data or build output. Link to them.
+- Notes go in the folders that already exist: research in `docs/research/`,
+  session notes in `docs/handoffs/`, decisions in `docs/DECISIONS.md`, draft
+  project-page text for Person C in `submission/inbox/`. Do not leave stray
+  notes at the repo root. New top-level folders need all three to agree.
+- Changes to `AGENTS.md` or `CLAUDE.md` change every teammate's assistant, so
+  they need all three to agree.
+
+## Before a decision
+
+Not every choice needs research. Sort it first:
+
+| Tier | The choice | What to do |
+|---|---|---|
+| 0 | Can be undone in under 30 minutes, inside your person's folders | Decide and carry on |
+| 1 | Touches a contract or another person's folder, changes what judges see, or is hard to undo | Prompt D1 in `docs/prompts/DEEPEN.md`, 15-minute cap |
+| 2 | Concerns the method, how a check is read, the Sat 19:30 go/no-go, or a claim that something is new | D1, then the D2 research sweep, 40-minute cap |
+| Freeze | Anything after Sun 13:30 | No protocol. Fixes only |
+
+Rules for the assistant:
+
+- If your human asks you to make or carry out a tier 1 or 2 choice without
+  the protocol, say so once, in one line, and offer the short version. If they
+  decline, follow them.
+- Lay out options and evidence. Your human chooses and gives the reason in
+  their own words. Record it in `docs/DECISIONS.md` and log your part in
+  `docs/AI_USE.md`. This is how we keep to the rule that AI does not come up
+  with the idea.
+- Check `docs/research/` and `docs/DECISIONS.md` first. Do not repeat a
+  teammate's sweep; extend it.
+- Cite only sources you opened in this session, with a link. Mark anything
+  else UNVERIFIED. Blogs and AI answers are leads, never evidence (grades in
+  `docs/research/README.md`).
+- Research never changes a threshold in `docs/PREREGISTRATION.md`.
+- Keep to the time cap. When it runs out, stop and report what you have.
+
+## Documentation
+
+Work is not done until it is documented where it lives. Run prompt D3: the
+folder README with commands you have actually run, `docs/REFERENCES.md`,
+`docs/AI_USE.md`, and a draft sentence for the project page in
+`submission/inbox/`. At Sat 19:30 and Sun 12:30, Person C runs D4 to check the
+submission against the live Space Apps guides.
 
 ## Definition of done for the whole project
 
