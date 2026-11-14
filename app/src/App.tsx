@@ -226,6 +226,7 @@ const OVERVIEW_CHARTS: Record<string, string> = {
   // Whole-region analyses; listed only where the file exists and no area is drawn.
   season: "Critical period · has it moved?",
   landcover: "Crops or wild land?",
+  people: "Who lives near the fires?",
   episodes: "This fire against earlier ones",
 };
 

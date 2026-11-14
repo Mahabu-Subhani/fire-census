@@ -89,6 +89,16 @@ data API, no account). Rerun after the hotspot files change:
 `python -I app/scripts/make_landcover.py` from the repo root, optionally with
 region ids. Takes a few minutes per area.
 
+## Population
+
+`public/data/<region>/population.json` comes from `scripts/make_population.py`
+(needs numpy and Pillow). Download the two WorldPop 2020 1 km UN-adjusted
+GeoTIFFs (about 18 MB each, URLs in the script) to a folder outside git, then
+from the repo root:
+`python -I app/scripts/make_population.py <that folder>`, optionally with
+region ids. Takes about 20 seconds for all four areas. The rule that joins it
+to the fire record is in `src/charts/population.ts` (decision 45).
+
 ## District files
 
 `public/data/<region>/districts.json` comes from `scripts/make_districts.py`.

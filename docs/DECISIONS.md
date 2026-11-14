@@ -132,6 +132,14 @@ early warning and emergency response. Points that change our plan:
 | 43 | Partner and Global Offer data | ESA Fire_cci (C6) and ESA WorldCover through the Microsoft Planetary Computer (land cover at fire cells). Other Global Offers (cloud credits, weather API, domain, collaboration tools) not used: the app is static and needs none, and a new domain this close to the deadline risks a broken link | Same |
 | 44 | Land cover in the app | A chart "What is burning: crops or wild land?": every fire cell in the record gets the dominant ESA WorldCover 2021 class of its 1 km cell, grouped as cropland, forest, grass and shrub, other; by month and by year, for the MODIS-visible activity and the small-fire layer, whole region only. Extends decision 43 (Mahabu's one-year sample for the project page) to the full record. Limits stated on screen: one land-cover map for all years; shares of fire cells, not of the harmonized value | 8crsk, 14 Nov, as team lead, after the AI assistant proposed it from the Global Offer list. Short D1: the challenge text separates wildfires from agricultural burns, and no other view in the app does. Reason in 8crsk's own words: **to be added by 8crsk** |
 
+
+## People and live data (added 14 November, about 21:00)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 45 | Who lives near the fires | A chart "Who lives near the fires?": WorldPop 2020 people per 0.1 degree square (`population.json`, `app/scripts/make_population.py`) joined to the record. A square counts when it had **3 or more** fire detections in the period (MODIS-equivalent in Harmonized). Follows the drawn area, dates and the Raw / Harmonized switch; a yearly chart shows both records. Not pre-registered, exploratory. The threshold was chosen **after** looking at the data: counting any square with fire, or a 5 km buffer around 1 km fire cells, jumps in 2012 even with the harmonized class (a footprint is not harmonized). Result, mean 2012-2025 against 2003-2011: Punjab and Haryana raw +99 %, harmonized -3 %; Chilecito raw +202 %, harmonized +6 %; Córdoba raw +257 %, harmonized +105 %; Karnataka raw +845 %, harmonized -50 %. The chart prints each area's own numbers and says to read the trend with care where the harmonized step stays large. Wording: exposure (living nearby), not harm or risk. Planetary Computer has no global population grid, so WorldPop was used | 8crsk, 14 Nov, as team lead; Mahabu agreed the team could do it without him. Reason in 8crsk's own words: "if theres fire risk in a higher no of people that would be helpful". The AI assistant proposed the method and the threshold and found the 2012 jump |
+| 46 | Live NASA fires and playback on the map | (a) A map toggle "NASA live fires: Off / Today / Yesterday" draws every VIIRS detection (NOAA-20 and NOAA-21) of that UTC day from the NASA GIBS WMS (no key, CORS open). Labelled raw, not harmonized, not an alert service. Our own data does not change, so decision 40 still holds. GIBS vector tiles returned 404 and the FIRMS no-key CSVs send no CORS header, so the WMS images are used. (b) A Play button and slider step the map through the months of the date range on one fixed colour scale, with the month shown on the map | 8crsk, 14 Nov, as team lead. Reason in 8crsk's own words: "looks cool in a hackathon too like real time data". Options laid out by the AI assistant |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -143,4 +151,5 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | 8crsk | Decision 35: redesign and research view | See row 35 |
 | 14 Nov 2026 | 8crsk | Decision 38: rules for comparing the satellites | See row 38 |
 | 14 Nov 2026 | 8crsk | Decision 44: land cover in the app | See row 44 |
+| 14 Nov 2026 | 8crsk | Decisions 45 and 46: people near fires; live NASA fires and playback on the map | See rows 45 and 46 |
 | 14 Nov 2026 | Charulekha | Decision 39: map-first retro UI, Arial, satellite base map | See row 39 |

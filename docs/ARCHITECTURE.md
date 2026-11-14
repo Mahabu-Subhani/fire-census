@@ -81,6 +81,7 @@ interface Selection {
   drift: DriftFile | null;     // <region>/drift.json
   episodes: Episodes | null;   // <region>/episodes.json
   landcover: LandCover | null; // <region>/landcover.json
+  population: Population | null; // <region>/population.json
 }
 
 function useSelection(): Selection;
@@ -116,6 +117,7 @@ Chart components C builds, each taking no props and reading `useSelection()`:
 | `SeasonTiming` | Season start, peak and end per year with the peak trend (`season.json`) |
 | `FireEpisodes` | Latest and largest fire episodes with ranks (`episodes.json`) |
 | `LandCover` | Fire activity split by land cover, by month or year (`landcover.json`) |
+| `PeopleNearFire` | People living in squares with fire, for the area and dates shown, and per year in both records (`population.json`); works for drawn areas too |
 
 A chart in `charts/index.ts` may give `available(selection)`; the shell hides
 it when that returns false. The two above are whole-region analyses, so they
@@ -254,6 +256,17 @@ entry each with `harmonized` and `small`: fire cells per group id),
 is one 0.01 degree cell per satellite, date and half of the day; it takes the
 cell's dominant land cover. Shown by the `LandCover` chart for the whole
 region; hidden if the file is missing.
+
+### `app/public/data/<region_id>/population.json`
+
+Written by `app/scripts/make_population.py` (Person B) from WorldPop 2020,
+1 km, UN-adjusted (one GeoTIFF per country, kept outside git). `source`,
+`population_year`, `square_deg` (the region's `cell_deg`), `method`,
+`region_population`, and `squares`: `[lon, lat, people]` per square, centres
+as in `cube.json`, squares with nobody left out. Each 1 km population pixel
+counts whole in the square holding its centre. The app joins it to the cube
+rows (`app/src/charts/population.ts`): a square counts when it had at least 3
+fire detections in the period (decision 45). Hidden if the file is missing.
 
 ### `app/public/data/<region_id>/sources.json`
 
