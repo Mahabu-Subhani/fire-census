@@ -173,8 +173,18 @@ def main() -> None:
                                    f"At the mean Aqua pixel size over this area the published day limit is "
                                    f"{dd['published_at_mean_pixel_MW']} MW"}
             if cid == "C6":
-                got = {"value": None, "verdict": "not run",
-                       "note": "ESA Fire_cci burned area not processed in the time available"}
+                c6_file = WORK / "c6.json"
+                c6 = json.loads(c6_file.read_text(encoding="utf-8")).get(area_id) if c6_file.exists() else None
+                if c6:
+                    got = {"value": c6["value"], "verdict": c6["verdict"],
+                           "note": (f"{c6['note']}. Aqua alone, which has no sensor change, gives "
+                                    f"{c6['aqua_only_same_statistic']} on the same statistic and the raw record "
+                                    f"{c6['raw_record_same_statistic']}: the hotspot-to-burned-area relationship "
+                                    f"itself changed, and our record differs from Aqua's by {c6['seam_share']}. "
+                                    f"ESA months missing: {', '.join(c6['missing_months']) or 'none'}")}
+                else:
+                    got = {"value": None, "verdict": "not run",
+                           "note": "ESA Fire_cci burned area not processed"}
             if cid == "C8" and model != "S0":
                 got = dict(res["checks"]["S0"].get("C8", {}))
                 got["note"] = "applies to the detection curve, which is used for the small-fire layer"

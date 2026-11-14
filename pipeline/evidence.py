@@ -30,7 +30,8 @@ from scipy import stats
 
 from config import FIGURES, WORK
 
-AREAS = {"cordoba": ("Córdoba", -63.7), "punjab-haryana": ("Punjab and Haryana", 75.7)}
+AREAS = {"cordoba": ("Córdoba", -63.7), "punjab-haryana": ("Punjab and Haryana", 75.7),
+         "karnataka-south": ("South Karnataka forests", 76.8)}
 # Sofiev and Kouznetsov (2026), GMD 19, 10123: MODIS C6.1 detection limit at nadir,
 # and linear in pixel area (Table 1): limit = slope * area + intercept.
 PUB_NADIR = {"D": 5.7, "N": 3.7}
@@ -73,7 +74,7 @@ def main() -> None:
     sens = json.loads((WORK / "sensitivity.json").read_text(encoding="utf-8"))
     con = duckdb.connect()
     ev = {"mix_test": {}, "c5": {}, "overpass": {}}
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+    fig, axes = plt.subplots(1, len(AREAS), figsize=(5.5 * len(AREAS), 4))
     for k, (area, (name, lon)) in enumerate(AREAS.items()):
         ev["mix_test"][area] = mix_test(area, curves)
         op = overpass_and_pixels(con, area, lon)
@@ -102,9 +103,10 @@ def main() -> None:
         ax.set_title(f"{name}: daytime overpass, local solar time", fontsize=10)
         ax.set_ylabel("Hour of day (mean of detections)")
         ax.spines[["top", "right"]].set_visible(False)
-        d = sens["aqua_drift_ln_aqua_over_harmonized"][area]
-        ax.text(2003, ax.get_ylim()[1] - 0.3, f"Aqua vs harmonized record: {100 * (np.exp(list(d.values())[0]) - 1):+.0f}% "
-                f"before 2022, {100 * (np.exp(list(d.values())[1]) - 1):+.0f}% after", fontsize=8, va="top")
+        d = sens["aqua_drift_ln_aqua_over_harmonized"].get(area)
+        if d:
+            ax.text(2003, ax.get_ylim()[1] - 0.3, f"Aqua vs harmonized record: {100 * (np.exp(list(d.values())[0]) - 1):+.0f}% "
+                    f"before 2022, {100 * (np.exp(list(d.values())[1]) - 1):+.0f}% after", fontsize=8, va="top")
     axes[0].legend(frameon=False, fontsize=8, loc="lower left")
     fig.tight_layout()
     fig.savefig(FIGURES / "orbit_drift.png", dpi=150)

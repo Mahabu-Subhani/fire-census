@@ -122,6 +122,15 @@ early warning and emergency response. Points that change our plan:
 |---|---|---|---|
 | 38 | Rules for the "Do the satellites agree?" section | **Same fire:** same or neighbouring 0.01 degree square, same date, same half of the day (the pipeline's matching rule; decisions 6 to 8 for grid and confidence). **Two VIIRS satellites agree** when the absolute log ratio of their fire cells is at most **0.25**, judged only on at least **30** fire cells each. **A daytime pass has drifted** when its mean local solar time moved more than **30 minutes** from its first usable year. These are display rules for the app; they change no number in the harmonized record and no pre-registered threshold | 8crsk, 14 Nov, as team lead, asked the AI assistant to propose thresholds and build the section. Proposed by the assistant with this evidence: identical VIIRS sensors differ by 0.07 to 0.10 a month in our data (PREREGISTRATION.md, note on C3), so 0.25 is about three times normal scatter; 30 is the minimum sample already pre-registered; Aqua's measured drift is 131 minutes in Punjab, and every VIIRS satellite stays within 19 minutes in all three regions. Reason in 8crsk's own words: **to be added by 8crsk** |
 
+## Closing the stretch list (14 November, about 17:00)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 40 | S2, a daily self-updating record | **Not built.** A manual refresh exists (`pipeline/refresh.py`, about ten minutes). A scheduled update would change the data after the submission deadline, which the rules may not allow, and the full pipeline needs 1.2 GB of raw files that are not in the repository | Decided by the AI assistant on Mahabu's instruction |
+| 41 | S3, estimating small fires before 2012 | **Not built.** It would be a model, not an observation, and could not be validated in the time left; the review (docs/REVIEW.md) warns against adding unvalidated results | Same |
+| 42 | Check C6 with ESA Fire_cci | **Run.** Córdoba fails (-0.440); Aqua alone, with no sensor change, gives -0.427, so the change is in burned area per detected fire, not a seam. Reported with that diagnosis | Same |
+| 43 | Partner and Global Offer data | ESA Fire_cci (C6) and ESA WorldCover through the Microsoft Planetary Computer (land cover at fire cells). Other Global Offers (cloud credits, weather API, domain, collaboration tools) not used: the app is static and needs none, and a new domain this close to the deadline risks a broken link | Same |
+
 ## Change log
 
 | Date | Who | Change | Reason |

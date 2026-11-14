@@ -29,4 +29,4 @@
   repeatedly flagged that way. Agricultural, land-clearing and waste burning
   stay in, because they are burning activity.
 - **Dates are in UTC,** so a night detection can fall on the previous local day.
-- **Not checked against burned-area maps** (check C6 was not run).
+- **Burned area per detected fire changed in Córdoba after 2012** (ESA Fire_cci, check C6). Aqua alone shows the same change, so it is not a seam, but it means fire-cell counts are not a fixed proxy for hectares burned.

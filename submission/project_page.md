@@ -129,11 +129,19 @@ app, including the failures. In Córdoba:
   years, so the limit could not be met by any real harmonization. We added a
   check on the two-year total (C3r, limit 0.10, passes at -0.072), recorded the
   change in a dated note, and show both verdicts side by side.
-- Not run: the comparison with ESA burned area (C6).
+- **A second check failed, and it taught us something.** We compared with
+  ESA's Fire_cci burned area, an independent record built from MODIS
+  reflectance with no 2012 seam (C6). Fire activity per km² burned is 36
+  percent lower after 2012 than before (-0.440 against a limit of 0.25).
+  But Aqua alone, which never changed sensor, gives -0.427 on the same test,
+  and the raw record +1.289. So burned area per detected fire in Córdoba
+  really changed; our record follows Aqua to within 0.013, while adding the
+  sensors up naively is off by a factor of about 3.6.
 
 In Punjab and Haryana the same checks pass except C3 (0.291) and the curve's
 stability (C8: 57 percent against a limit of 50), which is why the hard floor
-ships there; C6 was not run there either. The record also reproduces a documented change: a 2019 study
+ships there. C6 passes there (-0.153), but was only reported, not decisive,
+because Fire_cci misses many small crop fires. The record also reproduces a documented change: a 2019 study
 reported that Punjab's peak burning day moved later after 2009 groundwater laws
 delayed rice planting, and across both sensors our median burning day moves
 8.1 days later (C7, p = 0.0009).
@@ -180,11 +188,30 @@ one click away.
   so that years can be compared, not to measure burned area.
 - It is calibrated in three places: Córdoba, Punjab and Haryana, and
   Chilecito (borrowing Córdoba's calibration). Punjab's calibration is the
-  weakest, because crop-residue fires are small and brief.
+  weakest, because crop-residue fires are small and brief. A fourth area,
+  south Karnataka's forests, is a case study whose held-out checks fail.
 - A single month can differ by about 20 percent from what MODIS would have
   reported. Years, and the same month across years, are more reliable.
 - The last months are near-real-time data (from August 2026) and may change.
 - The outlook is history, not a forecast. We did not build a forecasting model.
+- It does not update itself. `pipeline/refresh.py` brings it up to date in
+  about ten minutes; we did not schedule it, because the data would then
+  change after the submission deadline.
+
+### What comes next
+
+Not built during the hackathon; listed so the next step is clear.
+
+- **Official ground records.** Compare with Punjab's official farm-fire
+  counts (Punjab Remote Sensing Centre, Central Pollution Control Board) and
+  CONAE's fire catalogue for Argentina. Punjab's official counts are
+  themselves satellite-based, so they test our pipeline, not the satellites.
+- **Fire weather.** With a record free of the 2012 jump, fire activity can be
+  related to 24 years of temperature, humidity, wind and drought (for example
+  ERA5-Land or NASA MERRA-2) without a fake step in the middle.
+- **More places.** Each new area needs its own calibration and its own checks
+  written down first; Karnataka showed that a method does not transfer by
+  itself.
 
 ### Tools used
 
@@ -238,8 +265,17 @@ part of NASA's Land, Atmosphere Near real-time Capability for Earth observations
 ## Space agency partner data and other references
 
 The challenge was authored by CONAE (Argentina). We cite its hotspot service
-as context and lead with one of its places, Córdoba. No CONAE or ESA data was
-processed.
+as context and lead with one of its places, Córdoba. We used two datasets
+from ESA, a 2026 Space Apps partner agency:
+
+- **ESA Fire_cci burned area v5.1** (monthly, 0.25 degree, 2001 to 2020),
+  read from the CEDA archive, for check C6.
+- **ESA WorldCover 2021** (10 m land cover), read through the Microsoft
+  Planetary Computer, to show what burns where: in Punjab and Haryana 87
+  percent of sampled VIIRS fire cells are cropland; in Córdoba 49 percent
+  grassland, 23 percent cropland and 19 percent shrubland. That difference
+  is why Punjab's small crop fires are hard for MODIS to see and its
+  calibration is weaker.
 
 - NASA FIRMS: https://www.earthdata.nasa.gov/data/tools/firms
 - Sofiev, M. and Kouznetsov, R. (2026): Observation operator and detection

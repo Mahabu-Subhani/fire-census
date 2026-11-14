@@ -52,6 +52,9 @@ Times are from a 32 GB Windows laptop.
 | 6. Sensitivity and orbit drift | `$PY sensitivity.py` | `work/sensitivity.json`, copies in `$FIRE_DATA-sens/` | 4 min |
 | 7. Reviewer objections, C5, drift figure | `$PY evidence.py` | `work/evidence.json`, `figures/orbit_drift.png` | 30 s |
 | 8. Daily fire masks (optional) | `$PY obs.py download` then `$PY obs.py process` | `$FIRE_DATA/modis/MYD14A1/`, `work/obs_<area>.parquet` | about 3 h download, 20 min process |
+| 8b. ESA burned area, check C6 | `$PY firecci.py` | `work/firecci_monthly.parquet`, `work/c6.json` | 10 min (network) |
+| 8c. Land cover at fire cells | `$PY landcover.py` | `work/landcover.json` | 7 min (network) |
+| 8d. Stretch analyses | `$PY stretch.py` (after step 9) | `app/public/data/<area>/{season,drift,episodes}.json`, season figures | 1 min |
 | 9. App data | `$PY export.py` | `app/public/data/regions.json`, `<area>/cube.json`, `<area>/meta.json` | 1 min |
 | 10. Figures | `$PY figures.py` | `submission/figures/*.png` | 20 s |
 | 11. Hotspot files | `$PY hotspots.py` | `app/public/data/<area>/hotspots/<year>.csv.gz` | 2 min |

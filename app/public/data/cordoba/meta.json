@@ -120,10 +120,10 @@
     {
       "id": "C6",
       "name": "Burned-area relationship is stable",
-      "value": null,
+      "value": -0.44,
       "threshold": "absolute log ratio at most 0.25",
-      "verdict": "not run",
-      "note": "ESA Fire_cci burned area not processed in the time available"
+      "verdict": "fail",
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; gated for this area. Aqua alone, which has no sensor change, gives -0.427 on the same statistic and the raw record 1.289: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by -0.013. ESA months missing: 2019-10, 2019-11, 2019-12"
     },
     {
       "id": "C7",
@@ -741,8 +741,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "8752832",
-  "generated_at": "2026-11-14T10:24:50Z",
+  "code_commit": "667957b",
+  "generated_at": "2026-11-14T11:10:36Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [

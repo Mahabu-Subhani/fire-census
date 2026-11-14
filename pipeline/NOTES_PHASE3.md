@@ -126,6 +126,39 @@ changes in the calendar, nor the month-to-month scatter behind check C3. That
 points to overpass timing as the cause. Not fetched for the Karnataka area
 (tile h25v08), where `obs` is null.
 
+## Check C6: ESA Fire_cci burned area (`firecci.py`)
+
+Fire_cci v5.1 grid, monthly 2001 to 2020, read by netCDF byte-range requests
+(only each area's rows; about 13 s per month; netCDF-C is not thread-safe, so
+eight processes). October to December 2019 could not be read from the server.
+
+| Area | C6 (harmonized) | Aqua alone | Raw record | Verdict |
+|---|---|---|---|---|
+| Córdoba (gated) | -0.440 | -0.427 | +1.289 | fail |
+| Punjab and Haryana (reported) | -0.153 | -0.185 | +1.534 | pass |
+| Chilecito (not pre-registered) | +0.430 | +0.157 | +1.854 | fail |
+| Karnataka (not pre-registered) | +0.276 | +0.340 | +2.537 | fail |
+
+Aqua alone has no sensor change, so its value is what the statistic gives with
+no seam at all. In Córdoba our record differs from it by -0.013: the check
+fails because burned area per detected fire changed after 2012, not because of
+the harmonization. The raw record would be off by +1.289.
+
+## Land cover at fire cells (`landcover.py`)
+
+ESA WorldCover 2021 via the Microsoft Planetary Computer, 3,000 sampled NOAA-20
+fire cells of 2021 per area (262 in Chilecito, 1,672 in Karnataka). Punjab and
+Haryana: cropland 87%, tree cover 7%, built-up 3%. Córdoba: grassland 49%,
+cropland 23%, shrubland 19%. Chilecito: shrubland 42%, tree cover 28%, bare
+12%. Karnataka: grassland 34%, tree cover 29%, cropland 22%. The share of the
+small-fire layer by class is within a few points of the MODIS-visible share
+in every area.
+
+## C5 for Karnataka
+
+Day midpoint 17.45 MW against 5.7 at nadir (3.06 times): fails the factor-of-2
+rule. Night 3.73 against 3.7: passes. So C5 fails for Karnataka.
+
 ## Still open
 
 - C6 (ESA burned area): not run.

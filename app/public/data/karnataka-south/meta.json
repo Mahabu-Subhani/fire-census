@@ -112,18 +112,18 @@
     {
       "id": "C5",
       "name": "Curve midpoint is physically plausible",
-      "value": null,
+      "value": "day 17.45 MW vs published 5.7 (x3.06); night 3.73 MW vs 3.7 (x1.01)",
       "threshold": "within a factor of 2 of published limits",
-      "verdict": "not run",
-      "note": "published limits not yet verified against their source"
+      "verdict": "fail",
+      "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. At the mean Aqua pixel size over this area the published day limit is 8.91 MW"
     },
     {
       "id": "C6",
       "name": "Burned-area relationship is stable",
-      "value": null,
+      "value": 0.276,
       "threshold": "absolute log ratio at most 0.25",
-      "verdict": "not run",
-      "note": "ESA Fire_cci burned area not processed in the time available"
+      "verdict": "fail",
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.34 on the same statistic and the raw record 2.537: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by -0.065. ESA months missing: 2019-10, 2019-11, 2019-12"
     },
     {
       "id": "C7",
@@ -741,8 +741,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "8752832",
-  "generated_at": "2026-11-14T10:24:50Z",
+  "code_commit": "667957b",
+  "generated_at": "2026-11-14T11:10:36Z",
   "data_through": "2026-11-05",
   "nrt_from": "2026-08",
   "sources": [

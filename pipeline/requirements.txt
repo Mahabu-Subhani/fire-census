@@ -9,3 +9,7 @@ pytest
 earthaccess
 pyhdf
 pypdf
+netCDF4
+rasterio
+pystac-client
+planetary-computer
