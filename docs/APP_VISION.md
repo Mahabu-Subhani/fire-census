@@ -2,9 +2,7 @@
 
 # App vision: what the person using it needs
 
-Status: **agreed by all three on 14 November** (decision 28), except the
-section "First principles", which was added afterwards and is still a proposal
-(decision 29). It builds on `docs/RESEARCHER_EXPERIENCE.md` and does not
+Status: **agreed by all three on 14 November** (decisions 28 and 29). It builds on `docs/RESEARCHER_EXPERIENCE.md` and does not
 replace it. Where the two disagree on build order, this file wins. Nothing
 here changes the B1 deliverables due at Sat 11:30 (shell, deploy, mock data,
 `useSelection()`, placeholder charts): every version of the app needs them.
@@ -17,7 +15,7 @@ defends the answer in 2 minutes, and hands over the data in 10.
 
 ## First principles: the challenge text, sentence by sentence
 
-Proposal (decision 29). Reduced to its parts, the challenge asks for **an
+Agreed (decision 29). Reduced to its parts, the challenge asks for **an
 updated and consistent record, read three ways (patterns, trends, anomalies),
 for an area the user selects, exported as analytics, visualizations and
 hotspots.** Each row below takes one sentence of the challenge page and says

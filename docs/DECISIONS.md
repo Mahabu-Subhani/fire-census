@@ -80,7 +80,7 @@ early warning and emergency response. Points that change our plan:
 | # | Decision | Answer | Why |
 |---|---|---|---|
 | 28 | App vision | `docs/APP_VISION.md` is the plan for what the app answers. Stack unchanged (decisions 15 to 20). Contract fields `mtd`, `data_through`, `nrt_from`, and hook fields `areaKm2`, `place`, `dataThrough` added to `docs/ARCHITECTURE.md` | Agreed by all three, reported by 8crsk. Reason in the team's own words: <to add> |
-| 29 | First-principles additions | The section "First principles" in `docs/APP_VISION.md` (baseline window, downloads, hotspot CSV, trends, keeping the data current) | **Proposed, not yet agreed.** Needs all three |
+| 29 | First-principles additions | The section "First principles" in `docs/APP_VISION.md` (baseline window, downloads, hotspot CSV, trends, keeping the data current) | Agreed by all three, 14 November (reported by 8crsk, team lead) |
 
 ## After the Phase 2 results (14 November 2026)
 
