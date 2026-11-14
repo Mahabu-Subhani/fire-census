@@ -226,9 +226,9 @@
     "NOAA-20": 13.29,
     "NOAA-21": 13.33,
     "S-NPP": 13.41,
-    "Terra": 9.13
+    "Terra": 9.11
    },
-   "aqua_over_harmonized": 1.244
+   "aqua_over_harmonized": 1.24
   }
  ],
  "note": "Mean local solar time of daytime detections. Aqua's last orbit-maintenance manoeuvre was in December 2021; since then its afternoon pass moves later each year and Terra's morning pass earlier. aqua_over_harmonized above 1 means a MODIS-only calendar would show more fire than the harmonized record."

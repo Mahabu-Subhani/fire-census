@@ -45,15 +45,31 @@ def last_date() -> date:
     return con.execute(f"select max(d) from ({q})").fetchone()[0]
 
 
+def area_last_date(area: str) -> date:
+    """Newest date already fetched for one area: its own API files, else the archive."""
+    files = sorted(RAW.glob(f"NRTAPI_*/fire_nrt_api_{area}_*.csv"))
+    if not files:
+        return last_archive_date()
+    name = files[-1].stem.split("_")                       # ..._<area>_<start>_<n>d
+    return date.fromisoformat(name[-2]) + timedelta(days=int(name[-1][:-1]) - 1)
+
+
+def last_archive_date() -> date:
+    con = duckdb.connect()
+    files = [p.as_posix() for p in RAW.glob("DL_FIRE_*/fire_*.csv")]
+    q = " union all ".join(f"select max(acq_date::date) d from read_csv('{f}', all_varchar=true)" for f in files)
+    return con.execute(f"select max(d) from ({q})").fetchone()[0]
+
+
 def main() -> None:
     key = map_key()
-    start = last_date() + timedelta(days=1)
     end = date.today() - timedelta(days=1)       # complete days only
-    if start > end:
-        print("Already up to date")
-        return
-    print(f"Fetching {start} to {end}")
+    print(f"Fetching each area from the day after its last date, to {end}")
     for area, (_name, west, south, east, north, country) in AREAS.items():
+        start = area_last_date(area) + timedelta(days=1)    # each area from its own last date
+        if start > end:
+            print(f"{area}: up to date")
+            continue
         for source, family in SOURCES.items():
             folder = RAW / f"NRTAPI_{country}_{family}_{source}"
             folder.mkdir(parents=True, exist_ok=True)

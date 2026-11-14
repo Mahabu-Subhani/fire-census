@@ -1,7 +1,7 @@
 {
   "level_shipped": "L2",
   "level_name": "Hard floor",
-  "shipping_reason": "Hard floor. The detection curve fails C8 here (its midpoint is too uncertain), so the rule moves to the hard floor, which passes C0, C1, C1b, C2, C3r and C4. Fails the original C3 (0.291). Both verdicts are shown.",
+  "shipping_reason": "Hard floor. Since Punjab was clipped to Punjab, Haryana and Chandigarh (decision 44) it passes every pre-registered check that applies to it, including the original held-out check C3 (0.144 against 0.15), so it ships under the original rule. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship.",
   "unit": "Aqua-equivalent fire cells",
   "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve.",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
@@ -749,8 +749,8 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "ae5374b",
-  "generated_at": "2026-11-14T15:54:01Z",
+  "code_commit": "4940239",
+  "generated_at": "2026-11-14T16:09:26Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
