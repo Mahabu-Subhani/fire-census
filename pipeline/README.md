@@ -126,6 +126,39 @@ unknown. `export.py` reads `pipeline/shipping.json` to decide which model fills
 | `shipping.json` | Which model ships in each area, and why |
 | `refresh.py` | Near-real-time detections after the archive ends (FIRMS area API, at most 5 days per call; S-NPP not requested since it stopped on 2 Nov 2026) |
 | `obs_probe.py` | One-off: sizes of the fire-mask files before downloading |
+| `walkthrough.py` | Writes `submission/inbox/A-what-we-show.md`: every screen of the app, every check in plain words and why C6 fails, with every number read from `app/public/data/` |
+
+### The presenter's walkthrough
+
+Rerun after every `export.py`, so the team never quotes a stale number. No
+downloaded data and no network needed. Run on 14 November from the repo root:
+
+```bash
+python pipeline/walkthrough.py     # wrote submission/inbox/A-what-we-show.md (415 lines)
+```
+
+`pipeline/tests/test_walkthrough.py` checks that every check row in the output
+matches `meta.json` and that the C6 notes were parsed (no "n/a").
+
+### Recomputing C6 and C6m from a fresh clone (run 15 November)
+
+The short way plus ESA's and NASA's burned area, which need a network but no
+account (about 15 minutes; Git Bash, `FIRE_DATA` and the venv as in "Set up
+once"; the venv also needs `rasterio pystac-client planetary-computer pyproj`):
+
+```bash
+cd pipeline
+$PY from_hotspots.py && $PY harmonize.py && $PY validate.py && $PY loyo.py
+$PY firecci.py      # fetching 240 months from ESA CCI ... writes work/c6.json
+$PY mcd64.py        # 2114 tile-months in the catalogue ... writes work/c6m.json
+$PY sensitivity.py && $PY evidence.py && $PY export.py && $PY stretch.py
+```
+
+Months or tiles that fail to download are fetched again on the next run.
+October to December 2019 are read from ESA's `new-corrected` folder. Run on
+15 November: every `cube.json`, season, drift and episode file came out byte
+for byte as shipped. Results and fixes in `NOTES_PHASE3.md`, "Check C6
+recomputed" and "Second audit of the pipeline".
 
 ## Reproduction test (14 November)
 

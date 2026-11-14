@@ -59,7 +59,7 @@
       "value": 1.642,
       "threshold": "greater than 0.5",
       "verdict": "pass",
-      "note": "curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C1",
@@ -67,7 +67,7 @@
       "value": 0.29,
       "threshold": "absolute value at most 0.10",
       "verdict": "fail",
-      "note": "curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C1b",
@@ -75,15 +75,15 @@
       "value": null,
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
       "verdict": "not run",
-      "note": "only 4 months with at least 30 Aqua fire cells: too few for the test to find a change point at p < 0.05 curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "only 4 months with at least 30 Aqua fire cells: too few for the test to find a change point at p < 0.05. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C1x",
       "name": "No seam at 2012, out of sample (added after results)",
       "threshold": "absolute log ratio at most 0.10",
-      "value": "+0.087",
+      "value": null,
       "verdict": "not run",
-      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Leaving one year out at a time (2012 to 2021): 8 of 10 years within 0.10, mean -0.009, largest 0.181. Borrowed from cordoba; not tested in this area."
+      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Not tested in this area, which has too few fires to fit its own model; it uses the model of C\u00f3rdoba and neighbouring areas, whose own result is +0.087 (leaving one year out at a time (2012 to 2021): 8 of 10 years within 0.10, mean -0.009, largest 0.181)."
     },
     {
       "id": "C2",
@@ -91,7 +91,7 @@
       "value": "2016: -0.054; 2008: +0.000",
       "threshold": "absolute value at most 0.10 at both",
       "verdict": "pass",
-      "note": "2008 is zero by construction: H equals the Aqua reference before 2012 curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "Only the 2016 placebo tests anything: 2008 is zero by construction, because before 2012 the harmonized record is the Aqua reference itself. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C3",
@@ -99,7 +99,7 @@
       "value": null,
       "threshold": "median absolute log ratio at most 0.15",
       "verdict": "not run",
-      "note": "only 0 months with at least 30 Aqua fire cells curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "only 0 months with at least 30 Aqua fire cells. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C3r",
@@ -107,7 +107,7 @@
       "value": null,
       "threshold": "absolute log ratio at most 0.10",
       "verdict": "not run",
-      "note": "only 0 months with at least 30 Aqua fire cells curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "only 0 months with at least 30 Aqua fire cells. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C4",
@@ -115,7 +115,7 @@
       "value": "slope 0.979, correlation 0.889",
       "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
       "verdict": "fail",
-      "note": "103 months curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "103 months. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C5",
@@ -123,7 +123,7 @@
       "value": "day 9.87 MW vs published 5.7 (x1.73); night 6.86 MW vs 3.7 (x1.85)",
       "threshold": "within a factor of 2 of published limits",
       "verdict": "pass",
-      "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. At the mean Aqua pixel size over this area the published day limit is 10.4 MW curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. At the mean Aqua pixel size over this area the published day limit is 10.4 MW. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C6",
@@ -131,7 +131,7 @@
       "value": 0.43,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "fail",
-      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.157 on the same statistic and the raw record 1.854: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.272. ESA months missing: 2019-10, 2019-11, 2019-12 curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.157 on the same statistic and the raw record 1.854: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.272. ESA months missing: none. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C6m",
@@ -139,7 +139,7 @@
       "value": -0.237,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "pass",
-      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.237. Aqua alone, with no sensor change: -0.306. Raw record: 1.565 curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.237. Aqua alone, with no sensor change: -0.306. Raw record: 1.565. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C7",
@@ -147,7 +147,7 @@
       "value": null,
       "threshold": "at least +5 days, p < 0.05",
       "verdict": "not run",
-      "note": "defined for Punjab and Haryana only curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "defined for Punjab and Haryana only. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C8",
@@ -155,7 +155,7 @@
       "value": "midpoint 9.9 MW, 90% range 8.6 to 12.3 (width 38% of midpoint)",
       "threshold": "90% range at most 50% of the midpoint",
       "verdict": "pass",
-      "note": "daytime curve. The night curve, read the same way, would be over the limit (72%); night fires are 7.4% of the reference fire cells in the fitting years curve and constants borrowed from cordoba; too few fires here to calibrate"
+      "note": "daytime curve. The night curve, read the same way, would be over the limit (72%); night fires are 7.4% of the reference fire cells in the fitting years. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     }
   ],
   "all_models": {
@@ -757,13 +757,13 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "8b0ea58",
-  "generated_at": "2026-11-14T18:14:07Z",
+  "code_commit": "e51d21a",
+  "generated_at": "2026-11-14T19:04:41Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days",
     "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days"
   ],
-  "month_log_sd": 0.244
+  "month_log_sd": null
 }

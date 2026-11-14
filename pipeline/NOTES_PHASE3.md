@@ -161,8 +161,8 @@ rule. Night 3.73 against 3.7: passes. So C5 fails for Karnataka.
 
 ## Still open
 
-- C6 (ESA burned area): not run.
-- C5 for Karnataka: not run (evidence.py covers the two calibration areas).
+- C6 (ESA burned area): not run. *(Resolved later the same day; see "Check C6" above.)*
+- C5 for Karnataka: not run (evidence.py covers the two calibration areas). *(Resolved; see "C5 for Karnataka" above.)*
 
 ## Areas fixed and rerun (14 November, about 21:30)
 
@@ -235,7 +235,7 @@ files (`from_hotspots.py`). Reviewed by: Mahabu Subhani (pending).
 7. **`obs`** counted the first days of January twice (`obs.py` fixed; data
    capped at the days in the month, not yet recomputed).
 8. **C6** included 2019 with three ESA months missing (`firecci.py` now uses
-   complete years; value not yet recomputed). C6 and C6m for Punjab and Haryana
+   complete years; value not yet recomputed; *recomputed 15 Nov, see the last section*). C6 and C6m for Punjab and Haryana
    predate item 1 (about -0.05 each when recomputed; still inside the limit).
 9. **`refresh.py`** took the last fetched date across all sources, so a run
    that stopped after one sensor could leave a gap in the others. Now per source.
@@ -244,3 +244,92 @@ files (`from_hotspots.py`). Reviewed by: Mahabu Subhani (pending).
 
 Sensitivity, rerun: every verdict is unchanged under all five alternative
 settings in both calibrated areas (before item 1, two Punjab verdicts moved).
+
+## Check C6 recomputed (15 November)
+
+AI-assisted, at Mahabu's request. Reviewed by: Mahabu Subhani (pending).
+
+1. **Why October to December 2019 were "missing".** Not a server failure. ESA
+   found an error in the processing of November 2019 (October and December
+   less affected), reprocessed the three months and put them in
+   `2019/new-corrected/` on the CEDA archive; the top-level path is a 404.
+   `firecci.py` now reads them there (`CORRECTED`, `url()`).
+2. **Failed months were never retried.** They were dropped before the cache
+   was saved, and the cache was reused whenever it existed. Now every month
+   missing from the cache is fetched again on each run, and the fetched
+   months are merged into it.
+3. **Rerun** from a fresh clone: `from_hotspots.py`, `harmonize.py`
+   (constants as published: Punjab floor 0.371 day, 0.221 night; Córdoba
+   midpoint 9.9 MW), then `firecci.py`; 240 of 240 months read.
+4. **Reproduction first.** With October to December 2019 removed and 2019
+   kept (the old rule), the numbers are Córdoba -0.440, Karnataka +0.276,
+   Chilecito +0.430: the published values. Punjab gives -0.149 under both
+   rules; the published -0.104 predates the hard-floor correction.
+5. **Result.** With 2019 complete: Córdoba -0.440 (fail; Aqua alone -0.427),
+   Punjab and Haryana -0.149 (pass; Aqua alone -0.125; seam part -0.024),
+   Chilecito +0.430 (fail), Karnataka +0.276 (fail). 2019 is not the median
+   year of 2013 to 2019 in any area, so completing it changes no value.
+6. **Into the app.** Only the C6 rows of the four `meta.json` files changed,
+   worded exactly as `export.py` writes them from `work/c6.json` (a full
+   `export.py` run with that file present writes the same rows).
+7. **Still to recompute:** C6m for Punjab and Haryana (before the hard-floor
+   correction; about -0.08 expected). *Done: item 8.*
+8. **C6m recomputed** the same day (`mcd64.py`, 2,114 tile-months): Punjab
+   and Haryana -0.036 to **-0.081** (pass; Aqua alone -0.089); Córdoba -0.392,
+   Chilecito -0.237, Karnataka +0.374 unchanged. `mcd64.py` had the same
+   never-retry flaw as `firecci.py` (fixed). Its 289 "failed" tile-months
+   were tiles the catalogue search returns because they touch the box but
+   that hold no pixel of it ("Intersection is empty"); they now count as
+   zero, and no value changes.
+
+## Second audit of the pipeline (15 November)
+
+AI-assisted: an independent AI read of `pipeline/` (given the code, not our
+conclusions), then a full rerun from the shipped hotspot files: `harmonize`,
+`validate`, `loyo`, `sensitivity`, `evidence`, `firecci`, `mcd64`, `export`,
+`stretch`. Reviewed by: Mahabu Subhani (pending).
+
+**Reproduction.** Every `cube.json` and every season, drift and episode file
+came out byte for byte as shipped; in `meta.json` every check value except
+C6 and C6m (recomputed above) matched. The reviewer confirmed the step
+windows (36 months each side), every threshold comparison, the C3/C3r cell
+filter, the C4 period (103 months), C7's windows and test, the Pettitt
+p-value, and the shipping rule.
+
+**Fixed:**
+
+1. **Chilecito showed Córdoba's numbers as its own** in two places. Its C1x
+   row had Córdoba's value (+0.087) beside "not run", and its `month_log_sd`
+   (the monthly error behind the rank range) was Córdoba's 0.244, so its rank
+   range was too narrow for an area that fails C1 and C4. Now C1x has no
+   value (the note gives Córdoba's result as Córdoba's), and `month_log_sd` is
+   null, so the app shows no range there (`loyo.py`).
+2. **Stale note would come back on a rebuild.** `shipping.json` still told
+   `export.py` to mark Punjab's C6 and C6m as computed before the
+   correction; on a fresh clone without the burned-area work files that note
+   would be attached to the recomputed values. Removed.
+3. **Season label by year, not by date** (`stretch.py`): a season window
+   starting in January 2012 (Karnataka) was labelled VIIRS although January
+   2012 is still Aqua. Now the record in use on the peak day. No shipped file
+   changes (Karnataka's 2012 peak falls after February).
+4. **Notes for borrowing areas** ended in a lower-case sentence fragment with
+   the area id ("curve and constants borrowed from cordoba"); now a sentence
+   with the area's name (`export.py`). The C2 note now says that only the 2016
+   placebo tests anything (`validate.py`; wording asked for by the session
+   reviewing the project page).
+
+**Not fixed, reported:**
+
+- **PELT was not run.** The pre-registration lists PELT as an ungated second
+  opinion for C1b; no code computes it. Its penalty was never fixed in
+  advance, so choosing one now would be a choice made after seeing results.
+  Stated in `limits.md` and in a dated note in `PREREGISTRATION.md`.
+- **Variant A is assumed** in `stretch.py`, `firecci.py`, `mcd64.py`,
+  `evidence.py` and `figures.py`. Every area ships variant A, so no number is
+  wrong; switching an area to B in `shipping.json` would need these changed.
+- **`docs/ARCHITECTURE.md`'s file list** says `season.json` and
+  `episodes.json` exist for fewer areas, and `drift.json` for three; the code
+  writes them for all four (Punjab's `episodes.json` is an explicit null).
+  It is the shared contract, so the change is left to Mahabu and 8crsk.
+- **`obs` (clear-view days)** is still up to 3 days high in January. It needs
+  the Aqua daily fire masks (Earthdata login, about 3 hours of download).

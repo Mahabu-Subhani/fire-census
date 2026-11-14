@@ -131,3 +131,33 @@ one it was applied with. Values in the notes above that change:
   test needs to reach p < 0.05 at all (Chilecito, 4 months).
 - **C8** is read on the daytime curve, as before; the check row now states
   that the night curve would be over the limit.
+
+### 15 November 2026: check C6 recomputed (drafted by the AI assistant, at Mahabu's request)
+
+No threshold and no definition is changed. C6 is now computed as defined,
+with complete years 2003 to 2011 and 2013 to 2019. ESA's October to December
+2019 files had been reprocessed after a processing error and moved to a
+`new-corrected` folder on the CEDA archive (ESA's note
+`Error_in_November_2019_files.txt` in the 2019 folder); `firecci.py` now
+reads them there, so all 240 months are used.
+
+| Area | C6 | Verdict | Aqua alone | Before |
+|---|---|---|---|---|
+| Córdoba (gated) | -0.440 | fail | -0.427 | -0.440 |
+| Punjab and Haryana | -0.149 | pass | -0.125 | -0.104 (before the hard-floor correction) |
+| Chilecito | +0.430 | fail | +0.157 | +0.430 |
+| Karnataka | +0.276 | fail | +0.340 | +0.276 |
+
+The Córdoba verdict is unchanged: fail, reported as failed.
+
+### 15 November 2026: C6m recomputed; PELT not run (drafted by the AI assistant, at Mahabu's request)
+
+No threshold and no definition is changed.
+
+- C6m (added after results, not pre-registered) recomputed on the corrected
+  record: Punjab and Haryana -0.081 (was -0.036), pass. Other areas unchanged.
+- **The PELT second opinion listed under C1b was never run.** This file says
+  it would be reported, not gated. No penalty was fixed in advance, and
+  picking one after the results are known would be a post-hoc choice, so it
+  is reported as not run rather than added now. C1b's verdict rests on the
+  Pettitt test alone, as the table says.

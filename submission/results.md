@@ -27,18 +27,22 @@ about 5.2 times.
 | C3r | Held-out years, two-year total (limit 0.10), added after results | **Pass.** -0.072 | **Pass.** -0.042 |
 | C4 | NOAA-20 alone, never used for fitting, gives the same record | **Pass.** Slope 0.951, correlation 0.987 | **Pass.** Slope 1.025, correlation 0.993 |
 | C5 | The curve agrees with published MODIS detection limits (within a factor of 2) | **Pass.** Day 9.9 MW against 5.7 MW at nadir; night 6.9 against 3.7 | **Pass.** Day 4.8 against 5.7; night 4.2 against 3.7 |
-| C6 | Stable relationship with ESA Fire_cci burned area (limit 0.25) | **Fail.** -0.440 (Aqua alone -0.427) | **Pass.** -0.104 |
-| C6m | Same with NASA MCD64A1 burned area, added after results | **Fail.** -0.392 (Aqua alone -0.430) | **Pass.** -0.036 |
+| C6 | Stable relationship with ESA Fire_cci burned area (limit 0.25) | **Fail.** -0.440 (Aqua alone -0.427) | **Pass.** -0.149 (Aqua alone -0.125) |
+| C6m | Same with NASA MCD64A1 burned area, added after results | **Fail.** -0.392 (Aqua alone -0.430) | **Pass.** -0.081 (Aqua alone -0.089) |
 | C7 | Punjab's burning peak moves later after 2009 (at least 5 days) | | **Pass.** 8.2 days later, p = 0.0009 |
 | C8 | The curve is stable when resampled (range at most 50 percent) | **Pass.** 9.9 MW, range 8.6 to 12.3 (38 percent). Daytime curve; see the note on C8 below | **Fail.** 4.8 MW, range 4.2 to 7.1 (62 percent); applies to the curve, which does not ship here |
 
-**About C6 and C6m in Punjab and Haryana.** The two values in the table were
-computed before the correction described below and have not been recomputed
-(the burned-area files are not in the repository). The correction lowers the
-record after 2012 by 4.6 percent, which moves both by about -0.05, to about
--0.15 and -0.08: still inside the 0.25 limit. In Córdoba the ESA value
-includes 2019, for which ESA's October to December files were missing; the
-code now uses complete years only and that value is also to be recomputed.
+**About C6 and C6m.** C6 was recomputed on 15 November on the corrected
+record, with all 240 ESA months. The October to December 2019 files had not
+been missing by chance: ESA reprocessed them after finding an error in
+November 2019 and moved them to a `new-corrected` folder, which the old code
+did not read. With 2019 complete, every value is unchanged except Punjab and
+Haryana's, which moves from -0.104 to -0.149 because of the hard-floor
+correction described below (still a pass). 2019 is not the median year of
+2013 to 2019 in any area, which is why it changes nothing. C6m was recomputed
+the same day on the corrected record: Punjab and Haryana moves from -0.036 to
+-0.081 (still a pass; Aqua alone -0.089), and the other three areas are
+unchanged. Every burned-area value in the app is now from the current record.
 
 **About C3.** The method we ship fails it in both areas. In Córdoba the
 detection curve (0.207) and the hard floor (0.292) fail; the constant ratio
@@ -114,9 +118,10 @@ Remaining step at 2012 (0 is perfect):
   S-NPP stopped delivering data on 2 November 2026.
 - **The record survives MODIS's orbit drift.** In our own data, Aqua's daytime
   pass over Punjab and Haryana moved from 13:18 local time in 2021 to 15:27 in
-  2026, and Terra's from 10:53 to 09:14. Since 2022 Aqua reports 10.5 percent
-  more fire than the harmonized record there (2.3 percent more before), and 5.9
-  percent more in Córdoba (1.9 percent more before). A MODIS-only calendar continued past 2022 would
+  2026, and Terra's from 10:53 to 09:14. Since 2022 Aqua reports about 11 percent
+  more fire than the harmonized record there (2.3 percent more before), and 6.1
+  percent more in Córdoba (1.9 percent more before); the log ratios are 0.105,
+  0.023, 0.059 and 0.019. A MODIS-only calendar continued past 2022 would
   carry that drift. Ours uses VIIRS after 2012, calibrated before the drift.
 - **The record reproduces a documented event.** A 2019 study reported that
   Punjab's peak burning day moved from 24 October to 4 November after 2009
@@ -161,7 +166,9 @@ Remaining step at 2012 (0 is perfect):
   normal". Chilecito has too few fires to calibrate, so it borrows Córdoba's
   curve, and two of its own checks fail on that borrowed calibration: the 2012
   step (C1, 0.29) and NOAA-20 agreement (C4, correlation 0.889). Treat it as a
-  case study, not a validated region.
+  case study, not a validated region. Because it has too few months to measure
+  its own monthly error, the app shows no rank range for it (until 15 November
+  it showed a range built on Córdoba's error, which was too narrow).
 - **Why the small-fire layer is larger than the record in Punjab.** From 2013
   to 2025 the small-fire layer is 2.05 times the harmonized record in Punjab and
   Haryana (1.94 to 2.32 by year) and 1.74 times in Córdoba. Crop-residue fires are

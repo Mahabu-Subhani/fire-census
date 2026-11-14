@@ -28,8 +28,16 @@ from config import AREAS, REPO, WORK, area_outline
 _MASKS: dict = {}
 
 URL = ("https://dap.ceda.ac.uk/neodc/esacci/fire/data/burned_area/MODIS/grid/v5.1/"
-       "{y}/{y}{m:02d}01-ESACCI-L4_FIRE-BA-MODIS-fv5.1.nc#mode=bytes")
+       "{y}/{sub}{y}{m:02d}01-ESACCI-L4_FIRE-BA-MODIS-fv5.1.nc#mode=bytes")
 YEARS = range(2001, 2021)
+# ESA found a processing error in November 2019 (and, less, October and December) and put the
+# reprocessed files in a "new-corrected" subfolder (see Error_in_November_2019_files.txt in the
+# 2019 folder, read 15 Nov 2026). The top-level path for these months is a 404.
+CORRECTED = {(2019, 10), (2019, 11), (2019, 12)}
+
+
+def url(y: int, m: int) -> str:
+    return URL.format(y=y, m=m, sub="new-corrected/" if (y, m) in CORRECTED else "")
 
 
 def outline_mask(area, lat, lon):
@@ -51,7 +59,7 @@ def one_month(args):
     y, m = args
     for attempt in range(3):
         try:
-            ds = netCDF4.Dataset(URL.format(y=y, m=m))
+            ds = netCDF4.Dataset(url(y, m))
             lat, lon = ds["lat"][:], ds["lon"][:]
             out = {}
             for area, (_n, west, south, east, north, _c) in AREAS.items():
@@ -71,19 +79,24 @@ def one_month(args):
 
 
 def main() -> None:
+    # The cache keeps the months already read. Months missing from it (a failed read last time)
+    # are fetched again on every run; until 15 Nov they were dropped before saving and never retried.
     cache = WORK / "firecci_monthly.parquet"
-    if cache.exists():
-        ba = pd.read_parquet(cache)
-    else:
-        months = [(y, m) for y in YEARS for m in range(1, 13)]
+    ba = pd.read_parquet(cache) if cache.exists() else pd.DataFrame(columns=["ym", *AREAS])
+    want = [(y, m) for y in YEARS for m in range(1, 13)]
+    todo = [(y, m) for y, m in want if f"{y}-{m:02d}" not in set(ba["ym"])]
+    if todo:
+        print(f"fetching {len(todo)} months from ESA CCI")
         with ProcessPoolExecutor(max_workers=8) as pool:
-            rows = list(pool.map(one_month, months))
-        ba = pd.DataFrame(rows)
-        bad = ba[ba.get("error").notna()] if "error" in ba else ba.iloc[0:0]
-        if len(bad):
-            print("months that failed:", bad[["ym", "error"]].to_string())
-        ba = ba[ba.get("error").isna()] if "error" in ba else ba
-        ba.drop(columns=[c for c in ("error",) if c in ba]).to_parquet(cache, index=False)
+            rows = pd.DataFrame(list(pool.map(one_month, todo)))
+        if "error" in rows:
+            bad = rows[rows["error"].notna()]
+            if len(bad):
+                print("months that failed (retried on the next run):\n", bad[["ym", "error"]].to_string())
+            rows = rows[rows["error"].isna()].drop(columns="error")
+        ba = pd.concat([ba, rows], ignore_index=True).sort_values("ym").reset_index(drop=True)
+        ba.to_parquet(cache, index=False)
+    ba = ba.astype({a: float for a in AREAS})
     ba["year"] = ba["ym"].str[:4].astype(int)
     # A year with missing burned-area months would be compared with a full year of fire cells
     # (found 14 Nov: 2019 lacks October to December). Only complete years are used.

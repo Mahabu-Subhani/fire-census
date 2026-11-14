@@ -167,8 +167,8 @@ Step values are natural logarithms: 0.05 is about 5%; 1.65 is about 5.2 times.
 | C3r | Held-out 2018-19, two-year total (at most 0.10), added after results | Pass, -0.072 | Pass, -0.042 |
 | C4 | Does NOAA-20 alone, never used for fitting, give the same record? | Pass, slope 0.951, correlation 0.987 | Pass, 1.024, 0.995 |
 | C5 | Does the curve agree with published MODIS detection limits? | Pass | Pass |
-| C6 | Stable against ESA burned area? (at most 0.25) | **Fail**, -0.440 | Pass, -0.104 |
-| C6m | Same with NASA MCD64A1, added after results | **Fail**, -0.392 | Pass, -0.036 |
+| C6 | Stable against ESA burned area? (at most 0.25) | **Fail**, -0.440 | Pass, -0.149 |
+| C6m | Same with NASA MCD64A1, added after results | **Fail**, -0.392 | Pass, -0.081 |
 | C7 | Did Punjab's burning peak move later after 2009? (5+ days) | | Pass, 8.2 days, p = 0.0009 |
 | C8 | Is the curve stable when resampled? (range at most 50%) | Pass, 38% | **Fail**, 62% (the curve; the hard floor ships here) |
 

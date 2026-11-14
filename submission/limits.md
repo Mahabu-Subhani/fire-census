@@ -40,8 +40,10 @@
   twice). Values are capped at the days in the month; January is still up to
   3 days high until `pipeline/obs.py`, now corrected, is rerun on the daily
   fire masks. `obs` is a data-quality note only and does not enter the record.
-- **Two burned-area values are to be recomputed** (C6 and C6m for Punjab and
-  Haryana, C6 for Córdoba); see the notes under the checks table in
-  `results.md`. No verdict is expected to change.
+- **The PELT second opinion for C1b was not run.** The pre-registration says
+  PELT would be reported beside the Pettitt test, not gated. It was never
+  computed; only the Pettitt test is shown.
+- **Chilecito has no rank range.** It has too few months to measure its own
+  monthly error, so the "Nth highest" line has no range there.
 - **Dates are in UTC,** so a night detection can fall on the previous local day.
 - **Burned area per detected fire changed in Córdoba after 2012** (ESA Fire_cci, check C6). Aqua alone shows the same change, so it is not a seam, but it means fire-cell counts are not a fixed proxy for hectares burned.

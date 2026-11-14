@@ -15,6 +15,7 @@ Run: python pipeline/export.py
 """
 
 import json
+import re
 import subprocess
 from datetime import datetime, timezone
 
@@ -85,6 +86,8 @@ def carried(prev: dict, cid: str, borrowed: str, stale: str = "") -> dict:
     row = prev.get(cid)
     if not row or row.get("verdict") == "not run":
         return {}
+    row = dict(row, note=re.sub(r"\.? ?curve and constants borrowed from \w+; too few fires here to calibrate$", "",
+                                row.get("note") or ""))      # wording before 15 Nov
     note = (row.get("note") or "").replace(borrowed, "").replace(stale, "").strip() if stale else \
         (row.get("note") or "").replace(borrowed, "").strip()
     return {"value": row.get("value"), "verdict": row["verdict"], "note": (note + " " + stale).strip()}
@@ -163,7 +166,8 @@ def main() -> None:
         fits = curves["areas"][donor]
         fd, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
         prev_rows, prev_obs = previous_export(area_id)
-        borrowed = f"curve and constants borrowed from {donor}; too few fires here to calibrate"
+        borrowed = (f"Curve and constants borrowed from {AREAS[donor][0].rsplit(',', 1)[0]}; too few fires "
+                    f"here to calibrate.")
         rel_sd = {"D": fd[REL_SD_KEY[model]], "N": fn[REL_SD_KEY[model]]}
         cube = build_cube(area_id, model, variant, rel_sd)
 
@@ -255,7 +259,7 @@ def main() -> None:
                         "C6": "burned-area data not yet obtained",
                         "C7": "defined for Punjab and Haryana only"}.get(cid, "")
             if donor != area_id:
-                note = (note + " " if note else "") + borrowed
+                note = (note.rstrip() + ("" if note.rstrip().endswith((".", ")")) else ".") + " " if note else "") + borrowed
             check_rows.append({"id": cid, "name": cname, "value": got.get("value"), "threshold": threshold,
                                "verdict": got.get("verdict", "not run"), "note": note.strip()})
 

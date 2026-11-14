@@ -124,14 +124,22 @@ def check_row(area: str, model: str, loyo: dict):
     got = loyo.get(donor, {}).get(model)
     if not got:
         return None
-    borrowed = f" Borrowed from {donor}; not tested in this area." if donor != area else ""
+    value = None if got["seam_2012"] is None else f"{got['seam_2012']:+.3f}"
+    # A borrowing area was not tested: its row must not show the donor's value as if it were its own
+    # (until 15 Nov Chilecito showed Córdoba's +0.087 beside "not run").
+    borrowed = donor != area
+    donor_name = AREAS[donor][0].rsplit(",", 1)[0]
+    loyo_text = (f"leaving one year out at a time (2012 to 2021): {got['n_within_limit']} of {got['n_years']} "
+                 f"years within 0.10, mean {got['mean']:+.3f}, largest {got['max_abs']:.3f}")
+    note = ("Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. " +
+            (f"Not tested in this area, which has too few fires to fit its own model; it uses the model of "
+             f"{donor_name}, whose own result is {value} ({loyo_text})." if borrowed else
+             loyo_text[0].upper() + loyo_text[1:] + "."))
     return {
         "id": CHECK[0], "name": CHECK[1], "threshold": CHECK[2],
-        "value": None if got["seam_2012"] is None else f"{got['seam_2012']:+.3f}",
+        "value": None if borrowed else value,
         "verdict": "not run" if borrowed else got["seam_verdict"],
-        "note": (f"Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. "
-                 f"Leaving one year out at a time (2012 to 2021): {got['n_within_limit']} of {got['n_years']} "
-                 f"years within 0.10, mean {got['mean']:+.3f}, largest {got['max_abs']:.3f}.{borrowed}"),
+        "note": note,
     }
 
 
@@ -150,7 +158,9 @@ def patch_meta() -> None:
         at = next((i + 1 for i, c in enumerate(rows) if c["id"] == "C1b"), len(rows))
         rows.insert(at, row)
         meta["checks"] = rows
-        meta["month_log_sd"] = loyo[TRANSFER.get(area, area)][model]["month_log_sd"]
+        # A borrowing area has too few months to measure its own scatter, and the donor's would make its
+        # rank range look tighter than it is (Chilecito showed Córdoba's 0.244 until 15 Nov): no range.
+        meta["month_log_sd"] = None if area in TRANSFER else loyo[area][model]["month_log_sd"]
         path.write_text(json.dumps(meta, indent=2), encoding="utf-8")   # same format as export.py
         print(f"{area}: {model} C1x {row['value']} {row['verdict']}; month_log_sd {meta['month_log_sd']}")
 

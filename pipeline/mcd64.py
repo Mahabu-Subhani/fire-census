@@ -59,14 +59,18 @@ def one_item(args):
             with rasterio.open(href) as src:
                 b = transform_bounds("EPSG:4326", src.crs, w, s, e, n, densify_pts=21)
                 win = from_bounds(*b, transform=src.transform).round_offsets().round_lengths()
-                win = win.intersection(rasterio.windows.Window(0, 0, src.width, src.height))
+                full = rasterio.windows.Window(0, 0, src.width, src.height)
+                if not rasterio.windows.intersect(win, full):
+                    # The catalogue search returns tiles touching the box; this one has no pixel in it.
+                    return {"href": href.split("?")[0], "ym": ym, "area": area, "km2": 0.0}
+                win = win.intersection(full)
                 data = src.read(1, window=win)
                 mask = area_mask(area, src, win)
                 burned = int(((data > 0) & mask).sum())
-            return {"ym": ym, "area": area, "km2": burned * PIXEL_KM2}
+            return {"href": href.split("?")[0], "ym": ym, "area": area, "km2": burned * PIXEL_KM2}
         except Exception as exc:
             err = str(exc)[:120]
-    return {"ym": ym, "area": area, "error": err}
+    return {"href": href.split("?")[0], "ym": ym, "area": area, "error": err}
 
 
 def items_for(area):
@@ -87,20 +91,29 @@ def statistic(ratio, early, late):
 
 
 def main() -> None:
+    # The cache keeps the tile-months already read (one row per tile, month and area). A tile-month
+    # missing from it is read again on every run; until 15 Nov failed ones were dropped for good, so
+    # a year could be summed over fewer tiles than exist without any warning.
     cache = WORK / "mcd64_monthly.parquet"
-    if cache.exists():
-        df = pd.read_parquet(cache)
-    else:
-        jobs = [j for area in AREAS for j in items_for(area)]
-        print(len(jobs), "tile-months to read", flush=True)
+    df = pd.read_parquet(cache) if cache.exists() else pd.DataFrame(columns=["href", "ym", "area", "km2"])
+    jobs = [j for area in AREAS for j in items_for(area)]
+    done = set(zip(df.get("href", pd.Series(dtype=str)), df["area"]))
+    todo = [j for j in jobs if (j[0].split("?")[0], j[2]) not in done]
+    print(len(jobs), "tile-months in the catalogue,", len(todo), "to read", flush=True)
+    if todo:
         with ProcessPoolExecutor(max_workers=8) as pool:
-            rows = list(pool.map(one_item, jobs, chunksize=8))
-        df = pd.DataFrame(rows)
-        if "error" in df:
-            bad = df[df["error"].notna()]
-            print(len(bad), "tile-months failed", bad.head(3).to_dict("records"))
-            df = df[df["error"].isna()].drop(columns="error")
+            rows = pd.DataFrame(list(pool.map(one_item, todo, chunksize=8)))
+        if "error" in rows:
+            bad = rows[rows["error"].notna()]
+            if len(bad):
+                print(len(bad), "tile-months failed (read again on the next run)", bad.head(3).to_dict("records"))
+            rows = rows[rows["error"].isna()].drop(columns="error")
+        df = pd.concat([df, rows], ignore_index=True)
         df.to_parquet(cache, index=False)
+    missing = len(jobs) - len(set(zip(df["href"], df["area"])) & {(j[0].split("?")[0], j[2]) for j in jobs})
+    if missing:
+        print(f"WARNING: {missing} tile-months still unread; values below use fewer tiles than exist")
+    df = df.astype({"km2": float})
     monthly = df.groupby(["area", "ym"])["km2"].sum().unstack(0)     # tiles of one month summed
     annual = monthly.groupby(monthly.index.str[:4].astype(int)).sum()
     shipping = json.loads((REPO / "pipeline" / "shipping.json").read_text(encoding="utf-8"))["areas"]

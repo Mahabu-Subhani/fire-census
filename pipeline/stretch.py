@@ -89,7 +89,9 @@ def season(area: str, d: pd.Series) -> dict:
                      "end": pick[0.9].strftime("%m-%d"), "start_doy": int(pick[0.1].day_of_year),
                      "peak_doy": int(pick[0.5].day_of_year), "end_doy": int(pick[0.9].day_of_year),
                      "length_days": int((pick[0.9] - pick[0.1]).days) + 1, "total": round(float(w.sum()), 2),
-                     "sensor": "MODIS (Aqua)" if year < 2012 else "VIIRS, harmonized"})
+                     # The record on the season's peak day: VIIRS from February 2012. A window that starts
+                     # in January 2012 (Karnataka) was labelled VIIRS by year alone until 15 Nov.
+                     "sensor": "MODIS (Aqua)" if pick[0.5] < pd.Timestamp("2012-02-01") else "VIIRS, harmonized"})
     df = pd.DataFrame(rows)
     out = {"window": s["name"], "years": rows,
            "trend": {k: theil_sen(df["year"], df[f"{k}_doy" if k != "length" else "length_days"])

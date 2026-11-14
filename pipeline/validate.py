@@ -101,7 +101,8 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
     c2b = step(h, *W2008) - step(r, *W2008)
     out["C2"] = {"value": f"2016: {c2a:+.3f}; 2008: {c2b:+.3f}",
                  "verdict": verdict(abs(c2a) <= 0.10 and abs(c2b) <= 0.10),
-                 "note": "2008 is zero by construction: H equals the Aqua reference before 2012"}
+                 "note": ("Only the 2016 placebo tests anything: 2008 is zero by construction, because before "
+                          "2012 the harmonized record is the Aqua reference itself.")}
 
     m3 = (ser.index >= "2018-01") & (ser.index <= "2019-12") & (r >= MIN_CELLS) & (h > 0)
     if m3.sum() >= 6:
