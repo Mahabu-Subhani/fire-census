@@ -189,13 +189,14 @@ function Footer() {
 /** The answer, always visible at the top of the panel. */
 function Answer() {
   const s = useMonthStatus();
-  const { place, drawn, region } = useSelection();
+  const { place, drawn, region, meta } = useSelection();
   const area = place ?? (drawn ? "Drawn area" : region?.name ?? "");
+  const caseStudy = meta !== null && isCaseStudy(meta);
   return (
     <div className="mf-answer" role="status">
       {s.state === "ready" ? (
         <>
-          <p className="mf-when">{s.when} · {area}</p>
+          <p className="mf-when">{s.when} · {area}{caseStudy ? " · case study" : ""}</p>
           <p className="mf-headline">{s.headline}</p>
           {s.verdictText && <p className={`mf-verdict${s.alert ? " alert" : ""}`}>{s.verdictText}</p>}
         </>
@@ -277,6 +278,13 @@ function Overview() {
         </Section>
         <Section id="dates" label="Dates and layers" open={open === "dates"} onToggle={toggle}>
           <Controls withActions={false} />
+        </Section>
+        <Section id="satellites" label="Do the satellites agree?" open={open === "satellites"} onToggle={toggle}>
+          <ErrorBoundary name="the satellites section">
+            <Suspense fallback={<Loading height={220} />}>
+              <SourcesPanel />
+            </Suspense>
+          </ErrorBoundary>
         </Section>
       </aside>
       <nav className="mf-tools" aria-label="Tools">
