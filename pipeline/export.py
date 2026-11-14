@@ -2,8 +2,14 @@
 
 AI-assisted: written with help from Claude. Reviewed by: Mahabu Subhani.
 
-Level L0 export: raw counts are real. `harm` is a PLACEHOLDER equal to the raw
-MODIS count and `small` is 0 until harmonize.py replaces them. meta.json says so.
+Which model fills `harm` for each area is read from pipeline/shipping.json, so
+that the choice is a recorded decision and not something buried in code.
+
+Units. `harm` is in Aqua-equivalent fire cells: the number of 0.01 degree
+cell-overpasses Aqua MODIS reported (before February 2012) or would be expected
+to report (after). `small` is the part of the VIIRS fire cells that the
+detection curve says MODIS would miss. Before July 2002 only Terra flew:
+`harm` then holds Terra fire cells and `terra_only` is true.
 
 Run: python pipeline/export.py
 """
@@ -12,15 +18,18 @@ import json
 import subprocess
 from datetime import datetime, timezone
 
-import duckdb
+import numpy as np
+import pandas as pd
 
 from config import APP_DATA, AREAS, DISPLAY_CELL_DEG, HARMONIZED_FROM, REPO, WORK
+from harmonize import VIIRS_OPS
 
-CHECK_IDS = [
+VIIRS_START = "2012-02"
+CHECKS = [
     ("C0", "The raw record shows the 2012 jump", "greater than 0.5"),
     ("C1", "No seam at 2012", "absolute value at most 0.10"),
     ("C1b", "No change point at 2012 (Pettitt)", "no change point with p < 0.05 between Jul 2011 and Dec 2012"),
-    ("C2", "No seam at placebo dates (2008, 2016)", "absolute value at most 0.10 at both"),
+    ("C2", "No seam at placebo dates (2016, 2008)", "absolute value at most 0.10 at both"),
     ("C3", "Held-out years 2018 to 2019", "median absolute log ratio at most 0.15"),
     ("C4", "NOAA-20 alone reproduces the record", "slope 0.90 to 1.10 and correlation at least 0.90"),
     ("C5", "Curve midpoint is physically plausible", "within a factor of 2 of published limits"),
@@ -28,6 +37,7 @@ CHECK_IDS = [
     ("C7", "Punjab peak moves later after 2009", "at least +5 days, p < 0.05"),
     ("C8", "Curve is stable under resampling", "90% range at most 50% of the midpoint"),
 ]
+MODEL_NAMES = {"S0": "Detection curve", "L2": "Hard floor", "L1r": "Constant ratio (fallback)"}
 
 
 def git_commit() -> str:
@@ -38,38 +48,117 @@ def git_commit() -> str:
         return ""
 
 
-def main() -> None:
-    con = duckdb.connect()
+def display(df: pd.DataFrame) -> pd.DataFrame:
     d = DISPLAY_CELL_DEG
-    regions = []
+    df = df.copy()
+    df["lon"] = ((df["cx"] // 10) + 0.5) * d     # cx counts 0.01 degree steps
+    df["lat"] = ((df["cy"] // 10) + 0.5) * d
+    return df
+
+
+def build_cube(area: str, model: str, variant: str, rel_sd: float) -> pd.DataFrame:
+    key = ["lon", "lat", "ym"]
+    cells = display(pd.read_parquet(WORK / f"{area}_cells.parquet"))
+    raw = pd.read_parquet(WORK / f"{area}.parquet", columns=["cx", "cy", "acq_date", "sensor"])
+    raw["ym"] = pd.to_datetime(raw["acq_date"]).dt.strftime("%Y-%m")
+    raw = display(raw)
+    cube = pd.DataFrame({
+        "raw_modis": raw[raw["sensor"] == "MODIS"].groupby(key).size(),
+        "raw_viirs": raw[raw["sensor"] == "VIIRS"].groupby(key).size(),
+        "aqua": cells[cells["satellite"] == "Aqua"].groupby(key).size(),
+        "terra": cells[cells["satellite"] == "Terra"].groupby(key).size(),
+    })
+
+    w = display(pd.read_parquet(WORK / f"{area}_weights.parquet"))
+    col = f"{model}_{variant}"
+    w["w"], w["w2"], w["sm"] = w[col], w[col] ** 2, 1.0 - w[f"p_{variant}"]
+    per = w.groupby(key + ["satellite"])[["w", "w2", "sm"]].sum().reset_index()
+    lo = per["satellite"].map(lambda s: VIIRS_OPS[s][0])
+    hi = per["satellite"].map(lambda s: VIIRS_OPS[s][1])
+    per = per[(per["ym"] >= lo) & (per["ym"] <= hi)]
+    n_ops = per["ym"].map(lambda m: sum(a <= m <= b for a, b in VIIRS_OPS.values()))
+    per["w"], per["sm"], per["w2"] = per["w"] / n_ops, per["sm"] / n_ops, per["w2"] / n_ops ** 2
+    v = per.groupby(key)[["w", "w2", "sm"]].sum()
+
+    cube = cube.join(v, how="outer").fillna(0.0).reset_index()
+    late = cube["ym"] >= VIIRS_START
+    early = cube["ym"] < HARMONIZED_FROM
+    cube["harm"] = np.where(late, cube["w"], np.where(early, cube["terra"], cube["aqua"]))
+    sd = np.where(late, np.sqrt(cube["w2"] + (rel_sd * cube["w"]) ** 2), 0.0)
+    cube["harm_lo"] = np.clip(cube["harm"] - 1.645 * sd, 0, None)
+    cube["harm_hi"] = cube["harm"] + 1.645 * sd
+    cube["small"] = np.where(late, cube["sm"], 0.0)
+    cube["terra_only"] = early
+    keep = (cube[["raw_modis", "raw_viirs", "harm", "small"]].sum(axis=1) > 0)
+    return cube[keep].sort_values(["ym", "lat", "lon"])
+
+
+def main() -> None:
+    shipping = json.loads((REPO / "pipeline" / "shipping.json").read_text(encoding="utf-8"))
+    curves = json.loads((WORK / "curves.json").read_text(encoding="utf-8"))
+    checks = json.loads((WORK / "checks.json").read_text(encoding="utf-8"))
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    regions = []
     for area_id, (name, west, south, east, north, _country) in AREAS.items():
-        src = (WORK / f"{area_id}.parquet").as_posix()
-        rows = con.execute(f"""
-            select round((floor(lon / {d}) + 0.5) * {d}, 3) as lon,
-                   round((floor(lat / {d}) + 0.5) * {d}, 3) as lat,
-                   strftime(acq_date, '%Y-%m') as ym,
-                   sum((sensor = 'MODIS')::int) as raw_modis,
-                   sum((sensor = 'VIIRS')::int) as raw_viirs
-            from '{src}' group by 1, 2, 3 order by 3, 2, 1""").fetchall()
-        first, last = con.execute(
-            f"select strftime(min(acq_date), '%Y-%m'), strftime(max(acq_date), '%Y-%m') from '{src}'").fetchone()
-        cube = [{"lon": lon, "lat": lat, "ym": ym, "raw_modis": int(m), "raw_viirs": int(v),
-                 "harm": int(m), "harm_lo": int(m), "harm_hi": int(m), "small": 0,
-                 "terra_only": ym < HARMONIZED_FROM}
-                for lon, lat, ym, m, v in rows]
+        choice = shipping["areas"][area_id]
+        model, variant = choice["model"], choice["variant"]
+        donor = curves["transfer"].get(area_id, area_id)
+        fits = curves["areas"][donor]
+        fd, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
+        cube = build_cube(area_id, model, variant, fd["rel_sd_k"])
+
+        rows = [{"lon": round(float(r.lon), 3), "lat": round(float(r.lat), 3), "ym": r.ym,
+                 "raw_modis": int(r.raw_modis), "raw_viirs": int(r.raw_viirs),
+                 "harm": round(float(r.harm), 2), "harm_lo": round(float(r.harm_lo), 2),
+                 "harm_hi": round(float(r.harm_hi), 2), "small": round(float(r.small), 2),
+                 "terra_only": bool(r.terra_only)} for r in cube.itertuples()]
         out = APP_DATA / area_id
         out.mkdir(parents=True, exist_ok=True)
-        (out / "cube.json").write_text(json.dumps(cube, separators=(",", ":")), encoding="utf-8")
+        (out / "cube.json").write_text(json.dumps(rows, separators=(",", ":")), encoding="utf-8")
+
+        res = checks[area_id]["variants"][variant]
+        mine = res["checks"][model]
+        check_rows = []
+        for cid, cname, threshold in CHECKS:
+            got = dict(mine.get(cid, {}))
+            if cid == "C7" and "C7" in res:
+                got = {"value": res["C7"]["value"], "verdict": res["C7"]["verdict"]}
+            if cid == "C8" and model != "S0":
+                got = dict(res["checks"]["S0"].get("C8", {}))
+                got["note"] = "applies to the detection curve, which is used for the small-fire layer"
+            note = got.get("note", "")
+            if not got:
+                note = {"C5": "published limits not yet verified against their source",
+                        "C6": "burned-area data not yet obtained",
+                        "C7": "defined for Punjab and Haryana only"}.get(cid, "")
+            if donor != area_id:
+                note = (note + " " if note else "") + f"curve and constants borrowed from {donor}; too few fires here to calibrate"
+            check_rows.append({"id": cid, "name": cname, "value": got.get("value"), "threshold": threshold,
+                               "verdict": got.get("verdict", "not run"), "note": note.strip()})
+
+        centres = curves["centres"]
         meta = {
-            "level_shipped": "L0",
-            "placeholder_note": "harm equals raw MODIS counts until harmonization is exported",
-            "floor_mw": {"day": None, "night": None},
-            "ladder": [],
-            "checks": [{"id": i, "name": n, "value": None, "threshold": t, "verdict": "not run", "note": ""}
-                       for i, n, t in CHECK_IDS],
-            "curve": {"day": [], "night": []},
-            "data_version": "0.1.0",
+            "level_shipped": model,
+            "level_name": MODEL_NAMES[model],
+            "shipping_reason": choice["reason"],
+            "unit": "Aqua-equivalent fire cells (0.01 degree cell x overpass)",
+            "calibration": {"variant": variant, "months": curves["calibration"][variant],
+                            "reference_pair": "Aqua MODIS and S-NPP VIIRS", "area": donor},
+            "floor_mw": {"day": round(fd["f50"], 2), "night": round(fn["f50"], 2)},
+            "constants": {"day": round(fd[{"S0": "k_curve", "L2": "k_floor", "L1r": "k_ratio"}[model]], 4),
+                          "night": round(fn[{"S0": "k_curve", "L2": "k_floor", "L1r": "k_ratio"}[model]], 4)},
+            "ladder": res["ladder"],
+            "checks": check_rows,
+            "all_models": {m: {c: v["verdict"] for c, v in res["checks"][m].items()}
+                           for m in ("S0", "L2", "L1r")},
+            "curve": {dn_key: [{"frp": round(c, 3), "p": round(p, 4), "p_lo": round(a, 4), "p_hi": round(b, 4)}
+                               for c, p, a, b in zip(centres, f["p_norm"], f["p_lo"], f["p_hi"])]
+                      for dn_key, f in (("day", fd), ("night", fn))},
+            "curve_stats": {"day": {k: fd[k] for k in ("n_snpp_cells", "n_aqua_cells", "match_rate",
+                                                       "control_rate", "plateau", "f50", "f50_lo", "f50_hi")},
+                            "night": {k: fn[k] for k in ("n_snpp_cells", "n_aqua_cells", "match_rate",
+                                                         "control_rate", "plateau", "f50", "f50_lo", "f50_hi")}},
+            "data_version": "0.2.0",
             "code_commit": git_commit(),
             "generated_at": now,
             "sources": ["MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
@@ -77,10 +166,10 @@ def main() -> None:
         }
         (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
         regions.append({"id": area_id, "name": name, "bbox": [west, south, east, north],
-                        "cell_deg": d, "first_month": first, "last_month": last,
-                        "harmonized_from": HARMONIZED_FROM})
+                        "cell_deg": DISPLAY_CELL_DEG, "first_month": cube["ym"].min(),
+                        "last_month": cube["ym"].max(), "harmonized_from": HARMONIZED_FROM})
         size = (out / "cube.json").stat().st_size / 1e6
-        print(f"{area_id}: {len(cube):,} rows, cube.json {size:.2f} MB, {first} to {last}")
+        print(f"{area_id}: model {model} variant {variant}, {len(rows):,} rows, cube.json {size:.2f} MB")
     (APP_DATA / "regions.json").write_text(json.dumps(regions, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
