@@ -12,7 +12,9 @@ pushed. Two things happened:
 2. **The record was rebuilt** (decision 57): the conversion constant is now
    fitted per calendar month, and under the rule in the pre-registration the
    **hard floor** ships in Córdoba, Chilecito and Punjab and Haryana. **The
-   detection curve ships in no area.** Every harmonized value from February
+   detection curve does not weight the harmonized count in any area.** (This
+   note first said "ships in no area", which was too strong: the curve still
+   sets the cut-off and weights the small-fire layer. See `A-creativity.md`.) Every harmonized value from February
    2012 changed in all four areas. Sections 2 to 4 list what that makes wrong
    in your files. Numbers: `submission/results.md` and `limits.md`.
 

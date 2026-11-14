@@ -124,6 +124,23 @@ not say; "any area" overclaimed.
   to the area on one load; not investigated (app code).
 - Not pushed, no pull request, not merged. The live site is unchanged.
 
+## Added at 02:02 (by `date`): what the curve still does, and two findings made reproducible
+
+- "The detection curve ships in no area" was too strong. It does not weight
+  the harmonized count; it still sets the hard floor's cut-off and weights
+  the small-fire layer in every area (`pipeline/export.py`). Wording corrected
+  in Person A's documents, and in one sentence each of `project_page.md` and
+  the root `README.md`.
+- `pipeline/findings.py` (new; reads only) prints the two findings the
+  documents quote: the constants against the midday sun's height (-0.99
+  Córdoba, -0.78 Punjab and Haryana) and Aqua against the record by season.
+  It reproduced the figures already in `results.md`. Test:
+  `pipeline/tests/test_findings.py`.
+- `docs/research/20261115-what-is-new-after-the-rebuild.md`: the evaluation
+  after the rebuild. `submission/inbox/A-creativity.md`: proposed sentences
+  and pitch lines for Charulekha and 8crsk; none is on the page.
+- Nothing that ships changed: no model, threshold, verdict or app data file.
+
 ## Start-time facts
 
 From `git log` (author and committer dates agree for every commit listed) and
