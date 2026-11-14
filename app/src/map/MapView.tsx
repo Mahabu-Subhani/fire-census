@@ -12,11 +12,40 @@ import { fmtValue, unitLabel } from "../stats";
 import { EMBER, useTheme, type Theme } from "../theme";
 import { activityCells } from "./activity";
 
-// OpenFreeMap: free OpenStreetMap vector tiles, no key (see docs/REFERENCES.md).
-const STYLE_URL: Record<Theme, string> = {
-  dark: "https://tiles.openfreemap.org/styles/dark",
-  light: "https://tiles.openfreemap.org/styles/positron",
-};
+// NASA GIBS: Blue Marble satellite imagery as map tiles, free, no key
+// (decision 39; see docs/REFERENCES.md). Dimmed a little in the dark theme so
+// the fire colours stand out. Tiles exist to zoom 8; the map may zoom past it.
+const GIBS_BLUE_MARBLE =
+  "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg";
+
+function satelliteStyle(theme: Theme): maplibregl.StyleSpecification {
+  return {
+    version: 8,
+    sources: {
+      satellite: {
+        type: "raster",
+        tiles: [GIBS_BLUE_MARBLE],
+        tileSize: 256,
+        maxzoom: 8,
+        attribution: "Imagery: NASA GIBS, Blue Marble",
+      },
+    },
+    layers: [
+      {
+        id: "satellite",
+        type: "raster",
+        source: "satellite",
+        paint: { "raster-brightness-max": theme === "dark" ? 0.8 : 1, "raster-saturation": -0.1 },
+      },
+    ],
+  };
+}
+
+/** Room to leave beside the region when framing it: the overview's results panel covers the right side. */
+function framePadding(): maplibregl.PaddingOptions {
+  const wide = typeof window !== "undefined" && window.innerWidth > 860 && document.querySelector(".mf-panel") !== null;
+  return wide ? { top: 64, bottom: 96, left: 48, right: 440 } : { top: 24, bottom: 24, left: 24, right: 24 };
+}
 const CLOSE_PX = 14;
 
 type Tool = "none" | "rectangle" | "polygon";
@@ -96,7 +125,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
     let map: MLMap;
     try {
       // preserveDrawingBuffer lets the map appear in a printed summary.
-      map = new maplibregl.Map({ container: container.current, style: STYLE_URL[theme], center: [0, 0], zoom: 1, preserveDrawingBuffer: true });
+      map = new maplibregl.Map({ container: container.current, style: satelliteStyle(theme), center: [0, 0], zoom: 1, maxZoom: 11, preserveDrawingBuffer: true });
     } catch (e) {
       onFail(e instanceof Error ? e.message : "the map could not start");
       return;
@@ -108,7 +137,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
       if (!disposed) onFail("the graphics context was lost");
     };
     map.getCanvas().addEventListener("webglcontextlost", onLost);
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
     // The dark base style names a few icons it does not ship; give it blanks
     // instead of filling the console with warnings.
     map.on("styleimagemissing", (e: { id: string }) => {
@@ -176,7 +205,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
     if (!map || !ready || !region) return;
     (map.getSource("region") as GeoJSONSource).setData({ type: "FeatureCollection", features: [polygonFeature(bboxToPolygon(region.bbox))] });
     const [w, s, e, n] = region.bbox;
-    map.fitBounds([[w, s], [e, n]], { padding: 24, duration: 600 });
+    map.fitBounds([[w, s], [e, n]], { padding: framePadding(), duration: 600 });
   }, [region, ready]);
 
   // Fire activity per cell for the area and dates shown.
