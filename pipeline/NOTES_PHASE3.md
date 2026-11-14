@@ -124,7 +124,7 @@ algorithm judged the ground observable, which is the right denominator for
 detection, and it shows that in these regions observation gaps do not explain
 changes in the calendar, nor the month-to-month scatter behind check C3. That
 points to overpass timing as the cause. Not fetched for the Karnataka area
-(tile h25v08), where `obs` is null.
+(tile h25v08), fetched and processed later the same day.
 
 ## Check C6: ESA Fire_cci burned area (`firecci.py`)
 
