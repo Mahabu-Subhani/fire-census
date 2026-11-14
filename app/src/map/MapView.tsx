@@ -8,11 +8,15 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { bboxToPolygon } from "../data/select";
 import { useSelection, useSelectionActions, type Polygon } from "../selection";
-import { unitLabel } from "../stats";
-import { ACTIVITY_RAMP, activityCells } from "./activity";
+import { fmtValue, unitLabel } from "../stats";
+import { EMBER, useTheme, type Theme } from "../theme";
+import { activityCells } from "./activity";
 
 // OpenFreeMap: free OpenStreetMap vector tiles, no key (see docs/REFERENCES.md).
-const STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
+const STYLE_URL: Record<Theme, string> = {
+  dark: "https://tiles.openfreemap.org/styles/dark",
+  light: "https://tiles.openfreemap.org/styles/positron",
+};
 const CLOSE_PX = 14;
 
 type Tool = "none" | "rectangle" | "polygon";
@@ -65,11 +69,14 @@ export function MapFallback({ reason }: { reason: string }) {
 
 export default function MapView() {
   const [failure, setFailure] = useState<string | null>(() => (webglSupported() ? null : "WebGL is not available"));
+  const { theme } = useTheme();
   if (failure) return <MapFallback reason={failure} />;
-  return <MapCanvas onFail={setFailure} />;
+  // A new theme needs a new base style: rebuild the map (the selection is kept).
+  return <MapCanvas key={theme} theme={theme} onFail={setFailure} />;
 }
 
-function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
+function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme: Theme }) {
+  const ramp = EMBER[theme];
   const { region, rows, mode, meta } = useSelection();
   const { polygon, setPolygon } = useSelectionActions();
   const [showActivity, setShowActivity] = useState(true);
@@ -89,14 +96,24 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
     let map: MLMap;
     try {
       // preserveDrawingBuffer lets the map appear in a printed summary.
-      map = new maplibregl.Map({ container: container.current, style: STYLE_URL, center: [0, 0], zoom: 1, preserveDrawingBuffer: true });
+      map = new maplibregl.Map({ container: container.current, style: STYLE_URL[theme], center: [0, 0], zoom: 1, preserveDrawingBuffer: true });
     } catch (e) {
       onFail(e instanceof Error ? e.message : "the map could not start");
       return;
     }
     // A lost WebGL context (common on phones under memory pressure) also ends the map.
-    map.getCanvas().addEventListener("webglcontextlost", () => onFail("the graphics context was lost"));
+    // Our own map.remove() (for example on a theme change) loses it too: ignore that one.
+    let disposed = false;
+    const onLost = () => {
+      if (!disposed) onFail("the graphics context was lost");
+    };
+    map.getCanvas().addEventListener("webglcontextlost", onLost);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    // The dark base style names a few icons it does not ship; give it blanks
+    // instead of filling the console with warnings.
+    map.on("styleimagemissing", (e: { id: string }) => {
+      if (!map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
+    });
     map.on("load", () => {
       for (const id of ["activity", "region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
       map.addLayer({
@@ -104,8 +121,8 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
         type: "fill",
         source: "activity",
         paint: {
-          "fill-color": ["interpolate", ["linear"], ["get", "t"], ...ACTIVITY_RAMP.flatMap((c, i) => [i / (ACTIVITY_RAMP.length - 1), c])],
-          "fill-opacity": 0.75,
+          "fill-color": ["interpolate", ["linear"], ["get", "t"], ...ramp.flatMap((c, i) => [i / (ramp.length - 1), c])],
+          "fill-opacity": 0.82,
         },
       });
       map.addLayer({ id: "region-line", type: "line", source: "region", paint: { "line-color": "#6b7280", "line-width": 1.5, "line-dasharray": [2, 2] } });
@@ -146,7 +163,11 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
     });
 
     mapRef.current = map;
-    return () => map.remove();
+    return () => {
+      disposed = true;
+      map.getCanvas().removeEventListener("webglcontextlost", onLost);
+      map.remove();
+    };
   }, []);
 
   // Region outline and view.
@@ -225,15 +246,15 @@ function MapCanvas({ onFail }: { onFail: (reason: string) => void }) {
           Show where it burned
         </label>
         {showActivity && activity && activity.max > 0 && (
-          <div className="legend-bar" aria-label={`Colour scale from low to ${Math.round(activity.max).toLocaleString("en-GB")}`}>
+          <div className="legend-bar" aria-label={`Colour scale from low to ${fmtValue(activity.max, mode)}`}>
             <span>Less</span>
-            <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ACTIVITY_RAMP.join(", ")})` }} />
-            <span>More (up to {Math.round(activity.max).toLocaleString("en-GB")} per cell)</span>
+            <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ramp.join(", ")})` }} />
+            <span>More (up to {fmtValue(activity.max, mode)} per cell)</span>
           </div>
         )}
         {showActivity && activity && (
           <p className="fine-print">
-            Each square is one grid cell (about 11 km), coloured by its total over the dates chosen, in {unitLabel(meta, mode)}.
+            Each square is about 11 km across, coloured by its total for the dates shown ({unitLabel(meta, mode)}).
             {activity.max === 0 && " No activity in this area and date range."}
           </p>
         )}

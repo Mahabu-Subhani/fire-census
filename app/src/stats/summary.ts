@@ -61,5 +61,5 @@ export function formatRank(r: Rank): string {
 
 /** A ratio to the median: two decimals below 1, so 0.058 reads "0.06", not a flattering "0.1". */
 export function formatRatio(r: number): string {
-  return r < 1 ? r.toFixed(2) : r.toFixed(1);
+  return r.toFixed(2);
 }

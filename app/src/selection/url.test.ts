@@ -28,6 +28,11 @@ describe("shareable link", () => {
     expect(parseUrlState("?a=1,2;3&from=2026-13&to=soon&m=fast")).toEqual({});
   });
 
+  it("keeps the research view in the link, and leaves the overview out", () => {
+    expect(parseUrlState(buildUrlState({ ...state, view: "research" })).view).toBe("research");
+    expect(buildUrlState({ ...state, view: "overview" })).not.toContain("v=");
+  });
+
   it("returns nothing for an empty query", () => {
     expect(parseUrlState("")).toEqual({});
   });

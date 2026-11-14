@@ -5,11 +5,11 @@
 import * as Plot from "@observablehq/plot";
 import { useMemo } from "react";
 import { useSelection } from "../selection";
-import { MIN_ACTIVITY, MIN_TREND_YEARS, TREND_ALPHA, median, trend, unitLabel } from "../stats";
+import { fmtShare, fmtTick, fmtValue, MIN_ACTIVITY, MIN_TREND_YEARS, TREND_ALPHA, median, trend, unitLabel } from "../stats";
 import ChartFrame from "./ChartFrame";
 import { usePlot } from "./usePlot";
 
-const num = (v: number) => v.toLocaleString("en", { maximumFractionDigits: Math.abs(v) < 10 ? 1 : 0 });
+const num = (v: number) => fmtValue(v, "harmonized");
 const pText = (p: number) => (p < 0.001 ? "below 0.001" : p.toFixed(3));
 
 export default function TrendChart() {
@@ -42,18 +42,18 @@ export default function TrendChart() {
       return Plot.plot({
         width,
         height: narrow ? 200 : 240,
-        marginLeft: 48,
+        marginLeft: 64,
         marginRight: narrow ? 18 : 20,
-        style: { fontSize: narrow ? "9px" : "10px" },
+        style: { fontSize: narrow ? "10px" : "11.5px", fontFamily: "var(--font-sans)" },
         x: { label: null, tickFormat: (y: number) => String(y), ticks: narrow ? 5 : 10 },
-        y: { grid: true, label: null, zero: true, nice: true, tickFormat: (v: number) => v.toLocaleString("en", { notation: "compact" }) },
+        y: { grid: true, label: null, zero: true, nice: true, tickFormat: fmtTick },
         marks: [
           fit ? Plot.areaY(fit.band, { x: "x", y1: "lo", y2: "hi", fill: "var(--series-2)", fillOpacity: 0.18 }) : null,
           Plot.lineY(t.years, { x: "year", y: "total", stroke: "var(--series-1)", strokeWidth: 1, strokeOpacity: 0.6 }),
           Plot.dot(t.years, {
             x: "year", y: "total", r: 4, fill: "var(--series-1)", stroke: "var(--surface)", strokeWidth: 2,
             title: (d) => `${d.year}: ${num(d.total)}\n${unit}`,
-            tip: { fontSize: 12, fill: "var(--surface)", stroke: "var(--border)" },
+            tip: { fontSize: 13, fill: "var(--surface-2)", stroke: "var(--border)" },
           }),
           fit && t.status === "ok" ? Plot.line(fit.line, { x: "x", y: "y", stroke: "var(--series-2)", strokeWidth: 2, strokeDasharray: t.clear ? undefined : "5,4" }) : null,
           Plot.ruleY([0]),
@@ -67,9 +67,9 @@ export default function TrendChart() {
   if (t?.status === "ok" && t.sen && t.mk) {
     const first = t.years[0].year;
     const last = t.years[t.years.length - 1].year;
-    const pct = t.perDecade !== null ? `, about ${Math.abs(Math.round(t.perDecade * 100))}% of a typical year per decade` : "";
+    const pct = t.perDecade !== null ? `, ${fmtShare(Math.abs(t.perDecade))} of a typical year per decade` : "";
     sentence = t.clear
-      ? `Activity ${t.sen.slope < 0 ? "fell" : "rose"} by about ${num(Math.abs(t.sen.slope))} a year from ${first} to ${last}${pct}.`
+      ? `Activity ${t.sen.slope < 0 ? "fell" : "rose"} by ${num(Math.abs(t.sen.slope))} a year from ${first} to ${last}${pct}.`
       : `No clear trend from ${first} to ${last}.`;
   } else if (t?.status === "too-few-years") {
     sentence = `Not enough complete years for a trend (at least ${MIN_TREND_YEARS} needed).`;
@@ -83,7 +83,8 @@ export default function TrendChart() {
 
   return (
     <ChartFrame
-      title="Is it getting worse here?"
+      title="Is it getting more or less?"
+      lede="Each dot is one full year. The line is the trend; the shading is how sure we are of it."
       mode="harmonized"
       exportName="trend"
       notes={[sentence, detail].filter(Boolean)}

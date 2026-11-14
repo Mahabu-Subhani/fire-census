@@ -10,9 +10,6 @@ export interface ActivityCells {
   cells: number;
 }
 
-/** Colour ramp for the map, light to dark (readable with colour-vision deficiency: it changes in lightness). */
-export const ACTIVITY_RAMP = ["#fff3b0", "#fdb863", "#f46d43", "#c2185b", "#4a0c4e"];
-
 /**
  * Sums each cell over the rows (already limited to the area and date range)
  * and returns one square per cell with any activity. `t` is the square root

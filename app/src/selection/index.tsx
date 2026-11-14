@@ -6,7 +6,9 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { loadCube, loadMeta, loadRegions } from "../data/load";
 import { bboxToPolygon, countCellCentres, overlapsBBox, polygonAreaKm2, selectCells } from "../data/select";
 import type { CubeRow, Meta, Mode, Polygon, Region, Selection } from "../data/types";
-import { buildUrlState, parseUrlState } from "./url";
+import { buildUrlState, parseUrlState, type View } from "./url";
+
+export type { View } from "./url";
 
 export type { CubeRow, Meta, Mode, Polygon, Region, Selection } from "../data/types";
 
@@ -15,6 +17,9 @@ export interface SelectionActions {
   /** The drawn area, or null for the whole region. */
   polygon: Polygon | null;
   error: string | null;
+  /** Which page the visitor is on: everyone's overview, or the research view. */
+  view: View;
+  setView: (view: View) => void;
   /** Grid-cell centres inside the drawn area; null for the whole region. 0 means the area is too small. */
   cellCount: number | null;
   setRegion: (id: string) => void;
@@ -40,6 +45,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   const [to, setTo] = useState("");
   const [mode, setMode] = useState<Mode>(pendingUrl.current.mode ?? "harmonized");
   const [showSmall, setShowSmall] = useState(pendingUrl.current.small ?? false);
+  const [view, setView] = useState<View>(pendingUrl.current.view ?? "overview");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,9 +105,9 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   // Keep the address bar in step with the view, so the link can be shared.
   useEffect(() => {
     if (!region || !from || !to) return;
-    const query = buildUrlState({ region: region.id, polygon, place, from, to, mode, small: showSmall });
+    const query = buildUrlState({ region: region.id, polygon, place, from, to, mode, small: showSmall, view });
     if (query !== window.location.search) window.history.replaceState(null, "", query);
-  }, [region, polygon, place, from, to, mode, showSmall]);
+  }, [region, polygon, place, from, to, mode, showSmall, view]);
 
   const cellCount = useMemo(
     () => (polygon && region ? countCellCentres(polygon, region.bbox, region.cell_deg) : null),
@@ -131,6 +137,8 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     polygon,
     error,
     cellCount,
+    view,
+    setView,
     setRegion: (id) => {
       pendingUrl.current = {};
       setRegionId(id);

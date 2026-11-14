@@ -3,6 +3,9 @@
 // the query string, so opening the link restores the same view.
 import type { Mode, Polygon } from "../data/types";
 
+/** Overview for everyone; research adds every chart, the method and the data. */
+export type View = "overview" | "research";
+
 export interface UrlState {
   region?: string;
   polygon?: Polygon | null;
@@ -11,6 +14,7 @@ export interface UrlState {
   to?: string;
   mode?: Mode;
   small?: boolean;
+  view?: View;
 }
 
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -38,10 +42,11 @@ export function parseUrlState(search: string): UrlState {
   const mode = q.get("m");
   if (mode === "raw" || mode === "harmonized") state.mode = mode;
   if (q.get("s") === "1") state.small = true;
+  if (q.get("v") === "research") state.view = "research";
   return state;
 }
 
-export function buildUrlState(state: Required<Omit<UrlState, "place" | "polygon">> & Pick<UrlState, "place" | "polygon">): string {
+export function buildUrlState(state: Required<Omit<UrlState, "place" | "polygon" | "view">> & Pick<UrlState, "place" | "polygon" | "view">): string {
   const q = new URLSearchParams();
   q.set("r", state.region);
   if (state.polygon) {
@@ -52,5 +57,6 @@ export function buildUrlState(state: Required<Omit<UrlState, "place" | "polygon"
   q.set("to", state.to);
   q.set("m", state.mode);
   if (state.small) q.set("s", "1");
+  if (state.view === "research") q.set("v", "research");
   return `?${q.toString()}`;
 }

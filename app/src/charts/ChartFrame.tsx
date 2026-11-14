@@ -1,7 +1,9 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending).
-// The frame every chart sits in: a title, then one line stating the unit
-// (from meta.unit or meta.unit_raw, never typed by hand), the mode and the
-// area; the chart; and CSV, PNG and SVG export.
+// The frame every chart sits in: a plain-question title and one line on how to
+// read it; the chart; and CSV, PNG and SVG export. The unit, mode and area are
+// shown once above all charts (the context bar), not repeated per chart; they
+// are still written into every exported file. A chart that always shows one
+// record whatever the switch says gets a small badge saying so.
 import { useRef, useState, type ReactNode } from "react";
 import { saveText } from "../downloads/csv";
 import type { Mode } from "../data/types";
@@ -20,11 +22,13 @@ export function formatMonth(ym: string): string {
 export function useAreaLabel(): string {
   const { place, region, areaKm2, drawn } = useSelection();
   const name = place ?? (drawn ? "Drawn area" : region?.name ?? "No area");
-  return areaKm2 === null ? name : `${name}, ${Math.round(areaKm2).toLocaleString("en")} km²`;
+  return areaKm2 === null ? name : `${name}, ${areaKm2.toLocaleString("en-GB", { maximumFractionDigits: 2 })} km²`;
 }
 
 interface Props {
   title: string;
+  /** One short line: how to read this chart. */
+  lede?: string;
   children: ReactNode;
   /** Set when the chart always shows one record whatever the switch says. */
   mode?: Mode;
@@ -36,7 +40,7 @@ interface Props {
   notes?: string[];
 }
 
-export default function ChartFrame({ title, children, mode: forcedMode, exportName, table, notes = [] }: Props) {
+export default function ChartFrame({ title, lede, children, mode: forcedMode, exportName, table, notes = [] }: Props) {
   const sel = useSelection();
   const { meta, from, to, region } = sel;
   const mode = forcedMode ?? sel.mode;
@@ -75,17 +79,16 @@ export default function ChartFrame({ title, children, mode: forcedMode, exportNa
   return (
     <figure className="cf" ref={ref}>
       <figcaption className="cf-head">
-        <h2 className="cf-title">{title}</h2>
-        <p className="cf-sub">
-          <span className={`cf-mode cf-mode-${mode}`}>{modeText}</span> <span>{unit}</span>
-          <br />
-          <span>{area}</span>
-          {range && <span> · {range}</span>}
-        </p>
+        <h2 className="cf-title">
+          {title}
+          {forcedMode && forcedMode !== sel.mode && <span className={`cf-mode cf-mode-${forcedMode}`}>{modeText} only</span>}
+        </h2>
+        {lede && <p className="cf-lede">{lede}</p>}
       </figcaption>
       <div className="cf-body">{children}</div>
       {exportName && (
         <div className="cf-actions" role="group" aria-label={`Download ${title}`}>
+          <span className="cf-actions-label">Download</span>
           {table && (
             <button type="button" onClick={csv} aria-label={`Download ${title} data as CSV`}>
               CSV

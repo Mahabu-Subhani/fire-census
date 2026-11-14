@@ -47,5 +47,5 @@ describe("formatRank", () => {
 
 describe("formatRatio", () => {
   it("keeps two decimals below 1", () => expect(formatRatio(138 / 2398)).toBe("0.06"));
-  it("keeps one decimal from 1", () => expect(formatRatio(2.44)).toBe("2.4"));
+  it("keeps two decimals from 1 too, never rounding further", () => expect(formatRatio(2.444)).toBe("2.44"));
 });

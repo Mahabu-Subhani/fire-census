@@ -1,64 +1,35 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
-// Page layout. Chart slots hold Person C's components from src/charts/.
+// Page layout. Two views share one selection: "overview" (everyone: the answer,
+// the calendar, the comparison, the outlook) and "research" (every chart, the
+// method and every check, the data). Chart slots hold Person C's components.
 import { useState } from "react";
 import { charts } from "./charts";
+import { formatMonth, useAreaLabel } from "./charts/ChartFrame";
 import CoordinateEntry from "./controls/CoordinateEntry";
 import DateRange from "./controls/DateRange";
 import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
-import EvidencePanel, { ChecksBadge } from "./evidence/EvidencePanel";
 import ErrorBoundary from "./ErrorBoundary";
+import EvidencePanel from "./evidence/EvidencePanel";
+import { summaryText } from "./evidence/checks";
 import ForResearchers from "./guide/ForResearchers";
 import Glossary from "./guide/Glossary";
-import LiveNotice from "./guide/LiveNotice";
-import StartHere from "./guide/StartHere";
+import Hero from "./layout/Hero";
+import { Reveal } from "./layout/motion";
+import TopBar from "./layout/TopBar";
 import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
-import { unitLabel, value } from "./stats";
+import { unitLabel } from "./stats";
 
 function formatDate(iso: string): string {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
-function formatMonth(ym: string): string {
-  return new Date(`${ym}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
-}
-
-function Header() {
-  const { mode } = useSelection();
-  const { setMode } = useSelectionActions();
-  return (
-    <header className="app-header">
-      <div>
-        <h1>Fire Census</h1>
-        <p className="tagline">One fire record, whichever satellite was watching.</p>
-      </div>
-      <ChecksBadge />
-      <div className="mode-box">
-        <div className="switch" role="group" aria-label="Record shown" aria-describedby="mode-help">
-          {(["harmonized", "raw"] as const).map((m) => (
-            <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
-              {m === "harmonized" ? "Harmonized" : "Raw"}
-            </button>
-          ))}
-        </div>
-        <p id="mode-help" className="mode-help">
-          {mode === "harmonized"
-            ? "Comparable across all years, whichever satellite was flying."
-            : "As the satellites reported. Jumps in 2012 when VIIRS starts: do not compare years in this view."}
-        </p>
-      </div>
-    </header>
-  );
-}
-
 function Controls() {
-  const selection = useSelection();
-  const { region, meta, rows, from, to, mode, showSmall, areaKm2, status, place } = selection;
-  const { regions, setRegion, setShowSmall, error, polygon, cellCount } = useSelectionActions();
+  const { region, meta, rows, from, to, mode, showSmall, areaKm2, status, place } = useSelection();
+  const { setShowSmall, error, polygon, cellCount } = useSelectionActions();
   const [copied, setCopied] = useState(false);
   const areaLabel = place ?? (polygon ? "Drawn area" : "Whole region");
-  const total = rows.reduce((sum, r) => sum + value(r, mode), 0);
 
   const download = () => {
     if (!region || !meta) return;
@@ -78,60 +49,76 @@ function Controls() {
 
   return (
     <div className="controls">
-      <label>
-        Region
-        <select value={region?.id ?? ""} onChange={(e) => setRegion(e.target.value)} disabled={regions.length === 0}>
-          {regions.map((r) => (
-            <option key={r.id} value={r.id}>{r.name}</option>
-          ))}
-        </select>
-      </label>
-      <PlaceSearch />
-      <p className="area-line">
-        {areaLabel}
-        {areaKm2 !== null && <>, {Math.round(areaKm2).toLocaleString("en-GB")} km²</>}
-        {cellCount !== null && <>, {cellCount.toLocaleString("en-GB")} grid cells</>}
-      </p>
-      {status === "ready" && areaKm2 !== null && areaKm2 > 0 && (
-        <p className="area-total">
-          Total for these dates: <strong>{Math.round(total).toLocaleString("en-GB")}</strong>{" "}
-          ({(total / areaKm2 * 1000).toLocaleString("en-GB", { maximumFractionDigits: 1 })} per 1,000 km², for comparing areas of
-          different size), in {unitLabel(meta, mode)}.
-        </p>
-      )}
       <DateRange />
-      <label className="check">
-        <input type="checkbox" checked={showSmall} onChange={(e) => setShowSmall(e.target.checked)} />
-        Show small fires on the charts (weak fires only the newer VIIRS satellites can see, from 2012)
+      <label className="toggle">
+        <input type="checkbox" role="switch" checked={showSmall} onChange={(e) => setShowSmall(e.target.checked)} />
+        <span className="toggle-track" aria-hidden="true" />
+        <span>Small fires layer <small>(VIIRS only, from 2012)</small></span>
       </label>
       <div className="actions">
-        <button type="button" onClick={download} disabled={!meta || status === "loading"}>Download CSV</button>
-        <button type="button" onClick={copyLink}>{copied ? "Link copied" : "Copy link to this view"}</button>
-        <button type="button" onClick={() => window.print()}>Print summary</button>
+        <button type="button" className="btn btn-primary" onClick={download} disabled={!meta || status === "loading"}>Download CSV</button>
+        <button type="button" className="btn" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
+        <button type="button" className="btn" onClick={() => window.print()}>Print</button>
       </div>
-      {status === "loading" && <p className="note">Loading the record for this region…</p>}
       {status === "error" && <p className="note error">Could not load the data: {error}</p>}
       {status === "empty" && cellCount === 0 && (
         <p className="note">This area contains no grid cell (cells are {region?.cell_deg} degree, about 11 km). Draw a larger area.</p>
       )}
       {status === "empty" && cellCount !== 0 && (
-        <p className="note">No detections in this area and date range. Zero detections does not prove there was no fire.</p>
+        <p className="note">No detections here in these dates. That does not prove there was no fire.</p>
       )}
+    </div>
+  );
+}
+
+/** Where: region, district search, and the area's size. The map follows it. */
+function AreaPicker() {
+  const { region, areaKm2, place } = useSelection();
+  const { regions, setRegion, polygon, cellCount } = useSelectionActions();
+  const areaLabel = place ?? (polygon ? "Drawn area" : "Whole region");
+  return (
+    <div className="controls">
+      <div className="field">
+        <label htmlFor="region-select">Region</label>
+        <select id="region-select" value={region?.id ?? ""} onChange={(e) => setRegion(e.target.value)} disabled={regions.length === 0}>
+          {regions.map((r) => (
+            <option key={r.id} value={r.id}>{r.name}</option>
+          ))}
+        </select>
+      </div>
+      <PlaceSearch />
+      <p className="area-line">
+        <span>{areaLabel}</span>
+        {areaKm2 !== null && <span className="mono">{areaKm2.toLocaleString("en-GB", { maximumFractionDigits: 2 })} km²</span>}
+        {cellCount !== null && <span className="mono">{cellCount.toLocaleString("en-GB")} cells</span>}
+      </p>
+    </div>
+  );
+}
+
+/** Shown once above the charts: what every chart below is about. */
+function ContextBar() {
+  const { meta, mode, from, to } = useSelection();
+  const area = useAreaLabel();
+  return (
+    <div className="context-bar">
+      <span className="context-area">{area}</span>
+      {from && to && <span>{formatMonth(from)} – {formatMonth(to)}</span>}
+      <span className={`context-mode context-mode-${mode}`}>{mode === "raw" ? "Raw" : "Harmonized"}</span>
+      <span className="context-unit">{unitLabel(meta, mode)}</span>
     </div>
   );
 }
 
 /** Shown only on paper: what the printout shows and how to get back to it. */
 function PrintHeader() {
-  const { region, from, to, mode, place, areaKm2, dataThrough } = useSelection();
-  const { polygon } = useSelectionActions();
+  const { region, from, to, mode, dataThrough } = useSelection();
+  const area = useAreaLabel();
   if (!region) return null;
-  const area = place ?? (polygon ? "Drawn area" : "Whole region");
   return (
     <div className="print-only print-header">
       <p>
-        <strong>{region.name}</strong>: {area}
-        {areaKm2 !== null && <>, {Math.round(areaKm2).toLocaleString("en-GB")} km²</>}. {formatMonth(from)} to {formatMonth(to)}.{" "}
+        <strong>Fire Census · {region.name}</strong>: {area}. {formatMonth(from)} to {formatMonth(to)}.{" "}
         {mode === "raw" ? "Raw record" : "Harmonized record"}.{dataThrough && <> Data to {formatDate(dataThrough)}.</>}
       </p>
       <p>Printed {formatDate(new Date().toISOString().slice(0, 10))}. This view online: {window.location.href}</p>
@@ -139,59 +126,101 @@ function PrintHeader() {
   );
 }
 
-function Freshness() {
-  const { meta, dataThrough } = useSelection();
+function ResearchHead() {
+  const { meta } = useSelection();
+  return (
+    <section className="research-head">
+      <p className="eyebrow">Data &amp; methods</p>
+      <h1>
+        Every chart, every check, <em>and the data behind them.</em>
+      </h1>
+      {meta && <p className="research-sub">Pre-registered checks for this region: {summaryText(meta.checks)}.</p>}
+    </section>
+  );
+}
+
+function MethodCallout() {
+  const { meta } = useSelection();
+  const { setView } = useSelectionActions();
   if (!meta) return null;
   return (
-    <p className="freshness">
-      {dataThrough && <>Data to {formatDate(dataThrough)}. </>}
-      {meta.nrt_from && <>Months from {formatMonth(meta.nrt_from)} use near-real-time data and may still change. </>}
-      Data version {meta.data_version}, processed {formatDate(meta.generated_at.slice(0, 10))}.
-    </p>
+    <Reveal className="callout">
+      <div>
+        <p className="eyebrow">How we know</p>
+        <p className="callout-text">Checks fixed before the data was opened: {summaryText(meta.checks)}. Failures are shown, not hidden.</p>
+      </div>
+      <button type="button" className="btn btn-primary" onClick={() => { setView("research"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+        Method, checks and data
+      </button>
+    </Reveal>
+  );
+}
+
+function Footer() {
+  const { meta, dataThrough } = useSelection();
+  return (
+    <footer className="app-footer">
+      {meta && (
+        <p className="freshness">
+          {dataThrough && <>Data to {formatDate(dataThrough)}. </>}
+          {meta.nrt_from && <>Months from {formatMonth(meta.nrt_from)} are near-real-time and may change. </>}
+          Data version {meta.data_version}.
+        </p>
+      )}
+      <p>
+        We acknowledge the use of data from NASA's Fire Information for Resource Management System (FIRMS)
+        (<a href="https://earthdata.nasa.gov/firms">earthdata.nasa.gov/firms</a>), part of NASA's Earth Science
+        Data and Information System (ESDIS). Team Sharmaji Ka Satellite, NASA Space Apps 2026 ·{" "}
+        <a href="https://github.com/Mahabu-Subhani/fire-census">Source code</a>
+      </p>
+    </footer>
   );
 }
 
 export default function App() {
+  const { view } = useSelectionActions();
   return (
-    <div className="app">
-      <Header />
-      <PrintHeader />
-      <LiveNotice />
-      <StartHere />
-      <main className="layout">
-        <div className="left">
-          <Controls />
-          <ErrorBoundary name="the map">
-            <MapView />
-          </ErrorBoundary>
-          <CoordinateEntry />
-        </div>
-        <div className="right">
-          {charts.map(({ id, Component }) => (
-            <div key={id} className={`slot slot-${id}`}>
-              <ErrorBoundary name="this chart">
-                <Component />
-              </ErrorBoundary>
-            </div>
-          ))}
-        </div>
-      </main>
-      <ErrorBoundary name="the method and checks panel">
-        <EvidencePanel />
-      </ErrorBoundary>
-      <Glossary />
-      <ErrorBoundary name="the researchers section">
-        <ForResearchers />
-      </ErrorBoundary>
-      <footer className="app-footer">
-        <Freshness />
-        <p>
-          We acknowledge the use of data from NASA's Fire Information for Resource Management System (FIRMS)
-          (<a href="https://earthdata.nasa.gov/firms">earthdata.nasa.gov/firms</a>), part of NASA's Earth Science
-          Data and Information System (ESDIS). Team Sharmaji Ka Satellite, NASA Space Apps 2026.{" "}
-          <a href="https://github.com/Mahabu-Subhani/fire-census">Source code</a>.
-        </p>
-      </footer>
-    </div>
+    <>
+      <TopBar />
+      <div className="app">
+        <PrintHeader />
+        {view === "overview" ? <Hero /> : <ResearchHead />}
+        <main className="layout" id="explore">
+          <aside className="panel" aria-label="Choose an area and dates">
+            <AreaPicker />
+            <ErrorBoundary name="the map">
+              <MapView />
+            </ErrorBoundary>
+            <CoordinateEntry />
+            <Controls />
+          </aside>
+          <div className="charts">
+            <ContextBar />
+            {charts
+              .filter((c) => c.views.includes(view))
+              .map(({ id, Component }, i) => (
+                <Reveal key={`${view}-${id}`} id={`chart-${id}`} className={`slot slot-${id}`} delay={i * 60}>
+                  <ErrorBoundary name="this chart">
+                    <Component />
+                  </ErrorBoundary>
+                </Reveal>
+              ))}
+            {view === "overview" && <MethodCallout />}
+          </div>
+        </main>
+        {view === "research" && (
+          <>
+            <ErrorBoundary name="the method and checks panel">
+              <Reveal><EvidencePanel /></Reveal>
+            </ErrorBoundary>
+            <Reveal><Glossary /></Reveal>
+            <ErrorBoundary name="the researchers section">
+              <Reveal><ForResearchers /></Reveal>
+            </ErrorBoundary>
+          </>
+        )}
+        <Footer />
+      </div>
+    </>
   );
 }

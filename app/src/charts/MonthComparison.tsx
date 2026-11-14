@@ -5,10 +5,10 @@
 import * as Plot from "@observablehq/plot";
 import { useMemo, useState } from "react";
 import { useSelection } from "../selection";
-import { compareMonth, formatRank, parseYm, unitLabel } from "../stats";
+import { compareMonth, fmtTick, fmtValue, formatRank, parseYm, unitLabel } from "../stats";
 import { BASELINE_TEXT, useBaseline } from "./baseline";
 import ChartFrame from "./ChartFrame";
-import { BaselineSwitch, MONTH_FULL, num } from "./UnusualBanner";
+import { BaselineSwitch, MONTH_FULL } from "./UnusualBanner";
 import { usePlot } from "./usePlot";
 
 export default function MonthComparison() {
@@ -19,6 +19,7 @@ export default function MonthComparison() {
   const month = chosen ?? latest;
   const name = MONTH_FULL[month - 1];
   const unit = unitLabel(meta, mode);
+  const num = (v: number) => fmtValue(v, mode);
 
   const c = useMemo(
     () =>
@@ -36,7 +37,7 @@ export default function MonthComparison() {
 
   const toDayText = c?.toDay ? ` (days 1 to ${c.toDay})` : "";
   const describe = (d: (typeof bars)[number]) =>
-    `${name} ${d.year}${toDayText}: ${d.value.toLocaleString("en", { maximumFractionDigits: 2 })}\n${unit}${d.current ? "\nCompared year" : d.inBase ? "" : "\nNot in the baseline"}`;
+    `${name} ${d.year}${toDayText}: ${num(d.value)}\n${unit}${d.current ? "\nCompared year" : d.inBase ? "" : "\nNot in the baseline"}`;
 
   const plotRef = usePlot(
     (width) => {
@@ -48,30 +49,30 @@ export default function MonthComparison() {
       ].filter((l): l is { y: number; label: string; dash: string | null } => l !== null);
       return Plot.plot({
         width,
-        height: narrow ? 200 : 240,
-        marginLeft: 44,
+        height: narrow ? 220 : 260,
+        marginLeft: 64,
         marginRight: narrow ? 8 : 16,
-        style: { fontSize: narrow ? "9px" : "10px" },
+        style: { fontSize: narrow ? "10px" : "11.5px", fontFamily: "var(--font-sans)" },
         x: {
           type: "band", label: null, tickSize: 0, padding: 0.2,
           // Every fifth year and the compared year, skipping a fifth year that would collide with it.
           tickFormat: (y: number) => (y === c.year || (y % 5 === 0 && Math.abs(y - (c.year ?? 0)) > 2) ? String(y) : ""),
         },
-        y: { grid: true, label: null, nice: true, zero: true, tickFormat: (v: number) => num(v) },
+        y: { grid: true, label: null, nice: true, zero: true, tickFormat: fmtTick },
         marks: [
           Plot.barY(bars, {
-            x: "year", y: "value",
-            fill: (d) => (d.current ? "var(--series-2)" : "var(--series-1)"),
+            x: "year", y: "value", rx: 3,
+            fill: (d) => (d.current ? "var(--accent)" : "var(--bar-neutral)"),
             fillOpacity: (d) => (d.current || d.inBase ? 1 : 0.35),
             title: describe,
-            tip: { fontSize: 12, fill: "var(--surface)", stroke: "var(--border)" },
+            tip: { fontSize: 13, fill: "var(--surface-2)", stroke: "var(--border)" },
           }),
           Plot.ruleY([0]),
           ...lines.map((l) =>
             Plot.ruleY([l.y], { stroke: "currentColor", strokeWidth: 1.5, strokeDasharray: l.dash ?? undefined }),
           ),
           ...lines.map((l) =>
-            Plot.text([l], { y: "y", text: "label", frameAnchor: "left", dy: -6, dx: 2, textAnchor: "start", fill: "currentColor", stroke: "var(--surface)", strokeWidth: 3, paintOrder: "stroke" }),
+            Plot.text([l], { y: "y", text: "label", frameAnchor: "left", dy: -7, dx: 4, textAnchor: "start", fill: "currentColor", stroke: "var(--surface)", strokeWidth: 4, paintOrder: "stroke", fontWeight: 600 }),
           ),
         ],
       });
@@ -95,7 +96,8 @@ export default function MonthComparison() {
 
   return (
     <ChartFrame
-      title={`${name} against earlier years`}
+      title={`Is this ${name} unusual?`}
+      lede={`Each bar is ${name}${toDayText} in one year; the ember bar is ${c?.year ?? "the latest"}. Lines: the usual level (median) and a bad year (90th percentile).`}
       exportName={`month-${String(month).padStart(2, "0")}`}
       notes={notes}
       table={() => ({
@@ -126,16 +128,16 @@ export default function MonthComparison() {
         <>
           <div ref={plotRef} className="cal-plot" />
           <div className="series-key">
-            <span><i style={{ background: "var(--series-2)" }} />{name} {c?.year}{toDayText}</span>
-            <span><i style={{ background: "var(--series-1)" }} />Earlier years in the baseline</span>
+            <span><i style={{ background: "var(--accent)" }} />{name} {c?.year}{toDayText}</span>
+            <span><i style={{ background: "var(--bar-neutral)" }} />Earlier years in the baseline</span>
             {bars.some((d) => !d.inBase && !d.current) && (
-              <span><i style={{ background: "var(--series-1)", opacity: 0.35 }} />Outside the baseline</span>
+              <span><i style={{ background: "var(--bar-neutral)", opacity: 0.35 }} />Outside the baseline</span>
             )}
           </div>
           {summary && <p className="status-detail">{summary}</p>}
           {c?.skippedIncomplete && <p className="status-detail">{notes[notes.length - 1]} Switch to Harmonized for month to date.</p>}
           <details className="data-table">
-            <summary>Show the values as a table</summary>
+            <summary>Every value as a table</summary>
             <div className="data-table-scroll">
               <table>
                 <thead>

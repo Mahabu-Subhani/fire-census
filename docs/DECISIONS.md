@@ -102,6 +102,12 @@ early warning and emergency response. Points that change our plan:
 |---|---|---|---|
 | 34 | Plain-language guidance for every audience in the challenge | A "not a live alert service" notice with a link to NASA's live FIRMS map for the area; a Start-here guide with three steps, a path per audience (emergency teams, firefighters, land managers, scientists) and example views; the meaning of Raw and Harmonized under the switch; a glossary; total and per-1,000 km² activity for the area; a fire-activity layer on the map; a For-researchers section (citation, whole files, data dictionary, Python and R); 44 px touch targets on phones | 8crsk (team lead), 14 Nov: the challenge names four audiences and the UI served mainly the analyst |
 
+## Design (added 14 November)
+
+| # | Decision | Answer | Why |
+|---|---|---|---|
+| 35 | Redesign for non-scientists, and a separate research view | Dark ember design (light theme on request); hero with the answer, four real numbers and the record as a dot grid; two views, Overview (calendar, this month against past years, outlook) and Data & methods (every chart, every check, glossary, data); charts titled as plain questions with a one-line how-to-read; a legend with words and exact values; every number exact (two decimals harmonized, whole numbers raw, ratios two decimals, shares one decimal, no "12K" shortening); the left panel scrolls on its own; scroll and touch animations that respect reduced motion | 8crsk (team lead), 14 Nov: the first screen was text-heavy, numbers were rounded, the legend was unreadable for non-experts and the left column could not be scrolled |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -110,3 +116,4 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | All three | Decision 28: app vision and contract fields | See row 28 |
 | 14 Nov 2026 | Charulekha | Decisions 32 and 33: minimum activity and default baseline for the status sentence | See rows 32 and 33 |
 | 14 Nov 2026 | 8crsk | Decision 34: plain-language guidance per audience | See row 34 |
+| 14 Nov 2026 | 8crsk | Decision 35: redesign and research view | See row 35 |

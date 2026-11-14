@@ -6,12 +6,12 @@
 import * as Plot from "@observablehq/plot";
 import { useMemo } from "react";
 import { useSelection } from "../selection";
-import { MONTH_NAMES, outlook, unitLabel } from "../stats";
+import { fmtShare, fmtTick, fmtValue, MONTH_NAMES, outlook, unitLabel } from "../stats";
 import ChartFrame from "./ChartFrame";
 import { MONTH_FULL } from "./UnusualBanner";
 import { usePlot } from "./usePlot";
 
-const num = (v: number) => v.toLocaleString("en", { maximumFractionDigits: v < 10 ? 1 : 0 });
+const num = (v: number) => fmtValue(v, "harmonized");
 
 export default function OutlookStrip() {
   const { status, areaRows, region, dataThrough, meta } = useSelection();
@@ -28,21 +28,21 @@ export default function OutlookStrip() {
       const narrow = width < 480;
       return Plot.plot({
         width,
-        height: narrow ? 180 : 200,
-        marginLeft: 48,
-        marginTop: 20,
-        style: { fontSize: narrow ? "9px" : "10px" },
+        height: narrow ? 200 : 230,
+        marginLeft: 64,
+        marginTop: 26,
+        style: { fontSize: narrow ? "10px" : "11.5px", fontFamily: "var(--font-sans)" },
         x: { domain: data.map((d) => d.label), label: null, tickSize: 0, padding: 0.35 },
-        y: { grid: true, label: null, zero: true, nice: true, tickFormat: (v: number) => v.toLocaleString("en", { notation: "compact" }) },
+        y: { grid: true, label: null, zero: true, nice: true, tickFormat: fmtTick },
         marks: [
           Plot.barY(data, {
-            x: "label", y: "median", fill: "var(--series-1)",
-            title: (d) => `${d.label}, history\nTypical (median): ${num(d.median)}\nBad year (90th percentile): ${num(d.p90)}\n${Math.round(d.share * 100)}% of a typical year's activity\n${unit}`,
-            tip: { fontSize: 12, fill: "var(--surface)", stroke: "var(--border)" },
+            x: "label", y: "median", fill: "var(--bar-neutral)", rx: 4,
+            title: (d) => `${d.label}, history\nTypical (median): ${num(d.median)}\nBad year (90th percentile): ${num(d.p90)}\n${fmtShare(d.share)} of a typical year's activity\n${unit}`,
+            tip: { fontSize: 13, fill: "var(--surface-2)", stroke: "var(--border)" },
           }),
           Plot.tickY(data, { x: "label", y: "p90", stroke: "currentColor", strokeWidth: 2, strokeDasharray: "4,3" }),
-          Plot.text(data, { x: "label", y: "p90", text: (d) => `bad year ${num(d.p90)}`, dy: -7, fill: "currentColor" }),
-          Plot.text(data, { x: "label", y: "median", text: (d) => `typical ${num(d.median)}`, dy: -7, fill: "currentColor", filter: (d) => d.p90 - d.median > 0 }),
+          Plot.text(data, { x: "label", y: "p90", text: (d) => (narrow ? num(d.p90) : `bad year ${num(d.p90)}`), dy: -8, fill: "currentColor", fontWeight: 600 }),
+          Plot.text(data, { x: "label", y: "median", text: (d) => (narrow ? num(d.median) : `typical ${num(d.median)}`), dy: 14, fill: "var(--bg)", fontWeight: 600, filter: (d) => d.median > 0 }),
           Plot.ruleY([0]),
         ],
       });
@@ -54,13 +54,14 @@ export default function OutlookStrip() {
   const span = o ? `${o.firstYear} to ${o.lastYear}` : "";
   const peak = o?.peak ? `${MONTH_FULL[o.peak.month - 1]} is usually the busiest month (in ${o.peak.years} of ${o.peak.of} years).` : "";
   const sentence = data.length
-    ? `In past years, ${data.map((d) => MONTH_NAMES[d.month - 1]).join(" to ")} held ${Math.round(coming * 100)}% of a typical year's activity. ${peak}`
+    ? `In past years, ${data.map((d) => MONTH_NAMES[d.month - 1]).join(" to ")} held ${fmtShare(coming)} of a typical year's activity. ${peak}`
     : "";
   const notes = [`History, not a forecast: what happened in these months in ${span} (harmonized, complete years).`, sentence].filter(Boolean);
 
   return (
     <ChartFrame
-      title="What usually comes next"
+      title="What usually comes next?"
+      lede="The next three months in past years: the bar is a typical year, the dashed mark a bad year. History, not a forecast."
       mode="harmonized"
       exportName="outlook"
       notes={notes}
@@ -76,7 +77,6 @@ export default function OutlookStrip() {
         <p className="cf-empty">Not enough history in this area.</p>
       ) : (
         <>
-          <p className="status-detail"><strong>History, not a forecast.</strong> Each bar is the typical amount for that month in {span}; the dashed mark is a bad year (the 90th percentile).</p>
           <div ref={plotRef} className="cal-plot" />
           {data.every((d) => d.p90 === 0) && <p className="cf-empty">These months had no activity here in past years.</p>}
           <p className="status-detail">{sentence}</p>
