@@ -1,7 +1,7 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 // Loads the static files Person A writes to app/public/data/.
 import type { District } from "./places";
-import type { CubeRow, Meta, Region } from "./types";
+import type { CubeRow, DriftFile, Episodes, Meta, Region, Season } from "./types";
 
 const base = `${import.meta.env.BASE_URL}data/`;
 
@@ -26,6 +26,21 @@ export function loadCube(regionId: string): Promise<CubeRow[]> {
 }
 
 export const loadMeta = (regionId: string) => getJson<Meta>(`${regionId}/meta.json`);
+
+/** An optional file: null if it is missing (or the server answered with a page instead). */
+async function getOptional<T>(path: string): Promise<T | null> {
+  try {
+    const response = await fetch(base + path);
+    if (!response.ok || (response.headers.get("content-type") ?? "").includes("text/html")) return null;
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+export const loadSeason = (regionId: string) => getOptional<Season>(`${regionId}/season.json`);
+export const loadDrift = (regionId: string) => getOptional<DriftFile>(`${regionId}/drift.json`);
+export const loadEpisodes = (regionId: string) => getOptional<Episodes>(`${regionId}/episodes.json`);
 
 // Districts are optional: a region without the file simply has no place search.
 const districtCache = new Map<string, Promise<District[]>>();

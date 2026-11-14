@@ -100,3 +100,12 @@ export function calibrationText(meta: Meta, region: Region, regions: Region[]): 
   }
   return `Calibrated on this region: ${pair}, ${span}.`;
 }
+
+/**
+ * A region that ships the fallback because its held-out checks fail (C3 and
+ * C3r). Read from meta.json, so no region is named here.
+ */
+export function isCaseStudy(meta: Meta): boolean {
+  const verdict = (id: string) => meta.checks.find((c) => c.id === id)?.verdict;
+  return verdict("C3") === "fail" && verdict("C3r") === "fail";
+}

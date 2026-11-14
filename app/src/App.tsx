@@ -14,7 +14,7 @@ import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
 import HotspotDownload from "./downloads/HotspotDownload";
 import ErrorBoundary from "./ErrorBoundary";
-import { summaryText } from "./evidence/checks";
+import { isCaseStudy, summaryText } from "./evidence/checks";
 import ForResearchers from "./guide/ForResearchers";
 import Glossary from "./guide/Glossary";
 import { Reveal } from "./layout/motion";
@@ -94,7 +94,7 @@ function Controls({ withActions }: { withActions: boolean }) {
 
 /** Where: region, district search, and the area's size. The map follows it. */
 function AreaPicker() {
-  const { region, areaKm2, place } = useSelection();
+  const { region, areaKm2, place, meta } = useSelection();
   const { regions, setRegion, polygon, cellCount } = useSelectionActions();
   const areaLabel = place ?? (polygon ? "Drawn area" : "Whole region");
   return (
@@ -107,6 +107,12 @@ function AreaPicker() {
           ))}
         </select>
       </div>
+      {meta && isCaseStudy(meta) && (
+        <p className="note case-study">
+          <strong>Case study.</strong> This area was added after the start and its held-out checks fail, so it uses the
+          simpler fallback method. Read its numbers with care; the checks are under Data &amp; methods.
+        </p>
+      )}
       <PlaceSearch />
       <p className="area-line">
         <span>{areaLabel}</span>
@@ -216,6 +222,9 @@ const OVERVIEW_CHARTS: Record<string, string> = {
   calendar: "Burning calendar",
   comparison: "This month against past years",
   outlook: "Next 3 months · past years",
+  // Whole-region analyses; listed only where the file exists and no area is drawn.
+  season: "Critical period · has it moved?",
+  episodes: "This fire against earlier ones",
 };
 
 const Icon = {
@@ -229,6 +238,7 @@ function Overview() {
   const [open, setOpen] = useState<string | null>("calendar");
   const { setView } = useSelectionActions();
   const { download, copyLink, copied, canDownload } = useActions();
+  const selection = useSelection();
   const toggle = (id: string) => setOpen((cur) => (cur === id ? null : id));
   const tool = (icon: ReactNode, label: string, onClick: () => void, disabled = false) => (
     <button type="button" onClick={onClick} disabled={disabled}>
@@ -249,7 +259,7 @@ function Overview() {
       <aside className="mf-panel" aria-label="Results">
         <Answer />
         {charts
-          .filter((c) => c.id in OVERVIEW_CHARTS)
+          .filter((c) => c.id in OVERVIEW_CHARTS && (c.available?.(selection) ?? true))
           .map(({ id, Component }) => (
             <Section key={id} id={id} label={OVERVIEW_CHARTS[id]} open={open === id} onToggle={toggle}>
               <div className={`slot slot-${id}`}>
@@ -280,6 +290,7 @@ function Overview() {
 }
 
 function Research() {
+  const selection = useSelection();
   return (
     <>
       <ResearchHead />
@@ -297,7 +308,7 @@ function Research() {
         <div className="charts">
           <ContextBar />
           {charts
-            .filter((c) => c.views.includes("research"))
+            .filter((c) => c.views.includes("research") && (c.available?.(selection) ?? true))
             .map(({ id, Component }, i) => (
               <Reveal key={`research-${id}`} id={`chart-${id}`} className={`slot slot-${id}`} delay={i * 60}>
                 <ErrorBoundary name="this chart">
