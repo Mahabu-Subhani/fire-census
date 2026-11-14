@@ -333,3 +333,68 @@ p-value, and the shipping rule.
   It is the shared contract, so the change is left to Mahabu and 8crsk.
 - **`obs` (clear-view days)** is still up to 3 days high in January. It needs
   the Aqua daily fire masks (Earthdata login, about 3 hours of download).
+
+## One constant per calendar month (15 November, decision 57)
+
+AI-assisted. Reviewed by: Mahabu Subhani (pending). Every number is from
+`checks.json`, `loyo.json`, `sensitivity.json`, `evidence.json`, `c6.json`
+and `c6m.json` of the rebuild of 15 November (from the raw FIRMS files:
+`clean.py` to `hotspots.py`; data to 13 November as before, `refresh.py` not
+run).
+
+1. **Why.** Check C3's error followed the season, the same in the fitting
+   years and in 2018 to 2019 (`docs/research/20261115-checks-audit-seasonal-
+   bias.md`). `harmonize.seasonal_constants` fits each model's daytime
+   constant per calendar month; the year-round versions are kept as `S0y`,
+   `L2y`, `L1ry`.
+2. **What the rule ships, as first written.** Córdoba: hard floor (the curve
+   fails C2). Punjab and Haryana: hard floor (the curve fails C3 and C8).
+   Chilecito: Córdoba's. Karnataka: ratio. The detection curve ships nowhere.
+3. **Shipped models, before (year-round, as shipped until 15 Nov) and after.**
+
+| | Córdoba before (curve) | Córdoba after (hard floor) | Punjab and Haryana before (hard floor) | Punjab and Haryana after (hard floor) |
+|---|---|---|---|---|
+| C1 | 0.049 | 0.077 | -0.016 | -0.020 |
+| C2 (2016) | -0.089 | -0.094 | -0.060 | -0.059 |
+| C3 | 0.207 fail | 0.117 | 0.169 fail | 0.148 |
+| C3x (2020 to 2021) | 0.125 | 0.124 | 0.223 fail | 0.169 fail |
+| C3r | -0.072 | -0.068 | -0.042 | -0.081 |
+| C4 slope, correlation | 0.951, 0.987 | 0.938, 0.977 | 1.025, 0.993 | 1.026, 0.989 |
+| C1x | 0.087 | 0.072 | 0.023 | 0.024 |
+| C6 | -0.440 fail | -0.403 fail | -0.149 | -0.148 |
+| C6m | -0.392 fail | -0.404 fail | -0.081 | -0.080 |
+| Leave one year out: years within 0.10, largest miss | 8 of 10, 0.181 | 3 of 10, 0.233 (2013) | 8 of 10, 0.129 | 8 of 10, 0.135 |
+| Monthly error used for the rank range (`month_log_sd`) | 0.244 | 0.246 | 0.426 | 0.361 |
+
+   Córdoba's detection curve with monthly constants, which does not ship: C1
+   0.066, C2 -0.114 fail, C3 0.072, C3x 0.125, C1x 0.100 fail, 9 of 10 years
+   within 0.10 (largest 0.193, 2013), `month_log_sd` 0.186.
+4. **Sensitivity of the shipped models** (five other settings). Córdoba: C1
+   0.070 to 0.088; C2 -0.094 to -0.111, a fail in three; C3 0.098 to 0.222, a
+   fail in three; C3x 0.114 to 0.143; C3r -0.088 to -0.056. Punjab and
+   Haryana: C1 -0.025 to -0.008; C2 -0.086 to -0.047; C3 0.154 to 0.242, a
+   fail in all five; C3x 0.148 to 0.173, a fail in three; C3r -0.100 to
+   -0.072, one a fail.
+5. **Mix test, Córdoba 2012 to 2021.** Hard floor 0.76 (p = 0.011), ratio
+   -0.75 (p = 0.013), curve 0.32 (p = 0.37).
+6. **Aqua against the record, ln(Aqua / record).** Córdoba -0.011 (2012 to
+   2021) and 0.025 (2022 to 2026). Punjab and Haryana 0.028 and 0.258; in
+   October and November alone 0.032 and 0.395; in April to June -0.000 and
+   -0.041.
+7. **Other values that changed.** Season totals, Punjab and Haryana rice
+   season: 2020 14,584; 2024 1,729; 2025 762 (timing trends unchanged: peak
+   +6.7 days per decade). Córdoba season peak +7.5 days per decade (1.0 to
+   14.4). Chilecito July 2026: 65.21 against a median of 4.83 (13.5 times),
+   2nd of 25; its episode is the 9th of 277 by total. 1 to 13 November 2026:
+   Punjab and Haryana 23rd of 25 (0.09 times the median), Córdoba 22nd of 25
+   (0.30 times). Small-fire layer over the record, median 2013 to 2025: 2.17
+   and 1.75.
+8. **Hotspot files.** Rows changed class only in Córdoba and Chilecito from
+   2012 on (30 files), where the model changed from the curve to the floor.
+   The Punjab and Haryana and Karnataka files have the same rows as before
+   and were left as committed.
+9. **Not rerun.** `landcover.json`, `sources.json` and `population.json`
+   (app scripts; the first two use the hotspot classes, so Córdoba's and
+   Chilecito's are slightly out of date) and `obs` (carried in from the
+   daily-mask tables as before).
+

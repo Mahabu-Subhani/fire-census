@@ -52,12 +52,19 @@ CHECKS = {
            "pre-registered"),
     "C3": ("Does it hold in years left out of the fit?",
            "Fitted on 2012 to 2017, tested on 2018 to 2019: the typical (median) month-to-month gap "
-           "between harmonized VIIRS and Aqua. This is a scatter measure; even two identical VIIRS "
-           "satellites differ by 0.07 to 0.10 on it.",
+           "between harmonized VIIRS and Aqua. With one year-round constant it failed, because the "
+           "error followed the season; since 15 Nov the constant is fitted per calendar month "
+           "(decision 57). Its pass is therefore not a clean held-out result; C3x is.",
            "pre-registered"),
     "C3r": ("Does the two-year total hold in years left out of the fit?",
-            "The gap between the 2018 to 2019 totals instead of the typical monthly gap. Measures drift, "
-            "which is what C3 was meant to catch. Shown beside C3, never instead of it.",
+            "The gap between the 2018 to 2019 totals instead of the typical monthly gap. A two-year "
+            "total cannot see a seasonal error, so it passed while single months were far off. Shown "
+            "beside C3, never instead of it; it decides nothing now.",
+            "added after results"),
+    "C3x": ("Does it hold in two more years, whose months had not been looked at?",
+            "C3's statistic and limit on 2020 to 2021. Added when the constants per calendar month were "
+            "adopted, because by then the 2018 to 2019 results had been seen. Only the yearly totals of "
+            "2020 and 2021 had been looked at before.",
             "added after results"),
     "C4": ("Does a different VIIRS satellite give the same record?",
            "NOAA-20 run through the model fitted on S-NPP, with no refitting, compared with S-NPP: "

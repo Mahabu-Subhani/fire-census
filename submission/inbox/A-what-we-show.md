@@ -2,13 +2,13 @@
 
 # What we show: every screen, every check, every number
 
-For the team before judging, and for Charulekha's demo and project page. Every number below was read from `app/public/data/` by `python pipeline/walkthrough.py`; none was typed by hand. Data: version 0.2.0, code e51d21a, exported 2026-11-14T19:04:41Z.
+For the team before judging, and for Charulekha's demo and project page. Every number below was read from `app/public/data/` by `python pipeline/walkthrough.py`; none was typed by hand. Data: version 0.2.0, code 8268032, exported 2026-11-14T19:37:39Z.
 
 ## 1. The story in four sentences
 
 1. NASA has watched fires from MODIS since 2000 and from VIIRS since 2012. VIIRS sees much smaller fires, so simply adding the two records makes burning look like it exploded in 2012.
 2. In Punjab and Haryana the raw record steps up x5.33 against Aqua alone at 2012 (check C0, 1.674). That is the camera, not the fire.
-3. We measured which VIIRS fires MODIS could have seen and count only those, so the record stays in MODIS units. After harmonization the step is x0.98 (check C1, -0.016).
+3. We measured which VIIRS fires MODIS could have seen and count only those, so the record stays in MODIS units. After harmonization the step is x0.98 (check C1, -0.02).
 4. The app answers 'is this month unusual here?' on that one record, for a region, a district or an area you draw, and shows every check, passed and failed.
 
 ## 2. Screen by screen
@@ -77,10 +77,10 @@ Live app: https://mahabu-subhani.github.io/fire-census/. Each screen: what it sh
 - **Say:** "The season's timing, year by year: has it moved?"
 - **Numbers come from:** season.json (pipeline/stretch.py)
 - **Numbers to quote:**
-  - Punjab and Haryana, India (rice-residue burning, 15 Sep to 15 Dec): peak moves 6.7 days per decade (range 5.3 to 8.2); season length -1.1 days per decade (range -3.0 to 0.8)
+  - Punjab and Haryana, India (rice-residue burning, 15 Sep to 15 Dec): peak moves 6.7 days per decade (range 5.3 to 8.2); season length -1.2 days per decade (range -3.3 to 0.8)
   - Punjab and Haryana, India: peak 8.4 days later after 2009 (one-sided p = 0.0009); 2003-2008 against 2010-2019. Published: peak moved from 24 Oct to 4 Nov (Balwinder-Singh et al. 2019, Nature Sustainability), a different statistic
-  - Córdoba and neighbouring areas, Argentina (winter-spring fire season, 1 Jun to 31 Dec): peak moves 10.0 days per decade (range 2.7 to 16.0); season length -2.5 days per decade (range -13.6 to 8.9)
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India (dry-season forest fires, 1 Jan to 31 May): peak moves -2.9 days per decade (range -6.7 to 1.1); season length 14.8 days per decade (range 6.7 to 22.0)
+  - Córdoba and neighbouring areas, Argentina (winter-spring fire season, 1 Jun to 31 Dec): peak moves 7.5 days per decade (range 1.0 to 14.4); season length -4.0 days per decade (range -16.4 to 6.0)
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India (dry-season forest fires, 1 Jan to 31 May): peak moves -2.9 days per decade (range -6.9 to 1.4); season length 11.6 days per decade (range 6.7 to 20.0)
 
 ### Land cover
 
@@ -115,9 +115,9 @@ Live app: https://mahabu-subhani.github.io/fire-census/. Each screen: what it sh
 - **Numbers come from:** episodes.json (pipeline/stretch.py)
 - **Numbers to quote:**
   - Punjab and Haryana, India: no episodes file (section hidden)
-  - Córdoba and neighbouring areas, Argentina: 436 episodes since 2002-07; largest: 2003-07-01 to 2003-12-25 (178 days, 4,385 fire cells, MODIS (Aqua)); 2002-08-08 to 2002-11-30 (115 days, 3,373 fire cells, MODIS (Aqua)); 2020-07-24 to 2020-11-07 (107 days, 2,815 fire cells, VIIRS, harmonized)
-  - Chilecito and Famatina, La Rioja, Argentina: 238 episodes since 2002-07; largest: 2017-09-17 to 2017-10-08 (22 days, 262 fire cells, VIIRS, harmonized); 2017-10-15 to 2017-10-25 (11 days, 203 fire cells, VIIRS, harmonized); 2024-08-02 to 2024-08-18 (17 days, 192 fire cells, VIIRS, harmonized)
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India: 246 episodes since 2002-07; largest: 2005-02-03 to 2005-03-03 (29 days, 434 fire cells, MODIS (Aqua)); 2004-02-10 to 2004-03-24 (44 days, 394 fire cells, MODIS (Aqua)); 2009-01-17 to 2009-03-09 (52 days, 360 fire cells, MODIS (Aqua))
+  - Córdoba and neighbouring areas, Argentina: 463 episodes since 2002-07; largest: 2003-07-01 to 2003-12-25 (178 days, 4,385 fire cells, MODIS (Aqua)); 2002-08-08 to 2002-11-30 (115 days, 3,373 fire cells, MODIS (Aqua)); 2020-07-24 to 2020-11-07 (107 days, 3,240 fire cells, VIIRS, harmonized)
+  - Chilecito and Famatina, La Rioja, Argentina: 277 episodes since 2002-07; largest: 2024-08-02 to 2024-08-18 (17 days, 249 fire cells, VIIRS, harmonized); 2017-10-15 to 2017-10-25 (11 days, 221 fire cells, VIIRS, harmonized); 2017-09-18 to 2017-09-26 (9 days, 190 fire cells, VIIRS, harmonized)
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India: 230 episodes since 2002-07; largest: 2005-02-03 to 2005-03-03 (29 days, 434 fire cells, MODIS (Aqua)); 2004-02-10 to 2004-03-24 (44 days, 394 fire cells, MODIS (Aqua)); 2009-01-17 to 2009-03-09 (52 days, 360 fire cells, MODIS (Aqua))
 
 ### Sensor agreement
 
@@ -127,13 +127,13 @@ Live app: https://mahabu-subhani.github.io/fire-census/. Each screen: what it sh
 - **Numbers come from:** sources.json and drift.json
 - **Numbers to quote:**
   - Punjab and Haryana, India: satellites in the record: Terra 2000 to 2026, Aqua 2002 to 2026, S-NPP 2012 to 2026, NOAA-20 2018 to 2026, NOAA-21 2023 to 2026
-  - Punjab and Haryana, India: Aqua's daytime pass 13:18 in 2021, 15:27 in 2026 so far; Aqua over harmonized in 2026 so far: 1.929 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
+  - Punjab and Haryana, India: Aqua's daytime pass 13:18 in 2021, 15:27 in 2026 so far; Aqua over harmonized in 2026 so far: 2.795 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
   - Córdoba and neighbouring areas, Argentina: satellites in the record: Terra 2000 to 2026, Aqua 2002 to 2026, S-NPP 2012 to 2026, NOAA-20 2018 to 2026, NOAA-21 2023 to 2026
-  - Córdoba and neighbouring areas, Argentina: Aqua's daytime pass 13:58 in 2021, 15:45 in 2026 so far; Aqua over harmonized in 2026 so far: 1.039 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
+  - Córdoba and neighbouring areas, Argentina: Aqua's daytime pass 13:58 in 2021, 15:45 in 2026 so far; Aqua over harmonized in 2026 so far: 1.145 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
   - Chilecito and Famatina, La Rioja, Argentina: satellites in the record: Terra 2000 to 2026, Aqua 2002 to 2026, S-NPP 2012 to 2026, NOAA-20 2018 to 2026, NOAA-21 2023 to 2026
-  - Chilecito and Famatina, La Rioja, Argentina: Aqua's daytime pass 13:52 in 2021, 15:53 in 2026 so far; Aqua over harmonized in 2026 so far: 0.189 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
+  - Chilecito and Famatina, La Rioja, Argentina: Aqua's daytime pass 13:52 in 2021, 15:53 in 2026 so far; Aqua over harmonized in 2026 so far: 0.157 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
   - Bandipur, Nagarhole and BR Hills, Karnataka, India: satellites in the record: Terra 2000 to 2026, Aqua 2002 to 2026, S-NPP 2012 to 2026, NOAA-20 2018 to 2026, NOAA-21 2023 to 2026
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India: Aqua's daytime pass 13:28 in 2021, 15:04 in 2026 so far; Aqua over harmonized in 2026 so far: 1.24 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India: Aqua's daytime pass 13:28 in 2021, 15:04 in 2026 so far; Aqua over harmonized in 2026 so far: 1.158 (above 1: a MODIS-only record would show more fire than ours; below 1, less)
 
 ### Toolbar
 
@@ -149,13 +149,13 @@ Live app: https://mahabu-subhani.github.io/fire-census/. Each screen: what it sh
 - **Numbers come from:** meta.json (ladder: step at 2012 against Aqua alone, as a multiplier) and cube.json (yearly sums)
 - **Numbers to quote:**
   - Punjab and Haryana, India: raw x5.33 (1.674); harmonized, hard floor x0.98 (-0.016) against Aqua alone at 2012
-  - Córdoba and neighbouring areas, Argentina: raw x5.20 (1.648); harmonized, detection curve x1.05 (0.049) against Aqua alone at 2012
-  - Chilecito and Famatina, La Rioja, Argentina: raw x5.17 (1.642); harmonized, detection curve x1.34 (0.29) against Aqua alone at 2012
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India: raw x7.36 (1.996); harmonized, constant ratio (fallback) x0.97 (-0.033) against Aqua alone at 2012
-  - Punjab and Haryana, India, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 18,109 / 14,536; 2011: 19,512 / 14,810; 2012: 116,469 / 16,162; 2013: 107,926 / 15,009; 2014: 119,926 / 17,385
-  - Córdoba and neighbouring areas, Argentina, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 2,458 / 1,526; 2011: 2,953 / 1,782; 2012: 9,374 / 1,350; 2013: 17,576 / 1,993; 2014: 5,737 / 786
-  - Chilecito and Famatina, La Rioja, Argentina, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 106 / 46; 2011: 101 / 44; 2012: 209 / 25; 2013: 259 / 29; 2014: 224 / 24
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 311 / 220; 2011: 400 / 255; 2012: 3,710 / 323; 2013: 1,223 / 115; 2014: 2,507 / 234
+  - Córdoba and neighbouring areas, Argentina: raw x5.20 (1.648); harmonized, hard floor x1.06 (0.062) against Aqua alone at 2012
+  - Chilecito and Famatina, La Rioja, Argentina: raw x5.17 (1.642); harmonized, hard floor x0.93 (-0.077) against Aqua alone at 2012
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India: raw x7.36 (1.996); harmonized, conversion ratio (fallback) x0.97 (-0.033) against Aqua alone at 2012
+  - Punjab and Haryana, India, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 18,109 / 14,536; 2011: 19,512 / 14,810; 2012: 116,469 / 16,153; 2013: 107,926 / 14,836; 2014: 119,926 / 17,370
+  - Córdoba and neighbouring areas, Argentina, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 2,458 / 1,526; 2011: 2,953 / 1,782; 2012: 9,374 / 1,419; 2013: 17,576 / 2,126; 2014: 5,737 / 707
+  - Chilecito and Famatina, La Rioja, Argentina, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 106 / 46; 2011: 101 / 44; 2012: 209 / 18; 2013: 259 / 19; 2014: 224 / 15
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India, whole-region yearly totals (raw detections / harmonized fire cells): 2010: 311 / 220; 2011: 400 / 255; 2012: 3,710 / 345; 2013: 1,223 / 117; 2014: 2,507 / 251
 
 ### Current month status and Annual trend
 
@@ -172,10 +172,10 @@ Live app: https://mahabu-subhani.github.io/fire-census/. Each screen: what it sh
 - **Say:** "We fixed the tests before opening the data. Here is every one, including the ones we failed."
 - **Numbers come from:** meta.json
 - **Numbers to quote:**
-  - Punjab and Haryana, India: ships **Hard floor**. Hard floor. Passes C0, C1, C1b, C2, C3r and C4. Fails the original held-out check C3 (0.169 against 0.15), as in Cordoba; it ships under the revised check C3r, which it passes (0.042 against 0.10). Both verdicts are shown. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship. Until 14 Nov the floor's constant was fitted on whole strength bins, which made the record 4.6 percent too high and C3 read 0.144; fixed.
-  - Córdoba and neighbouring areas, Argentina: ships **Detection curve**. Detection curve. Passes C0, C1, C1b, C2, C3r, C4 and C8. Fails the original held-out check C3 (0.207 against 0.15); the team adopted the revised check C3r, which it passes (0.072 against 0.10). Both verdicts are shown.
-  - Chilecito and Famatina, La Rioja, Argentina: ships **Detection curve**. Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there.
-  - Bandipur, Nagarhole and BR Hills, Karnataka, India: ships **Constant ratio (fallback)**. Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 20 to 32 percent more than any harmonized version), so the constant-ratio fallback ships. The detection curve passed C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.112). Region added after the start (decision 36); not pre-registered.
+  - Punjab and Haryana, India: ships **Hard floor**. Hard floor, with one constant per calendar month. Passes every check the shipping rule names, as first written: C0, C1 (-0.020), C1b, C2 (-0.059) and C3 (0.148 against 0.15, narrowly); also C3r and C4. Fails C3x, added after results: the same statistic on 2020 to 2021 is 0.169. The detection curve fails C3 (0.208) and C8 (its midpoint is too uncertain), which is why it does not ship. Until 15 Nov the hard floor with one year-round constant shipped; it failed C3 (0.169) because its error followed the season.
+  - Córdoba and neighbouring areas, Argentina: ships **Hard floor**. Hard floor, with one constant per calendar month. Passes every check the shipping rule names, as first written: C0, C1 (0.077), C1b, C2 (-0.094) and C3 (0.117 against 0.15); also C3r, C3x (2020 to 2021: 0.124) and C4. The detection curve passes C3 (0.072) but fails the 2016 placebo C2 (-0.114 against 0.10), so the rule moves to the hard floor. Until 15 Nov the detection curve with one year-round constant shipped under the revised check C3r; it failed C3 (0.207) because its error followed the season.
+  - Chilecito and Famatina, La Rioja, Argentina: ships **Hard floor**. Case-study area with too few fires to calibrate. Uses Cordoba's curve, floor and monthly constants, and Cordoba's model (the hard floor). Its own checks are shown and several fail because so few fires occur there.
+  - Bandipur, Nagarhole and BR Hills, Karnataka, India: ships **Conversion ratio (fallback)**. Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 16 to 21 percent more than any harmonized version), so the conversion-ratio fallback ships, with one constant per calendar month. The detection curve passes C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.119), C3 (0.288) and C3r (-0.196). Region added after the start (decision 36); not pre-registered.
 
 ### Glossary and Data access
 
@@ -208,10 +208,10 @@ Pass if: absolute value at most 0.10.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | -0.016 | Pass |
-| Córdoba and neighbouring areas | 0.049 | Pass |
-| Chilecito and Famatina, La Rioja | 0.29 | **FAIL** |
-| Bandipur, Nagarhole and BR Hills, Karnataka | -0.033 | Pass |
+| Punjab and Haryana | -0.02 | Pass |
+| Córdoba and neighbouring areas | 0.077 | Pass |
+| Chilecito and Famatina, La Rioja | -0.138 | **FAIL** |
+| Bandipur, Nagarhole and BR Hills, Karnataka | 0.031 | Pass |
 
 ### C1b: Does a change-point test find a break at 2012?
 
@@ -221,10 +221,10 @@ Pass if: no change point with p < 0.05 between Jul 2011 and Dec 2012.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | p=0.324 at 2012-09 | Pass |
-| Córdoba and neighbouring areas | p=0.163 at 2013-04 | Pass |
+| Punjab and Haryana | p=0.430 at 2014-11 | Pass |
+| Córdoba and neighbouring areas | p=0.000 at 2013-10 | Pass |
 | Chilecito and Famatina, La Rioja | n/a | not run |
-| Bandipur, Nagarhole and BR Hills, Karnataka | p=0.226 at 2016-04 | Pass |
+| Bandipur, Nagarhole and BR Hills, Karnataka | p=0.200 at 2016-04 | Pass |
 
 ### C1x: Is the jump gone when the model never saw those years?
 
@@ -234,10 +234,10 @@ Pass if: absolute log ratio at most 0.10.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | +0.023 | Pass |
-| Córdoba and neighbouring areas | +0.087 | Pass |
+| Punjab and Haryana | +0.024 | Pass |
+| Córdoba and neighbouring areas | +0.072 | Pass |
 | Chilecito and Famatina, La Rioja | n/a | not run |
-| Bandipur, Nagarhole and BR Hills, Karnataka | -0.007 | Pass |
+| Bandipur, Nagarhole and BR Hills, Karnataka | +0.030 | Pass |
 
 ### C2: Does the test cry wolf?
 
@@ -247,36 +247,49 @@ Pass if: absolute value at most 0.10 at both.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | 2016: -0.060; 2008: +0.000 | Pass |
-| Córdoba and neighbouring areas | 2016: -0.089; 2008: +0.000 | Pass |
-| Chilecito and Famatina, La Rioja | 2016: -0.054; 2008: +0.000 | Pass |
-| Bandipur, Nagarhole and BR Hills, Karnataka | 2016: -0.112; 2008: +0.000 | **FAIL** |
+| Punjab and Haryana | 2016: -0.059; 2008: +0.000 | Pass |
+| Córdoba and neighbouring areas | 2016: -0.094; 2008: +0.000 | Pass |
+| Chilecito and Famatina, La Rioja | 2016: +0.359; 2008: +0.000 | **FAIL** |
+| Bandipur, Nagarhole and BR Hills, Karnataka | 2016: -0.119; 2008: +0.000 | **FAIL** |
 
 ### C3: Does it hold in years left out of the fit?
 
-Fitted on 2012 to 2017, tested on 2018 to 2019: the typical (median) month-to-month gap between harmonized VIIRS and Aqua. This is a scatter measure; even two identical VIIRS satellites differ by 0.07 to 0.10 on it. *(pre-registered.)*
+Fitted on 2012 to 2017, tested on 2018 to 2019: the typical (median) month-to-month gap between harmonized VIIRS and Aqua. With one year-round constant it failed, because the error followed the season; since 15 Nov the constant is fitted per calendar month (decision 57). Its pass is therefore not a clean held-out result; C3x is. *(pre-registered.)*
+
+Pass if: median absolute log ratio at most 0.15.
+
+| Area | Value | Verdict |
+|---|---|---|
+| Punjab and Haryana | 0.148 | Pass |
+| Córdoba and neighbouring areas | 0.117 | Pass |
+| Chilecito and Famatina, La Rioja | n/a | not run |
+| Bandipur, Nagarhole and BR Hills, Karnataka | 0.288 | **FAIL** |
+
+### C3r: Does the two-year total hold in years left out of the fit?
+
+The gap between the 2018 to 2019 totals instead of the typical monthly gap. A two-year total cannot see a seasonal error, so it passed while single months were far off. Shown beside C3, never instead of it; it decides nothing now. *(added after results.)*
+
+Pass if: absolute log ratio at most 0.10.
+
+| Area | Value | Verdict |
+|---|---|---|
+| Punjab and Haryana | -0.081 | Pass |
+| Córdoba and neighbouring areas | -0.068 | Pass |
+| Chilecito and Famatina, La Rioja | n/a | not run |
+| Bandipur, Nagarhole and BR Hills, Karnataka | -0.196 | **FAIL** |
+
+### C3x: Does it hold in two more years, whose months had not been looked at?
+
+C3's statistic and limit on 2020 to 2021. Added when the constants per calendar month were adopted, because by then the 2018 to 2019 results had been seen. Only the yearly totals of 2020 and 2021 had been looked at before. *(added after results.)*
 
 Pass if: median absolute log ratio at most 0.15.
 
 | Area | Value | Verdict |
 |---|---|---|
 | Punjab and Haryana | 0.169 | **FAIL** |
-| Córdoba and neighbouring areas | 0.207 | **FAIL** |
+| Córdoba and neighbouring areas | 0.124 | Pass |
 | Chilecito and Famatina, La Rioja | n/a | not run |
-| Bandipur, Nagarhole and BR Hills, Karnataka | 0.373 | **FAIL** |
-
-### C3r: Does the two-year total hold in years left out of the fit?
-
-The gap between the 2018 to 2019 totals instead of the typical monthly gap. Measures drift, which is what C3 was meant to catch. Shown beside C3, never instead of it. *(added after results.)*
-
-Pass if: absolute log ratio at most 0.10.
-
-| Area | Value | Verdict |
-|---|---|---|
-| Punjab and Haryana | -0.042 | Pass |
-| Córdoba and neighbouring areas | -0.072 | Pass |
-| Chilecito and Famatina, La Rioja | n/a | not run |
-| Bandipur, Nagarhole and BR Hills, Karnataka | -0.3 | **FAIL** |
+| Bandipur, Nagarhole and BR Hills, Karnataka | n/a | not run |
 
 ### C4: Does a different VIIRS satellite give the same record?
 
@@ -286,10 +299,10 @@ Pass if: slope 0.90 to 1.10 and correlation at least 0.90.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | slope 1.025, correlation 0.993 | Pass |
-| Córdoba and neighbouring areas | slope 0.951, correlation 0.987 | Pass |
-| Chilecito and Famatina, La Rioja | slope 0.979, correlation 0.889 | **FAIL** |
-| Bandipur, Nagarhole and BR Hills, Karnataka | slope 1.016, correlation 0.975 | Pass |
+| Punjab and Haryana | slope 1.026, correlation 0.989 | Pass |
+| Córdoba and neighbouring areas | slope 0.938, correlation 0.977 | Pass |
+| Chilecito and Famatina, La Rioja | slope 0.998, correlation 0.821 | **FAIL** |
+| Bandipur, Nagarhole and BR Hills, Karnataka | slope 1.015, correlation 0.976 | Pass |
 
 ### C5: Is the detection limit physically sensible?
 
@@ -312,10 +325,10 @@ Pass if: absolute log ratio at most 0.25.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | -0.149 | Pass |
-| Córdoba and neighbouring areas | -0.44 | **FAIL** |
-| Chilecito and Famatina, La Rioja | 0.43 | **FAIL** |
-| Bandipur, Nagarhole and BR Hills, Karnataka | 0.276 | **FAIL** |
+| Punjab and Haryana | -0.148 | Pass |
+| Córdoba and neighbouring areas | -0.403 | **FAIL** |
+| Chilecito and Famatina, La Rioja | 0.034 | Pass |
+| Bandipur, Nagarhole and BR Hills, Karnataka | 0.347 | **FAIL** |
 
 ### C6m: Same, with NASA MCD64A1 burned area
 
@@ -325,10 +338,10 @@ Pass if: absolute log ratio at most 0.25.
 
 | Area | Value | Verdict |
 |---|---|---|
-| Punjab and Haryana | -0.081 | Pass |
-| Córdoba and neighbouring areas | -0.392 | **FAIL** |
-| Chilecito and Famatina, La Rioja | -0.237 | Pass |
-| Bandipur, Nagarhole and BR Hills, Karnataka | 0.374 | **FAIL** |
+| Punjab and Haryana | -0.08 | Pass |
+| Córdoba and neighbouring areas | -0.404 | **FAIL** |
+| Chilecito and Famatina, La Rioja | -0.535 | **FAIL** |
+| Bandipur, Nagarhole and BR Hills, Karnataka | 0.438 | **FAIL** |
 
 ### C7: Did Punjab's burning peak move later after 2009?
 
@@ -360,10 +373,10 @@ Pass if: 90% range at most 50% of the midpoint.
 
 | Area | Pass | Fail | Not run | Failed checks |
 |---|---|---|---|---|
-| Punjab and Haryana | 11 | 2 | 0 | C3, C8 |
-| Córdoba and neighbouring areas | 9 | 3 | 1 | C3, C6, C6m |
-| Chilecito and Famatina, La Rioja | 5 | 3 | 5 | C1, C4, C6 |
-| Bandipur, Nagarhole and BR Hills, Karnataka | 6 | 6 | 1 | C2, C3, C3r, C5, C6, C6m |
+| Punjab and Haryana | 12 | 2 | 0 | C3x, C8 |
+| Córdoba and neighbouring areas | 11 | 2 | 1 | C6, C6m |
+| Chilecito and Famatina, La Rioja | 4 | 4 | 6 | C1, C2, C4, C6m |
+| Bandipur, Nagarhole and BR Hills, Karnataka | 6 | 6 | 2 | C2, C3, C3r, C5, C6, C6m |
 
 ## 4. Why C6 fails, and what it does and does not mean
 
@@ -371,10 +384,10 @@ C6 divides our yearly fire activity by the area ESA says burned, and compares 20
 
 | Area | Gated? | C6, our record | Aqua alone (no seam possible) | Part a seam could explain | Raw record | C6m (NASA), our record | C6m, Aqua alone |
 |---|---|---|---|---|---|---|---|
-| Punjab and Haryana | no, reported | -0.149 (Pass) | -0.125 | -0.024 | 1.553 | -0.081 | -0.089 |
-| Córdoba and neighbouring areas | yes | -0.44 (**FAIL**) | -0.427 | -0.013 | 1.289 | -0.392 | -0.43 |
-| Chilecito and Famatina, La Rioja | no, reported | 0.43 (**FAIL**) | 0.157 | 0.272 | 1.854 | -0.237 | -0.306 |
-| Bandipur, Nagarhole and BR Hills, Karnataka | no, reported | 0.276 (**FAIL**) | 0.34 | -0.065 | 2.537 | 0.374 | 0.329 |
+| Punjab and Haryana | no, reported | -0.148 (Pass) | -0.125 | -0.023 | 1.553 | -0.08 | -0.089 |
+| Córdoba and neighbouring areas | yes | -0.403 (**FAIL**) | -0.427 | 0.023 | 1.289 | -0.404 | -0.43 |
+| Chilecito and Famatina, La Rioja | no, reported | 0.034 (Pass) | 0.157 | -0.123 | 1.854 | -0.535 | -0.306 |
+| Bandipur, Nagarhole and BR Hills, Karnataka | no, reported | 0.347 (**FAIL**) | 0.34 | 0.006 | 2.537 | 0.438 | 0.329 |
 
 **Reading the table.**
 
@@ -383,10 +396,10 @@ C6 divides our yearly fire activity by the area ESA says burned, and compares 20
 
 **Area by area (worked out from the numbers above each time the script runs).**
 
-- Punjab and Haryana: passes (-0.149); Aqua alone gives -0.125. NASA MCD64A1: our record -0.081, Aqua alone -0.089, seam part 0.008: the same picture from an independent product. Not gated here.
-- Córdoba and neighbouring areas: fails (-0.44), but Aqua alone, with no sensor change, already gives -0.427; the part a seam could explain is -0.013. So the failure is in the world or the burned-area product, not in the harmonization. NASA MCD64A1: our record -0.392, Aqua alone -0.43, seam part 0.038: the same picture from an independent product. Gated: this is the area C6 was pre-registered for.
-- Chilecito and Famatina, La Rioja: fails (0.43) and the part a seam could explain is large (0.272; Aqua alone 0.157). Here the harmonized record itself differs from Aqua after 2012. Compare this area's C1. NASA MCD64A1: our record -0.237, Aqua alone -0.306, seam part 0.069: a different picture, so the two burned-area products disagree here. Not gated here.
-- Bandipur, Nagarhole and BR Hills, Karnataka: fails (0.276), but Aqua alone, with no sensor change, already gives 0.34; the part a seam could explain is -0.065. So the failure is in the world or the burned-area product, not in the harmonization. NASA MCD64A1: our record 0.374, Aqua alone 0.329, seam part 0.045: the same picture from an independent product. Not gated here.
+- Punjab and Haryana: passes (-0.148); Aqua alone gives -0.125. NASA MCD64A1: our record -0.08, Aqua alone -0.089, seam part 0.009: the same picture from an independent product. Not gated here.
+- Córdoba and neighbouring areas: fails (-0.403), but Aqua alone, with no sensor change, already gives -0.427; the part a seam could explain is 0.023. So the failure is in the world or the burned-area product, not in the harmonization. NASA MCD64A1: our record -0.404, Aqua alone -0.43, seam part 0.026: the same picture from an independent product. Gated: this is the area C6 was pre-registered for.
+- Chilecito and Famatina, La Rioja: passes (0.034); Aqua alone gives 0.157. NASA MCD64A1: our record -0.535, Aqua alone -0.306, seam part -0.229: the same picture from an independent product. Not gated here.
+- Bandipur, Nagarhole and BR Hills, Karnataka: fails (0.347), but Aqua alone, with no sensor change, already gives 0.34; the part a seam could explain is 0.006. So the failure is in the world or the burned-area product, not in the harmonization. NASA MCD64A1: our record 0.438, Aqua alone 0.329, seam part 0.109: a different picture, so the two burned-area products disagree here. Not gated here.
 
 **Why the relationship changed (hypotheses, not tested).** Possible causes include a change in the kind of fires (many small, repeatedly detected burns against fewer large spreading ones) and a few very large early fire years weighing on a median of only nine years. None of these was tested; do not state any as the cause.
 
@@ -398,9 +411,9 @@ C6 divides our yearly fire activity by the area ESA says burned, and compares 20
 
 ## 5. Do not say
 
-- "Punjab and Haryana passes every check": it fails C3, C8.
-- "Córdoba and neighbouring areas passes every check": it fails C3, C6, C6m.
-- "Chilecito and Famatina, La Rioja passes every check": it fails C1, C4, C6.
+- "Punjab and Haryana passes every check": it fails C3x, C8.
+- "Córdoba and neighbouring areas passes every check": it fails C6, C6m.
+- "Chilecito and Famatina, La Rioja passes every check": it fails C1, C2, C4, C6m.
 - "Bandipur, Nagarhole and BR Hills, Karnataka passes every check": it fails C2, C3, C3r, C5, C6, C6m.
 - "Fire activity rose fivefold after 2012": that is the raw record; say it is the camera.
 - "Hectares burned" for our numbers: the unit is fire cells (1 km squares with fire in one pass), in Aqua-equivalent units.
