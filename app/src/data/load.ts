@@ -1,5 +1,6 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 // Loads the static files Person A writes to app/public/data/.
+import type { District } from "./places";
 import type { CubeRow, Meta, Region } from "./types";
 
 const base = `${import.meta.env.BASE_URL}data/`;
@@ -25,3 +26,14 @@ export function loadCube(regionId: string): Promise<CubeRow[]> {
 }
 
 export const loadMeta = (regionId: string) => getJson<Meta>(`${regionId}/meta.json`);
+
+// Districts are optional: a region without the file simply has no place search.
+const districtCache = new Map<string, Promise<District[]>>();
+export function loadDistricts(regionId: string): Promise<District[]> {
+  let districts = districtCache.get(regionId);
+  if (!districts) {
+    districts = getJson<District[]>(`${regionId}/districts.json`).catch(() => []);
+    districtCache.set(regionId, districts);
+  }
+  return districts;
+}

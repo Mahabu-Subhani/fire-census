@@ -196,6 +196,16 @@ Optional cube field, present only if the observation-aware step is completed:
 `obs` (integer or null), the number of valid clear observations of the cell in
 that month. The app must treat a missing or null `obs` as "unknown", never as zero.
 
+### `app/public/data/<region_id>/districts.json` (optional; written by B)
+
+District outlines for the place search, built by `app/scripts/make_districts.py`
+from geoBoundaries ADM2 and ADM1 files (sources and licences in
+`docs/REFERENCES.md`). One entry per district overlapping the region box:
+`name`, `province`, `country`, `label` (unique, "Ludhiana, Punjab, India"),
+`ring` (outer outline, simplified to about 200 m), `bbox`, `partly_outside`,
+`parts_dropped` (islands or exclaves left out), `source`, `licence`. If the file
+is missing, the app hides the search.
+
 ### `app/public/data/<region_id>/hotspots/<YYYY>.csv.gz` (stretch goal)
 
 Raw FIRMS rows for the region and year, original columns plus `harm_class`

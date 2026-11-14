@@ -4,6 +4,7 @@ import { useState } from "react";
 import { charts } from "./charts";
 import CoordinateEntry from "./controls/CoordinateEntry";
 import DateRange from "./controls/DateRange";
+import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
 import EvidencePanel, { ChecksBadge } from "./evidence/EvidencePanel";
 import ErrorBoundary from "./ErrorBoundary";
@@ -72,6 +73,7 @@ function Controls() {
           ))}
         </select>
       </label>
+      <PlaceSearch />
       <p className="area-line">
         {areaLabel}
         {areaKm2 !== null && <>, {Math.round(areaKm2).toLocaleString("en-GB")} km²</>}

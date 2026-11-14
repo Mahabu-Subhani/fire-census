@@ -178,3 +178,18 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   a { color: #000; }
 }
 .map-fallback { min-height: 120px; display: flex; align-items: center; }
+
+.place-search { display: grid; gap: 4px; position: relative; }
+.place-search label { font-weight: 600; }
+.place-search input {
+  font: inherit; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; min-height: 36px;
+}
+.place-list {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 10; margin: 2px 0 0; padding: 4px 0; list-style: none;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+.place-list li { padding: 8px 10px; cursor: pointer; }
+.place-list li[aria-selected="true"], .place-list li:hover { background: var(--accent); color: #fff; }
+.fine-print { margin: 0; font-size: 0.75rem; color: var(--muted); }
+@media print { .place-search { display: none; } }
