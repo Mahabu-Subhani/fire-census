@@ -9,7 +9,9 @@
   built so that 2005 and 2025 can be compared, not to measure absolute area.
 - **Calibrated in two places only:** the Córdoba area (a box around the province, including parts of its neighbours) and Punjab and Haryana (the exact states), plus the
   Chilecito area, which borrows Córdoba's calibration because it has too few
-  fires of its own.
+  fires of its own. A fourth area, the forests of south Karnataka, was added
+  late as a case study: no method passes its held-out checks, so the plain
+  conversion ratio is used there and the app labels it.
 - **Punjab's calibration is weak.** Crop-residue fires are small and last
   minutes, so two satellites passing minutes apart often see different fires.
   Its detection curve was too uncertain to ship (check C8), and its results move
@@ -28,5 +30,18 @@
   excluded, as are near-real-time detections at places that the final data has
   repeatedly flagged that way. Agricultural, land-clearing and waste burning
   stay in, because they are burning activity.
+- **Night values are uncertain.** The night detection curve rests on few
+  fires (575 Aqua night fire cells in Córdoba's fitting years, 156 in Punjab
+  and Haryana's) and would not pass our stability check on its own. Night is
+  7.4 percent of Córdoba's reference record and 0.2 percent of Punjab and
+  Haryana's.
+- **Clear-view days (`obs`) are too high in January.** The first one to three
+  days of each January were counted twice (and a few months had a file counted
+  twice). Values are capped at the days in the month; January is still up to
+  3 days high until `pipeline/obs.py`, now corrected, is rerun on the daily
+  fire masks. `obs` is a data-quality note only and does not enter the record.
+- **Two burned-area values are to be recomputed** (C6 and C6m for Punjab and
+  Haryana, C6 for Córdoba); see the notes under the checks table in
+  `results.md`. No verdict is expected to change.
 - **Dates are in UTC,** so a night detection can fall on the previous local day.
 - **Burned area per detected fire changed in Córdoba after 2012** (ESA Fire_cci, check C6). Aqua alone shows the same change, so it is not a seam, but it means fire-cell counts are not a fixed proxy for hectares burned.
