@@ -3,7 +3,7 @@
 .env.*
 
 # Raw and intermediate data (large; reproduce with the pipeline)
-data/
+/data/
 
 # Python
 __pycache__/
