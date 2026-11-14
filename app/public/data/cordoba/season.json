@@ -1,0 +1,304 @@
+{
+ "window": "winter-spring fire season, 1 Jun to 31 Dec",
+ "years": [
+  {
+   "year": 2003,
+   "start": "07-29",
+   "peak": "09-10",
+   "end": "11-14",
+   "start_doy": 210,
+   "peak_doy": 253,
+   "end_doy": 318,
+   "length_days": 109,
+   "total": 4485.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2004,
+   "start": "07-01",
+   "peak": "08-26",
+   "end": "10-19",
+   "start_doy": 183,
+   "peak_doy": 239,
+   "end_doy": 293,
+   "length_days": 111,
+   "total": 2884.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2005,
+   "start": "07-25",
+   "peak": "09-13",
+   "end": "10-21",
+   "start_doy": 206,
+   "peak_doy": 256,
+   "end_doy": 294,
+   "length_days": 89,
+   "total": 2239.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2006,
+   "start": "07-10",
+   "peak": "09-06",
+   "end": "10-18",
+   "start_doy": 191,
+   "peak_doy": 249,
+   "end_doy": 291,
+   "length_days": 101,
+   "total": 2441.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2007,
+   "start": "07-14",
+   "peak": "08-30",
+   "end": "11-27",
+   "start_doy": 195,
+   "peak_doy": 242,
+   "end_doy": 331,
+   "length_days": 137,
+   "total": 1694.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2008,
+   "start": "06-17",
+   "peak": "08-27",
+   "end": "10-22",
+   "start_doy": 169,
+   "peak_doy": 240,
+   "end_doy": 296,
+   "length_days": 128,
+   "total": 2396.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2009,
+   "start": "07-11",
+   "peak": "08-28",
+   "end": "10-31",
+   "start_doy": 192,
+   "peak_doy": 240,
+   "end_doy": 304,
+   "length_days": 113,
+   "total": 3012.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2010,
+   "start": "07-09",
+   "peak": "09-04",
+   "end": "11-07",
+   "start_doy": 190,
+   "peak_doy": 247,
+   "end_doy": 311,
+   "length_days": 122,
+   "total": 1417.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2011,
+   "start": "07-21",
+   "peak": "09-02",
+   "end": "11-04",
+   "start_doy": 202,
+   "peak_doy": 245,
+   "end_doy": 308,
+   "length_days": 107,
+   "total": 1580.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2012,
+   "start": "06-22",
+   "peak": "08-22",
+   "end": "11-02",
+   "start_doy": 174,
+   "peak_doy": 235,
+   "end_doy": 307,
+   "length_days": 134,
+   "total": 1061.63,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2013,
+   "start": "08-04",
+   "peak": "09-10",
+   "end": "10-23",
+   "start_doy": 216,
+   "peak_doy": 253,
+   "end_doy": 296,
+   "length_days": 81,
+   "total": 1736.55,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2014,
+   "start": "07-20",
+   "peak": "09-12",
+   "end": "11-27",
+   "start_doy": 201,
+   "peak_doy": 255,
+   "end_doy": 331,
+   "length_days": 131,
+   "total": 628.77,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2015,
+   "start": "07-08",
+   "peak": "08-30",
+   "end": "11-15",
+   "start_doy": 189,
+   "peak_doy": 242,
+   "end_doy": 319,
+   "length_days": 131,
+   "total": 810.85,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2016,
+   "start": "07-28",
+   "peak": "09-22",
+   "end": "12-15",
+   "start_doy": 210,
+   "peak_doy": 266,
+   "end_doy": 350,
+   "length_days": 141,
+   "total": 829.65,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2017,
+   "start": "07-18",
+   "peak": "09-24",
+   "end": "11-21",
+   "start_doy": 199,
+   "peak_doy": 267,
+   "end_doy": 325,
+   "length_days": 127,
+   "total": 1515.5,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2018,
+   "start": "06-29",
+   "peak": "08-26",
+   "end": "10-18",
+   "start_doy": 180,
+   "peak_doy": 238,
+   "end_doy": 291,
+   "length_days": 112,
+   "total": 948.54,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2019,
+   "start": "07-26",
+   "peak": "09-20",
+   "end": "11-15",
+   "start_doy": 207,
+   "peak_doy": 263,
+   "end_doy": 319,
+   "length_days": 113,
+   "total": 1038.46,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2020,
+   "start": "07-30",
+   "peak": "09-27",
+   "end": "10-19",
+   "start_doy": 212,
+   "peak_doy": 271,
+   "end_doy": 293,
+   "length_days": 82,
+   "total": 3127.88,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2021,
+   "start": "07-20",
+   "peak": "10-01",
+   "end": "10-28",
+   "start_doy": 201,
+   "peak_doy": 274,
+   "end_doy": 301,
+   "length_days": 101,
+   "total": 1163.88,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2022,
+   "start": "07-21",
+   "peak": "09-14",
+   "end": "11-24",
+   "start_doy": 202,
+   "peak_doy": 257,
+   "end_doy": 328,
+   "length_days": 127,
+   "total": 1583.11,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2023,
+   "start": "07-28",
+   "peak": "09-16",
+   "end": "11-07",
+   "start_doy": 209,
+   "peak_doy": 259,
+   "end_doy": 311,
+   "length_days": 103,
+   "total": 712.56,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2024,
+   "start": "08-10",
+   "peak": "09-20",
+   "end": "10-26",
+   "start_doy": 223,
+   "peak_doy": 264,
+   "end_doy": 300,
+   "length_days": 78,
+   "total": 1615.37,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2025,
+   "start": "07-15",
+   "peak": "09-06",
+   "end": "11-18",
+   "start_doy": 196,
+   "peak_doy": 249,
+   "end_doy": 322,
+   "length_days": 127,
+   "total": 815.68,
+   "sensor": "VIIRS, harmonized"
+  }
+ ],
+ "trend": {
+  "start": {
+   "days_per_decade": 7.0,
+   "lo": -1.0,
+   "hi": 15.0
+  },
+  "peak": {
+   "days_per_decade": 10.0,
+   "lo": 2.7,
+   "hi": 16.0
+  },
+  "end": {
+   "days_per_decade": 5.0,
+   "lo": -3.3,
+   "hi": 16.3
+  },
+  "length": {
+   "days_per_decade": -2.5,
+   "lo": -13.6,
+   "hi": 8.9
+  }
+ },
+ "method": "Day by which 10, 50 and 90 percent of the season's harmonized activity had happened. Trend: Theil-Sen slope with 90 percent range. Years with fewer than 30 fire cells in the window are left out."
+}

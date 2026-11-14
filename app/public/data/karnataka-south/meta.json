@@ -1,0 +1,752 @@
+{
+  "level_shipped": "L1r",
+  "level_name": "Constant ratio (fallback)",
+  "shipping_reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 20 to 32 percent more than any harmonized version), so the constant-ratio fallback ships. The detection curve passed C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.112). Region added after the start (decision 36); not pre-registered.",
+  "unit": "Aqua-equivalent fire cells",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve.",
+  "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
+  "calibration": {
+    "variant": "A",
+    "months": [
+      "2012-02",
+      "2017-12"
+    ],
+    "reference_pair": "Aqua MODIS and S-NPP VIIRS",
+    "area": "karnataka-south"
+  },
+  "floor_mw": {
+    "day": 17.45,
+    "night": 3.73
+  },
+  "constants": {
+    "day": 0.1705,
+    "night": 0.0161
+  },
+  "ladder": [
+    {
+      "level": "L0 raw detections",
+      "step_2012": 1.996
+    },
+    {
+      "level": "L1 fire cells",
+      "step_2012": 1.98,
+      "placebo_2016": "-0.102",
+      "held_out": 1.756
+    },
+    {
+      "level": "L1r constant ratio",
+      "step_2012": -0.033,
+      "placebo_2016": "-0.112",
+      "held_out": 0.373
+    },
+    {
+      "level": "L2 hard floor",
+      "step_2012": -0.196,
+      "placebo_2016": "+0.084",
+      "held_out": 0.269
+    },
+    {
+      "level": "S0 detection curve",
+      "step_2012": -0.05,
+      "placebo_2016": "-0.033",
+      "held_out": 0.183
+    }
+  ],
+  "checks": [
+    {
+      "id": "C0",
+      "name": "The raw record shows the 2012 jump",
+      "value": 1.996,
+      "threshold": "greater than 0.5",
+      "verdict": "pass",
+      "note": ""
+    },
+    {
+      "id": "C1",
+      "name": "No seam at 2012",
+      "value": -0.033,
+      "threshold": "absolute value at most 0.10",
+      "verdict": "pass",
+      "note": ""
+    },
+    {
+      "id": "C1b",
+      "name": "No change point at 2012 (Pettitt)",
+      "value": "p=0.226 at 2016-04",
+      "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
+      "verdict": "pass",
+      "note": "38 months with at least 30 Aqua fire cells"
+    },
+    {
+      "id": "C2",
+      "name": "No seam at placebo dates (2016, 2008)",
+      "value": "2016: -0.112; 2008: +0.000",
+      "threshold": "absolute value at most 0.10 at both",
+      "verdict": "fail",
+      "note": "2008 is zero by construction: H equals the Aqua reference before 2012"
+    },
+    {
+      "id": "C3",
+      "name": "Held-out years 2018 to 2019",
+      "value": 0.373,
+      "threshold": "median absolute log ratio at most 0.15",
+      "verdict": "fail",
+      "note": "7 of 24 months have at least 30 Aqua fire cells"
+    },
+    {
+      "id": "C3r",
+      "name": "Held-out years, two-year total (revised after results)",
+      "value": -0.3,
+      "threshold": "absolute log ratio at most 0.10",
+      "verdict": "fail",
+      "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); reported beside C3, never instead of it; 7 months"
+    },
+    {
+      "id": "C4",
+      "name": "NOAA-20 alone reproduces the record",
+      "value": "slope 1.016, correlation 0.976",
+      "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
+      "verdict": "pass",
+      "note": "103 months"
+    },
+    {
+      "id": "C5",
+      "name": "Curve midpoint is physically plausible",
+      "value": null,
+      "threshold": "within a factor of 2 of published limits",
+      "verdict": "not run",
+      "note": "published limits not yet verified against their source"
+    },
+    {
+      "id": "C6",
+      "name": "Burned-area relationship is stable",
+      "value": null,
+      "threshold": "absolute log ratio at most 0.25",
+      "verdict": "not run",
+      "note": "ESA Fire_cci burned area not processed in the time available"
+    },
+    {
+      "id": "C7",
+      "name": "Punjab peak moves later after 2009",
+      "value": null,
+      "threshold": "at least +5 days, p < 0.05",
+      "verdict": "not run",
+      "note": "defined for Punjab and Haryana only"
+    },
+    {
+      "id": "C8",
+      "name": "Curve is stable under resampling",
+      "value": "midpoint 17.5 MW, 90% range 11.7 to 18.8 (width 40% of midpoint)",
+      "threshold": "90% range at most 50% of the midpoint",
+      "verdict": "pass",
+      "note": "applies to the detection curve, which is used for the small-fire layer"
+    }
+  ],
+  "all_models": {
+    "S0": {
+      "C0": "pass",
+      "C1": "pass",
+      "C1b": "pass",
+      "C2": "pass",
+      "C3": "fail",
+      "C3r": "fail",
+      "C4": "pass",
+      "C8": "pass"
+    },
+    "L2": {
+      "C0": "pass",
+      "C1": "fail",
+      "C1b": "fail",
+      "C2": "pass",
+      "C3": "fail",
+      "C3r": "fail",
+      "C4": "fail"
+    },
+    "L1r": {
+      "C0": "pass",
+      "C1": "pass",
+      "C1b": "pass",
+      "C2": "fail",
+      "C3": "fail",
+      "C3r": "fail",
+      "C4": "pass"
+    }
+  },
+  "curve": {
+    "day": [
+      {
+        "frp": 0.112,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.141,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.178,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.224,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.282,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.355,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.447,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.562,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.708,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.891,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 1.122,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 1.413,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 1.778,
+        "p": 0.0392,
+        "p_lo": 0.0158,
+        "p_hi": 0.0558
+      },
+      {
+        "frp": 2.239,
+        "p": 0.0392,
+        "p_lo": 0.0214,
+        "p_hi": 0.0597
+      },
+      {
+        "frp": 2.818,
+        "p": 0.0593,
+        "p_lo": 0.0444,
+        "p_hi": 0.0908
+      },
+      {
+        "frp": 3.548,
+        "p": 0.0645,
+        "p_lo": 0.0499,
+        "p_hi": 0.1016
+      },
+      {
+        "frp": 4.467,
+        "p": 0.1039,
+        "p_lo": 0.0862,
+        "p_hi": 0.1387
+      },
+      {
+        "frp": 5.623,
+        "p": 0.1994,
+        "p_lo": 0.1593,
+        "p_hi": 0.2699
+      },
+      {
+        "frp": 7.079,
+        "p": 0.1994,
+        "p_lo": 0.1616,
+        "p_hi": 0.279
+      },
+      {
+        "frp": 8.913,
+        "p": 0.264,
+        "p_lo": 0.211,
+        "p_hi": 0.3656
+      },
+      {
+        "frp": 11.22,
+        "p": 0.3423,
+        "p_lo": 0.2926,
+        "p_hi": 0.4697
+      },
+      {
+        "frp": 14.125,
+        "p": 0.4514,
+        "p_lo": 0.3701,
+        "p_hi": 0.6256
+      },
+      {
+        "frp": 17.783,
+        "p": 0.5043,
+        "p_lo": 0.4511,
+        "p_hi": 0.7111
+      },
+      {
+        "frp": 22.387,
+        "p": 0.7074,
+        "p_lo": 0.6096,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 28.184,
+        "p": 0.7934,
+        "p_lo": 0.6908,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 35.481,
+        "p": 1.0,
+        "p_lo": 0.9486,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 44.668,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 56.234,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 70.795,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 89.125,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 112.202,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 141.254,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 177.828,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 223.872,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 281.838,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 354.813,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 446.684,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 562.341,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 707.946,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 891.251,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 1122.018,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 1412.538,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 1778.279,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 2238.721,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 2818.383,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      }
+    ],
+    "night": [
+      {
+        "frp": 0.112,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.141,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.178,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.224,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.282,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.355,
+        "p": 0.0,
+        "p_lo": 0.0,
+        "p_hi": 0.0
+      },
+      {
+        "frp": 0.447,
+        "p": 0.0263,
+        "p_lo": 0.0,
+        "p_hi": 0.0516
+      },
+      {
+        "frp": 0.562,
+        "p": 0.0263,
+        "p_lo": 0.0,
+        "p_hi": 0.0516
+      },
+      {
+        "frp": 0.708,
+        "p": 0.0263,
+        "p_lo": 0.0,
+        "p_hi": 0.0516
+      },
+      {
+        "frp": 0.891,
+        "p": 0.0263,
+        "p_lo": 0.0,
+        "p_hi": 0.0866
+      },
+      {
+        "frp": 1.122,
+        "p": 0.0263,
+        "p_lo": 0.0,
+        "p_hi": 0.0866
+      },
+      {
+        "frp": 1.413,
+        "p": 0.2024,
+        "p_lo": 0.0802,
+        "p_hi": 0.4609
+      },
+      {
+        "frp": 1.778,
+        "p": 0.2024,
+        "p_lo": 0.0942,
+        "p_hi": 0.4699
+      },
+      {
+        "frp": 2.239,
+        "p": 0.2919,
+        "p_lo": 0.1203,
+        "p_hi": 0.4926
+      },
+      {
+        "frp": 2.818,
+        "p": 0.3573,
+        "p_lo": 0.2049,
+        "p_hi": 0.7359
+      },
+      {
+        "frp": 3.548,
+        "p": 0.3573,
+        "p_lo": 0.206,
+        "p_hi": 0.7397
+      },
+      {
+        "frp": 4.467,
+        "p": 1.0,
+        "p_lo": 0.5554,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 5.623,
+        "p": 1.0,
+        "p_lo": 0.5714,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 7.079,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 8.913,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 11.22,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 14.125,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 17.783,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 22.387,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 28.184,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 35.481,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 44.668,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 56.234,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 70.795,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 89.125,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 112.202,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 141.254,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 177.828,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 223.872,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 281.838,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 354.813,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 446.684,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 562.341,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 707.946,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 891.251,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 1122.018,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 1412.538,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 1778.279,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 2238.721,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      },
+      {
+        "frp": 2818.383,
+        "p": 1.0,
+        "p_lo": 1.0,
+        "p_hi": 1.0
+      }
+    ]
+  },
+  "curve_stats": {
+    "day": {
+      "n_snpp_cells": 7087,
+      "n_aqua_cells": 1208,
+      "match_rate": 0.13009736136588118,
+      "control_rate": 0.0023987582898264428,
+      "plateau": 0.5059523809523809,
+      "f50": 17.454025430409775,
+      "f50_lo": 11.737755883264242,
+      "f50_hi": 18.763729776147798
+    },
+    "night": {
+      "n_snpp_cells": 2356,
+      "n_aqua_cells": 38,
+      "match_rate": 0.025466893039049237,
+      "control_rate": 0.0008488964346349745,
+      "plateau": 0.10317460317460317,
+      "f50": 3.7342274939705438,
+      "f50_lo": 2.265438842463746,
+      "f50_hi": 4.292643196605677
+    }
+  },
+  "data_version": "0.2.0",
+  "code_commit": "9af4ef1",
+  "generated_at": "2026-11-14T10:21:30Z",
+  "data_through": "2026-11-05",
+  "nrt_from": "2026-08",
+  "sources": [
+    "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
+    "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"
+  ]
+}

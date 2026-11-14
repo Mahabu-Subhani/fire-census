@@ -15,6 +15,11 @@
       "model": "S0",
       "variant": "A",
       "reason": "Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there."
+    },
+    "karnataka-south": {
+      "model": "L1r",
+      "variant": "A",
+      "reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 20 to 32 percent more than any harmonized version), so the constant-ratio fallback ships. The detection curve passed C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.112). Region added after the start (decision 36); not pre-registered."
     }
   }
 }

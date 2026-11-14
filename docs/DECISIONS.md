@@ -108,6 +108,13 @@ early warning and emergency response. Points that change our plan:
 |---|---|---|---|
 | 35 | Redesign for non-scientists, and a separate research view | Dark ember design (light theme on request); hero with the answer, four real numbers and the record as a dot grid; two views, Overview (calendar, this month against past years, outlook) and Data & methods (every chart, every check, glossary, data); charts titled as plain questions with a one-line how-to-read; a legend with words and exact values; every number exact (two decimals harmonized, whole numbers raw, ratios two decimals, shares one decimal, no "12K" shortening); the left panel scrolls on its own; scroll and touch animations that respect reduced motion | 8crsk (team lead), 14 Nov: the first screen was text-heavy, numbers were rounded, the legend was unreadable for non-experts and the left column could not be scrolled |
 
+## Stretch (added 14 November, about 16:30)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 36 | Fourth area for the local judges | "Bandipur, Nagarhole and BR Hills, Karnataka" (75.8 to 77.8 E, 11.4 to 13.0 N), calibrated on its own. Added after the start and not pre-registered; the same checks and shipping rule apply. Result: no model passes the held-out checks, so the constant ratio ships. Shown as a case study, not a validated region | Mahabu asked for stretch goals; the AI assistant proposed this area for the Bangalore judges and built it. Reason in Mahabu's words: **to be added** |
+| 37 | Stretch analyses | `season.json` (season start, peak, end and trend), `drift.json` (overpass time and Aqua against the record), `episodes.json` (fire episodes ranked) written by `pipeline/stretch.py`. Contract rows proposed in ARCHITECTURE.md; B and C decide whether and how to show them | Same as 36 |
+
 ## Change log
 
 | Date | Who | Change | Reason |

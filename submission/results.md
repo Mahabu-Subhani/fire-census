@@ -72,6 +72,23 @@ Remaining step at 2012 (0 is perfect):
   groundwater laws delayed rice planting. Across a record that spans both
   sensors, our median burning day moves 8.1 days later. MODIS alone gives 7.4.
   The two studies measure the peak differently, so the numbers need not match.
+- **The burning season itself has moved, across the sensor change.** On the
+  harmonized daily record, the day by which half of Punjab's rice-residue
+  season (15 September to 15 December) had burned moved later by 6.7 days per
+  decade (90 percent range 5.7 to 8.3). The start and end moved about as much,
+  so the season shifted without growing longer. The trend runs straight
+  through 2012, when the record switches from MODIS to VIIRS. In Córdoba the
+  season's midpoint moved later by 10.0 days per decade (2.7 to 16.0).
+- **Punjab's burning fell sharply in 2024 and 2025.** Harmonized activity in
+  the rice-residue season was 14,025 fire cells in 2020, 1,913 in 2024 and 944
+  in 2025. Our record shows what a 13:30 satellite pass sees: a reported shift
+  of burning to the evening (UNVERIFIED lead from a 2025 study summary) would
+  also lower it, so read this as detected burning, not all burning.
+- **How this fire compares with earlier ones.** In the Chilecito area we found
+  238 fire episodes since July 2002 (runs of active days, allowing two quiet
+  days). The July 2026 fire, 27 to 31 July, is the 11th largest by total
+  activity and the 9th by its peak day. The largest were in September and
+  October 2017.
 - **Robustness.** In Córdoba every check keeps its verdict when we keep
   low-confidence detections, change what counts as the same fire, or move the
   curve's reference point. Punjab is fragile: two of those changes push C3r over

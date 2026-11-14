@@ -40,5 +40,19 @@
     "first_month": "2001-07",
     "last_month": "2026-11",
     "harmonized_from": "2002-07"
+  },
+  {
+    "id": "karnataka-south",
+    "name": "Bandipur, Nagarhole and BR Hills, Karnataka, India",
+    "bbox": [
+      75.8,
+      11.4,
+      77.8,
+      13.0
+    ],
+    "cell_deg": 0.1,
+    "first_month": "2000-12",
+    "last_month": "2026-11",
+    "harmonized_from": "2002-07"
   }
 ]

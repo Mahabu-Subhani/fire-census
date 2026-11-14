@@ -1,0 +1,323 @@
+{
+ "window": "rice-residue burning, 15 Sep to 15 Dec",
+ "years": [
+  {
+   "year": 2002,
+   "start": "10-07",
+   "peak": "10-20",
+   "end": "10-29",
+   "start_doy": 280,
+   "peak_doy": 293,
+   "end_doy": 302,
+   "length_days": 23,
+   "total": 8087.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2003,
+   "start": "10-09",
+   "peak": "10-21",
+   "end": "11-01",
+   "start_doy": 282,
+   "peak_doy": 294,
+   "end_doy": 305,
+   "length_days": 24,
+   "total": 9161.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2004,
+   "start": "10-09",
+   "peak": "10-23",
+   "end": "11-01",
+   "start_doy": 283,
+   "peak_doy": 297,
+   "end_doy": 306,
+   "length_days": 24,
+   "total": 8763.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2005,
+   "start": "10-12",
+   "peak": "10-28",
+   "end": "11-09",
+   "start_doy": 285,
+   "peak_doy": 301,
+   "end_doy": 313,
+   "length_days": 29,
+   "total": 14186.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2006,
+   "start": "10-06",
+   "peak": "10-24",
+   "end": "11-05",
+   "start_doy": 279,
+   "peak_doy": 297,
+   "end_doy": 309,
+   "length_days": 31,
+   "total": 9591.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2007,
+   "start": "10-09",
+   "peak": "10-25",
+   "end": "11-05",
+   "start_doy": 282,
+   "peak_doy": 298,
+   "end_doy": 309,
+   "length_days": 28,
+   "total": 13425.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2008,
+   "start": "10-13",
+   "peak": "10-29",
+   "end": "11-08",
+   "start_doy": 287,
+   "peak_doy": 303,
+   "end_doy": 313,
+   "length_days": 27,
+   "total": 12552.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2009,
+   "start": "10-16",
+   "peak": "10-30",
+   "end": "11-11",
+   "start_doy": 289,
+   "peak_doy": 303,
+   "end_doy": 315,
+   "length_days": 27,
+   "total": 12524.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2010,
+   "start": "10-17",
+   "peak": "11-02",
+   "end": "11-11",
+   "start_doy": 290,
+   "peak_doy": 306,
+   "end_doy": 315,
+   "length_days": 26,
+   "total": 13001.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2011,
+   "start": "10-17",
+   "peak": "10-29",
+   "end": "11-07",
+   "start_doy": 290,
+   "peak_doy": 302,
+   "end_doy": 311,
+   "length_days": 22,
+   "total": 13798.0,
+   "sensor": "MODIS (Aqua)"
+  },
+  {
+   "year": 2012,
+   "start": "10-19",
+   "peak": "11-02",
+   "end": "11-11",
+   "start_doy": 293,
+   "peak_doy": 307,
+   "end_doy": 316,
+   "length_days": 24,
+   "total": 13688.65,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2013,
+   "start": "10-22",
+   "peak": "11-02",
+   "end": "11-13",
+   "start_doy": 295,
+   "peak_doy": 306,
+   "end_doy": 317,
+   "length_days": 23,
+   "total": 12511.38,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2014,
+   "start": "10-20",
+   "peak": "11-03",
+   "end": "11-12",
+   "start_doy": 293,
+   "peak_doy": 307,
+   "end_doy": 316,
+   "length_days": 24,
+   "total": 14961.24,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2015,
+   "start": "10-21",
+   "peak": "11-04",
+   "end": "11-14",
+   "start_doy": 294,
+   "peak_doy": 308,
+   "end_doy": 318,
+   "length_days": 25,
+   "total": 12703.4,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2016,
+   "start": "10-18",
+   "peak": "11-03",
+   "end": "11-11",
+   "start_doy": 292,
+   "peak_doy": 308,
+   "end_doy": 316,
+   "length_days": 25,
+   "total": 17266.16,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2017,
+   "start": "10-18",
+   "peak": "10-31",
+   "end": "11-20",
+   "start_doy": 291,
+   "peak_doy": 304,
+   "end_doy": 324,
+   "length_days": 34,
+   "total": 11111.37,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2018,
+   "start": "10-24",
+   "peak": "11-05",
+   "end": "11-16",
+   "start_doy": 297,
+   "peak_doy": 309,
+   "end_doy": 320,
+   "length_days": 24,
+   "total": 11756.54,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2019,
+   "start": "10-22",
+   "peak": "11-03",
+   "end": "11-12",
+   "start_doy": 295,
+   "peak_doy": 307,
+   "end_doy": 316,
+   "length_days": 22,
+   "total": 8942.36,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2020,
+   "start": "10-20",
+   "peak": "11-03",
+   "end": "11-12",
+   "start_doy": 294,
+   "peak_doy": 308,
+   "end_doy": 317,
+   "length_days": 24,
+   "total": 14025.37,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2021,
+   "start": "10-27",
+   "peak": "11-07",
+   "end": "11-14",
+   "start_doy": 300,
+   "peak_doy": 311,
+   "end_doy": 318,
+   "length_days": 19,
+   "total": 15317.92,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2022,
+   "start": "10-24",
+   "peak": "11-04",
+   "end": "11-15",
+   "start_doy": 297,
+   "peak_doy": 308,
+   "end_doy": 319,
+   "length_days": 23,
+   "total": 9042.56,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2023,
+   "start": "10-26",
+   "peak": "11-07",
+   "end": "11-18",
+   "start_doy": 299,
+   "peak_doy": 311,
+   "end_doy": 322,
+   "length_days": 24,
+   "total": 6319.08,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2024,
+   "start": "10-18",
+   "peak": "11-08",
+   "end": "11-23",
+   "start_doy": 292,
+   "peak_doy": 313,
+   "end_doy": 328,
+   "length_days": 37,
+   "total": 1912.74,
+   "sensor": "VIIRS, harmonized"
+  },
+  {
+   "year": 2025,
+   "start": "10-20",
+   "peak": "11-05",
+   "end": "11-18",
+   "start_doy": 293,
+   "peak_doy": 309,
+   "end_doy": 322,
+   "length_days": 30,
+   "total": 944.35,
+   "sensor": "VIIRS, harmonized"
+  }
+ ],
+ "trend": {
+  "start": {
+   "days_per_decade": 8.0,
+   "lo": 6.2,
+   "hi": 10.0
+  },
+  "peak": {
+   "days_per_decade": 6.7,
+   "lo": 5.7,
+   "hi": 8.3
+  },
+  "end": {
+   "days_per_decade": 7.3,
+   "lo": 5.7,
+   "hi": 10.0
+  },
+  "length": {
+   "days_per_decade": -0.0,
+   "lo": -2.7,
+   "hi": 0.9
+  }
+ },
+ "method": "Day by which 10, 50 and 90 percent of the season's harmonized activity had happened. Trend: Theil-Sen slope with 90 percent range. Years with fewer than 30 fire cells in the window are left out.",
+ "law_2009": {
+  "mean_peak_before": 298.3,
+  "mean_peak_after": 306.4,
+  "shift_days": 8.1,
+  "p_one_sided": 0.0009,
+  "note": "2003-2008 against 2010-2019. Published: peak moved from 24 Oct to 4 Nov (Balwinder-Singh et al. 2019, Nature Sustainability), a different statistic"
+ }
+}

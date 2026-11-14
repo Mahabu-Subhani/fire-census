@@ -22,6 +22,9 @@ AREAS = {
     "cordoba": ("Córdoba province, Argentina", -65.8, -35.0, -61.7, -29.5, "argentina"),
     "punjab-haryana": ("Punjab and Haryana, India", 73.8, 27.6, 77.6, 32.6, "india"),
     "chilecito": ("Chilecito and Famatina, La Rioja, Argentina", -68.2, -29.8, -66.8, -28.4, "argentina"),
+    # Added 14 Nov after the start (decision 36): forests of south Karnataka and the Nilgiri edge
+    # (Bandipur, Nagarhole, BR Hills, MM Hills). Not pre-registered; checks run the same way.
+    "karnataka-south": ("Bandipur, Nagarhole and BR Hills, Karnataka, India", 75.8, 11.4, 77.8, 13.0, "india"),
 }
 
 # FIRMS request id -> (country, sensor family, platform). From the request list.

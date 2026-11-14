@@ -196,6 +196,18 @@ Optional cube field, present only if the observation-aware step is completed:
 `obs` (integer or null), the number of valid clear observations of the cell in
 that month. The app must treat a missing or null `obs` as "unknown", never as zero.
 
+### Stretch files (optional; written by A with `pipeline/stretch.py`, added 14 November)
+
+Whole-area analyses, not recomputed for a drawn shape. The app should show
+them only when the whole region is selected, and hide a view if its file is
+missing. Proposed by A; awaiting B and C.
+
+| File | Areas | Answers | Shape |
+|---|---|---|---|
+| `season.json` | punjab-haryana, cordoba | "Has the burning season moved?" | `window` (text); `years`: one entry per year with `start`, `peak`, `end` (`MM-DD`), `start_doy`, `peak_doy`, `end_doy`, `length_days`, `total`, `sensor`; `trend.start/peak/end/length` with `days_per_decade`, `lo`, `hi`; Punjab also `law_2009` |
+| `drift.json` | all three | "Would a MODIS-only calendar still be right?" | `years`: `year`, `overpass_local_time` (hours, per satellite), `aqua_over_harmonized` (from 2012); `note` |
+| `episodes.json` | chilecito, cordoba | "How does this fire compare with previous ones?" | `definition`, `count`, `largest` (top 15 by total) and `latest` (last 5): `start`, `end`, `days`, `total`, `peak`, `peak_day`, `sensor`, `rank_total`, `rank_peak` |
+
 ### `app/public/data/<region_id>/districts.json` (optional; written by B)
 
 District outlines for the place search, built by `app/scripts/make_districts.py`
