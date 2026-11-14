@@ -83,7 +83,7 @@ Five satellites, two sensor types, different times of day. The app's rules:
   both sensors can see. Consistency over time is what a calendar needs.
 - **"What happens when MODIS is switched off?"** Nothing changes: the record
   already runs on VIIRS from 2012.
-- **"Does it work anywhere?"** For the three processed regions. The pipeline
+- **"Does it work anywhere?"** For the four processed areas. The pipeline
   is region-independent; adding a region is a FIRMS download and one run.
 
 ## Not built (say so if asked)
