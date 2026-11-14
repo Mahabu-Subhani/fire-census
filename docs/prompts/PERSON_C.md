@@ -5,6 +5,120 @@ Setup and usage tips: `docs/prompts/README.md`.
 
 ---
 
+## Web app work (from Sat 11:30): these replace the chart steps in C1 to C3
+
+The shell is on `main`. Use these three prompts for the app. Keep using C1 to
+C4 for the project page, the demo and the submission. The split with 8crsk:
+
+| | 8crsk (B) | Charulekha (C) |
+|---|---|---|
+| Folders | Everything in `app/` except the two on the right, including `App.tsx` and `package.json` | `app/src/charts/` and `app/src/stats/` |
+| Builds | Map, controls, place search, downloads of the selection, share link, Checks and Method panels | Calendar, series, comparison, status sentence, season band, outlook, trend, per-chart export |
+| Git | Pushes to `main` | Branch `c/charts`. Pull `main` before each piece; merge small and often |
+
+Need a new field in `useSelection()` or a new library? Ask 8crsk in the team
+chat. Do not edit files outside your two folders.
+
+### CA1. Stats core and the calendar (now to Sat 13:00)
+
+```text
+I am Charulekha, Person C. 8crsk has merged the app shell. Run git pull on
+main, then git checkout -b c/charts (or git merge main if the branch exists).
+Read CLAUDE.md, docs/ARCHITECTURE.md ("Inside the app", especially "How to
+read the rows" and "Working together in app/"), docs/APP_VISION.md and
+app/README.md. Run npm install and npm test in app/ to check that everything works.
+
+I own app/src/charts/ and app/src/stats/ only. Never edit App.tsx,
+package.json or anything else in app/. The chart order on the page is the list
+in app/src/charts/index.ts. Observable Plot 0.6.16 is installed.
+
+Build, in this order:
+
+1. app/src/stats/: pure functions with unit tests (vitest, *.test.ts next to
+   the code), no React:
+   - value(row, mode): raw_modis + raw_viirs in raw mode, harm in harmonized.
+   - toCalendar(rows, mode): year by month matrix of sums. Missing rows are 0.
+   - monthHistory(areaRows, month, mode, useMtd): the value of one calendar
+     month in every year, using mtd instead of harm for the incomplete month
+     of dataThrough and for the same month in earlier years.
+   - median, rank ("2nd highest of 24") and the 90th percentile of a list.
+   Tests must include an empty selection, a month with no rows, ties in rank,
+   and the incomplete current month.
+2. A ChartFrame component in app/src/charts/ that every chart uses: a title
+   stating the unit (always from meta.unit, never typed by hand), the mode
+   (Raw or Harmonized) and the area (place, or "Drawn area" or the region
+   name, with km²); a slot for the chart; and a space for export buttons later.
+3. BurningCalendar, inside ChartFrame: years as rows, months as columns
+   (decision 21), cividis colour ramp with a legend, exact value on hover and
+   tap, months before harmonized_from marked "Terra only, not harmonized".
+   Reads rows from useSelection() and the maths from stats/.
+
+Then set it as the first chart in app/src/charts/index.ts, run npm test and
+npm run build, commit, and merge c/charts into main. Check it at 400 px wide.
+Every file carries the AI-assisted header from docs/AI_USE.md.
+
+At 13:00 stop and report: done, not done, blocked.
+```
+
+### CA2. The answer on top (Sat 14:30 to 19:30; Fable recommended)
+
+```text
+I am Charulekha, Person C. Pull main into c/charts. Read docs/APP_VISION.md
+(questions Q1, Q2, Q7 and traps 1, 2, 3 and 10) and my newest hand-off note.
+
+Build, in this order, with the maths in app/src/stats/ and tests for each:
+
+1. UnusualBanner becomes the status sentence at the top. Rank first, ratio
+   second, for the month of dataThrough using month-to-date: "November 2026 so
+   far (1 to 5 Nov): 3rd highest of 25 Novembers, 2.1 times the median."
+   Below a minimum amount of activity, say "too little activity to judge"
+   instead. Before you code the minimum and the baseline, run prompt D1 from
+   docs/prompts/DEEPEN.md on two questions: what the minimum should be, and
+   whether the default baseline is all years or the last 10 years (trap 10).
+   Record both answers in docs/DECISIONS.md. Offer both baselines in the UI.
+2. MonthComparison: the selected month against the history of the same
+   calendar month, as a small chart: every year's value, the median line, the
+   90th percentile, and this year highlighted. Uses areaRows, not rows.
+3. A season band on BurningCalendar: the months that historically hold most
+   of the year's activity, computed from areaRows, plus a "you are here"
+   marker on the month of dataThrough.
+4. ActivitySeries: the monthly series. In Raw mode the 2012 jump is obvious;
+   in Harmonized mode it should be gone. Shade harm_lo to harm_hi. When
+   showSmall is true, draw `small` as a separate series from 2012 (decision 23).
+5. Export on every chart through ChartFrame: CSV of exactly what is plotted
+   (first lines are comments with the sources, data_version and code_commit
+   from meta, the mode, the area and the range), PNG and SVG.
+
+Numbers always come from the rows, never typed. Merge to main after each
+item. Before 19:30, run the adversarial review prompt in docs/prompts/SHARED.md
+on the charts and stats, then stop and report.
+```
+
+### CA3. Trends and the look ahead (Sat night; stop at Sun 12:30 freeze)
+
+```text
+I am Charulekha, Person C. Pull main into c/charts. Read docs/APP_VISION.md
+(Q3, Q5 and the "First principles" table) and my newest hand-off note.
+
+Build, in this order, stopping when time runs out:
+
+1. Trend: yearly totals from areaRows with a trend line and its uncertainty
+   (Sen's slope with a Mann-Kendall test, or "no clear trend"). Harmonized
+   mode only. In Raw mode show "Trends are not shown on the raw record: its
+   2012 jump would be counted as a trend."
+2. A second colour mode for the calendar: difference from that calendar
+   month's multi-year average, on a diverging colour-vision-safe ramp, with
+   a legend in numbers.
+3. An outlook strip for the next three months after dataThrough: the median
+   and the 90th percentile from history, labelled "history, not a forecast".
+
+Add each to app/src/charts/index.ts in a sensible order, with tests in stats/.
+Merge after each item. At Sun 12:30 the app freezes: after that, fixes only,
+and my time goes to the demo and the submission (prompts C3 and C4).
+```
+
+---
+
 ## C0. Orientation (allowed before the start; makes no changes)
 
 ```text

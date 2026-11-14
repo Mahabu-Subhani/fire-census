@@ -1,9 +1,6 @@
 // AI-assisted: written with help from Claude (Anthropic). Reviewed by 8crsk.
 // Page layout. Chart slots hold Person C's components from src/charts/.
-import ActivitySeries from "./charts/ActivitySeries";
-import BurningCalendar from "./charts/BurningCalendar";
-import MonthComparison from "./charts/MonthComparison";
-import UnusualBanner from "./charts/UnusualBanner";
+import { charts } from "./charts";
 import MapView from "./map/MapView";
 import { useSelection, useSelectionActions } from "./selection";
 
@@ -81,10 +78,11 @@ export default function App() {
           <MapView />
         </div>
         <div className="right">
-          <div className="slot slot-banner"><UnusualBanner /></div>
-          <div className="slot slot-comparison"><MonthComparison /></div>
-          <div className="slot slot-calendar"><BurningCalendar /></div>
-          <div className="slot slot-series"><ActivitySeries /></div>
+          {charts.map(({ id, Component }) => (
+            <div key={id} className={`slot slot-${id}`}>
+              <Component />
+            </div>
+          ))}
         </div>
       </main>
       <footer className="app-footer">

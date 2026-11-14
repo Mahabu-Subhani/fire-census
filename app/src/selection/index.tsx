@@ -77,9 +77,13 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     };
   }, [region]);
 
+  const areaRows = useMemo(
+    () => (cube && region ? selectCells(cube, polygon, region.first_month, region.last_month) : []),
+    [cube, polygon, region],
+  );
   const rows = useMemo(
-    () => (cube && from && to ? selectCells(cube, polygon, from, to) : []),
-    [cube, polygon, from, to],
+    () => (from && to ? areaRows.filter((r) => r.ym >= from && r.ym <= to) : []),
+    [areaRows, from, to],
   );
 
   const outside = polygon !== null && region !== null && !overlapsBBox(polygon, region.bbox);
@@ -88,6 +92,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     region,
     meta,
     rows,
+    areaRows,
     from,
     to,
     mode,

@@ -80,7 +80,10 @@ export type Polygon = [number, number][];
 export interface Selection {
   region: Region | null;
   meta: Meta | null;
+  /** Rows inside the area and the date range: what the calendar and series show. */
   rows: CubeRow[];
+  /** Rows inside the area for every month, ignoring the date range: the history that comparisons need. */
+  areaRows: CubeRow[];
   from: string;
   to: string;
   mode: Mode;

@@ -68,6 +68,7 @@ interface Selection {
   region: Region | null;       // entry from regions.json
   meta: Meta | null;           // contents of meta.json
   rows: CubeRow[];             // rows inside the drawn area and date range
+  areaRows: CubeRow[];         // rows inside the area for ALL months (history for comparisons)
   from: string; to: string;    // "YYYY-MM"
   mode: Mode;
   showSmall: boolean;
@@ -79,6 +80,24 @@ interface Selection {
 
 function useSelection(): Selection;
 ```
+
+How to read the rows (one rule for every chart, implemented once in `app/src/stats/`):
+
+- **Raw** mode value per row: `raw_modis + raw_viirs` (the naive record, with its 2012 jump).
+- **Harmonized** mode value per row: `harm`, with range `harm_lo` to `harm_hi`.
+  The small-fire layer `small` is shown as its own layer when `showSmall` is
+  true, never added into `harm`.
+- Missing rows mean zero. The unit label comes from `meta.unit`.
+- Comparisons with history (median, rank, outlook, trend) use `areaRows`, so
+  the result does not change when the user narrows the date range. The
+  calendar and the series show `rows`.
+- The month of `dataThrough` is incomplete: compare it using `mtd`, never `harm`.
+
+Working together in `app/`: C owns `app/src/charts/` and `app/src/stats/`. The
+order of charts on the page is the list in `app/src/charts/index.ts`, so C adds
+or reorders charts without touching `App.tsx`. B owns everything else in
+`app/`, including `package.json`; ask B to add a dependency. If C needs a new
+field in `useSelection()`, C asks B; B adds it and updates this section.
 
 Chart components C builds, each taking no props and reading `useSelection()`:
 
