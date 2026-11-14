@@ -27,9 +27,10 @@ import sys
 
 import duckdb
 import numpy as np
+import pandas as pd
 
 from config import APP_DATA, AREAS, WORK
-from harmonize import CENTRES, TRANSFER, fit_curve, match_table, month_bin_counts
+from harmonize import TRANSFER, fit_curve, match_table, month_bin_counts
 
 POOL = ("2012-02", "2021-12")
 SEAM_TEST = ("2012-02", "2015-01")
@@ -48,9 +49,12 @@ def area_counts(con: duckdb.DuckDBPyConnection, area: str) -> dict:
     months = sorted(m for m in set(match["ym"]) | set(aqua["ym"]) if POOL[0] <= m <= POOL[1])
     out = {"months": np.array(months)}
     for dn in ("D", "N"):
-        n, h, c = month_bin_counts(match[(match["dn"] == dn) & match["ym"].isin(months)], months)
+        sub = match[(match["dn"] == dn) & match["ym"].isin(months)]
+        n, h, c = month_bin_counts(sub, months)
         aq = aqua[aqua["dn"] == dn].set_index("ym")["n"].reindex(months).fillna(0).to_numpy(float)
-        out[dn] = (n, h, c, aq)
+        # Month index and strength of every S-NPP fire cell, for the hard floor's exact threshold.
+        each = (pd.Categorical(sub["ym"], categories=months).codes, sub["frp_sum"].to_numpy())
+        out[dn] = (n, h, c, aq, each)
     return out
 
 
@@ -59,15 +63,18 @@ def predict(data: dict, train: np.ndarray, test: np.ndarray) -> dict:
     h = {m: np.zeros(int(test.sum())) for m in MODELS}
     r = np.zeros(int(test.sum()))
     for dn in ("D", "N"):
-        n, hit, ctrl, aq = data[dn]
+        n, hit, ctrl, aq, (month_of, frp) = data[dn]
         r += aq[test]
         if n[train].sum() == 0:
             continue
         _, p, _, f50 = fit_curve(n[train], hit[train], ctrl[train])
-        weights = {"S0": p, "L2": (CENTRES >= f50).astype(float), "L1r": np.ones(len(CENTRES))}
-        for m, w in weights.items():
-            k = aq[train].sum() / max((n[train] @ w).sum(), 1e-9)
-            h[m] += k * (n[test] @ w)
+        # Cells per month under each model. The hard floor counts each cell on its own strength,
+        # exactly as harmonize.py applies it (not by whole strength bins).
+        above = np.bincount(month_of[frp >= f50], minlength=len(aq)).astype(float)
+        per_month = {"S0": n @ p, "L2": above, "L1r": n.sum(axis=1)}
+        for m, cells in per_month.items():
+            k = aq[train].sum() / max(cells[train].sum(), 1e-9)
+            h[m] += k * cells[test]
     return {"h": h, "r": r}
 
 

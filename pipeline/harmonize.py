@@ -15,7 +15,7 @@ Levels built here (the ladder):
   L2   hard floor: VIIRS cells at or above the curve's midpoint, times a constant
   S0   detection curve: each VIIRS cell weighted by its detection probability
 
-Run: python pipeline/harmonize.py     Output: WORK/<area>_{cells,weights,series,daily}.parquet, curves.json
+Run: python pipeline/harmonize.py     Output: WORK/<area>_{cells,weights,series}.parquet, curves.json
 """
 
 import json
@@ -123,33 +123,38 @@ def calibrate(match: pd.DataFrame, aqua_month: pd.Series, variant: str, dn: str)
     n, h, c = month_bin_counts(sub, months)
     aq = aqua_month.reindex(months).fillna(0).to_numpy()
     p_raw, p_norm, plateau, f50 = fit_curve(n, h, c)
-    floor_w = (CENTRES >= f50).astype(float)
+    # The hard floor is applied to each fire cell's own strength (frp_sum >= f50), so its constant
+    # is fitted on the same rule. Until 14 Nov it was fitted on whole strength bins instead, which
+    # left out or added the cells between f50 and the nearest bin edge (Punjab day: 4.6 percent).
+    mi = pd.Categorical(sub["ym"], categories=months).codes
+    n_floor = np.bincount(mi[(sub["frp_sum"] >= f50).to_numpy()], minlength=len(months)).astype(float)
     out = {
         "variant": variant, "dn": dn, "n_snpp_cells": int(n.sum()), "n_aqua_cells": int(aq.sum()),
         "match_rate": float(h.sum() / max(n.sum(), 1)), "control_rate": float(c.sum() / max(n.sum(), 1)),
         "plateau": float(plateau), "f50": float(f50),
         "p_norm": p_norm.tolist(), "p_raw": p_raw.tolist(),
         "k_curve": float(aq.sum() / max((n @ p_norm).sum(), 1e-9)),
-        "k_floor": float(aq.sum() / max((n @ floor_w).sum(), 1e-9)),
+        "k_floor": float(aq.sum() / max(n_floor.sum(), 1e-9)),
         "k_ratio": float(aq.sum() / max(n.sum(), 1e-9)),
     }
     # Block bootstrap by month: resample whole months with replacement.
-    f50s, ks, curves = [], [], []
+    f50s, ks, curves, ks_floor, ks_ratio = [], [], [], [], []
     for _ in range(N_BOOT):
         idx = RNG.integers(0, len(months), len(months))
         _, pn, _, f = fit_curve(n[idx], h[idx], c[idx])
         f50s.append(f)
         ks.append(aq[idx].sum() / max((n[idx] @ pn).sum(), 1e-9))
+        ks_floor.append(aq[idx].sum() / max(n_floor[idx].sum(), 1e-9))     # floor held at the fitted f50
+        ks_ratio.append(aq[idx].sum() / max(n[idx].sum(), 1e-9))
         curves.append(pn)
     curves = np.array(curves)
     out["f50_lo"], out["f50_hi"] = (float(x) for x in np.nanpercentile(f50s, [5, 95]))
     out["p_lo"] = np.percentile(curves, 5, axis=0).tolist()
     out["p_hi"] = np.percentile(curves, 95, axis=0).tolist()
-    # Relative spread of the calibration total, used for the range on harm.
-    tot = np.array([k * (n @ pn).sum() for k, pn in zip(ks, curves)])
-    base = np.array([(n @ pn).sum() for pn in curves])
-    out["rel_sd_k"] = float(np.std(ks) / np.mean(ks))
-    del tot, base
+    # Relative spread of each model's constant over the resampled months, used for the range on harm.
+    out["rel_sd_k"] = float(np.std(ks) / np.mean(ks))                       # detection curve
+    out["rel_sd_k_floor"] = float(np.std(ks_floor) / np.mean(ks_floor))
+    out["rel_sd_k_ratio"] = float(np.std(ks_ratio) / np.mean(ks_ratio))
     # Near-simultaneous subset (Aqua overpass within 10 minutes), as a robustness figure.
     sno = sub[sub["dt"] <= 10]
     if len(sno) >= 500:
@@ -218,14 +223,7 @@ def harmonize_area(con: duckdb.DuckDBPyConnection, area: str, curves_all: dict) 
     ser = ser.fillna({"R": 0, "terra": 0, "L0": 0})
     ser.reset_index().to_parquet(WORK / f"{area}_series.parquet", index=False)
 
-    # Daily series for October and November (check C7).
-    daily = pd.DataFrame({"aqua": aqua.groupby("acq_date").size()})
-    for variant in CAL:
-        d = v.groupby(["satellite", "acq_date"])[f"S0_{variant}"].sum().unstack(0)
-        daily[f"V_S0_{variant}"] = d.mean(axis=1, skipna=True)
-    daily = daily.join(pd.DataFrame(index=pd.to_datetime(v["acq_date"].unique())), how="outer")
-    daily.index.name = "acq_date"
-    daily.reset_index().to_parquet(WORK / f"{area}_daily.parquet", index=False)
+    # The daily series for check C7 is built in validate.py from the cells and weights files.
 
 
 def main() -> None:

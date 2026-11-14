@@ -108,11 +108,16 @@ def process() -> None:
                 df = pd.DataFrame({"cx": cx, "cy": cy, "v": valid[t]})
                 g = df.groupby(["cx", "cy"])["v"].agg(["sum", "size"]).reset_index()
                 g["ym"] = day.strftime("%Y-%m")
+                g["date"] = day
                 g["area"] = area
                 rows.append(g)
         if k % 200 == 0:
             print(f"processed {k} of {len(files)}", flush=True)
     allrows = pd.concat(rows, ignore_index=True)
+    # The 8-day file that starts on day 361 runs into 1 to 3 January, which the next year's first
+    # file also covers, and a granule can be downloaded twice. Count each cell and date once.
+    # (Found 14 Nov: January `obs` was up to 3 days too high. Fixed here; rerun to correct the data.)
+    allrows = allrows.drop_duplicates(["area", "cx", "cy", "date"])
     # Pixel-days: sum of clear looks and number of pixels per cell, per month.
     agg = allrows.groupby(["area", "cx", "cy", "ym"]).agg(clear=("sum", "sum"), pix=("size", "max"),
                                                           days=("size", "count")).reset_index()

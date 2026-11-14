@@ -45,9 +45,12 @@ def last_date() -> date:
     return con.execute(f"select max(d) from ({q})").fetchone()[0]
 
 
-def area_last_date(area: str) -> date:
-    """Newest date already fetched for one area: its own API files, else the archive."""
-    files = sorted(RAW.glob(f"NRTAPI_*/fire_nrt_api_{area}_*.csv"))
+def area_last_date(area: str, folder) -> date:
+    """Newest date already fetched for one area from one source: its own API files, else the archive.
+
+    Per source, so that a run that stopped after one sensor does not leave a gap in the others.
+    """
+    files = sorted(folder.glob(f"fire_nrt_api_{area}_*.csv"))
     if not files:
         return last_archive_date()
     name = files[-1].stem.split("_")                       # ..._<area>_<start>_<n>d
@@ -66,13 +69,13 @@ def main() -> None:
     end = date.today() - timedelta(days=1)       # complete days only
     print(f"Fetching each area from the day after its last date, to {end}")
     for area, (_name, west, south, east, north, country) in AREAS.items():
-        start = area_last_date(area) + timedelta(days=1)    # each area from its own last date
-        if start > end:
-            print(f"{area}: up to date")
-            continue
         for source, family in SOURCES.items():
             folder = RAW / f"NRTAPI_{country}_{family}_{source}"
             folder.mkdir(parents=True, exist_ok=True)
+            start = area_last_date(area, folder) + timedelta(days=1)    # each area and source from its own last date
+            if start > end:
+                print(f"{area} {source}: up to date")
+                continue
             day, n = start, 0
             while day <= end:
                 days = min(5, (end - day).days + 1)           # the API allows 1 to 5 days per call ("Expects [1..5]")

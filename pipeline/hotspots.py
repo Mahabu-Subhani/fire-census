@@ -21,6 +21,14 @@ import duckdb
 import pandas as pd
 
 from config import APP_DATA, AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, REPO, WORK, area_cells, folder_info
+from harmonize import VIIRS_OPS
+
+# A VIIRS detection in a month when the record does not use that satellite (S-NPP's first days in
+# January 2012, when the record is still Aqua's, and after October 2026) is not part of the record.
+NOT_IN_USE = " or ".join(
+    f"(satellite_name = '{sat}' and (strftime(d, '%Y-%m') < '{lo}' or strftime(d, '%Y-%m') > '{hi}'))"
+    for sat, (lo, hi) in VIIRS_OPS.items())
+NOT_IN_USE_REASON = "VIIRS detection in a month when the record does not use this satellite"
 
 FIRMS_COLS = ["latitude", "longitude", "brightness", "scan", "track", "acq_date", "acq_time", "satellite",
               "instrument", "confidence", "version", "bright_t31", "frp", "daynight", "type"]
@@ -102,6 +110,7 @@ def main() -> None:
                 when satellite_name = 'Terra' and d < date '2002-07-01' then 'harmonized'
                 when satellite_name = 'Aqua' and d < date '2012-02-01' then 'harmonized'
                 when sensor = 'MODIS' then 'excluded'
+                when {NOT_IN_USE} then 'excluded'
                 when w.p >= 0.5 then 'harmonized'
                 else 'small' end as harm_class,
               case
@@ -115,6 +124,7 @@ def main() -> None:
                 when satellite_name = 'Aqua' and d < date '2012-02-01' then 'Aqua MODIS: the reference record before VIIRS'
                 when sensor = 'MODIS' and satellite_name = 'Terra' then 'Terra morning overpass: kept as a separate raw series'
                 when sensor = 'MODIS' then 'Aqua after January 2012: the record uses VIIRS from then on'
+                when {NOT_IN_USE} then '{NOT_IN_USE_REASON}'
                 when w.p >= 0.5 then 'VIIRS fire cell MODIS would usually see'
                 else 'VIIRS fire cell MODIS would usually miss (small-fire layer)' end as harm_reason
             from r
@@ -143,8 +153,9 @@ def main() -> None:
         clean_n = con.execute(f"select count(*) from '{static}'").fetchone()[0]
         kept = counts.get("harmonized", 0) + counts.get("small", 0)
         kept_modis_late = con.execute("select count(*) from hs where harm_class = 'excluded' and (harm_reason like "
-                                      "'%Terra morning%' or harm_reason like 'Aqua after%')").fetchone()[0]
-        print(f"  check: cleaned rows {clean_n:,} = kept {kept:,} + MODIS rows not used after their period "
+                                      "'%Terra morning%' or harm_reason like 'Aqua after%' "
+                                      f"or harm_reason = '{NOT_IN_USE_REASON}')").fetchone()[0]
+        print(f"  check: cleaned rows {clean_n:,} = kept {kept:,} + rows from a satellite outside its period "
               f"{kept_modis_late:,} -> {clean_n == kept + kept_modis_late}")
 
 
