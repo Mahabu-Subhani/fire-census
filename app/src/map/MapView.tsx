@@ -8,9 +8,11 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { bboxToPolygon } from "../data/select";
 import { useSelection, useSelectionActions, type Polygon } from "../selection";
-import { fmtValue, monthsBetween, MONTH_NAMES, unitLabel, value } from "../stats";
+import { fmtPeople } from "../charts/population";
+import { fmtShare, fmtValue, monthsBetween, MONTH_NAMES, unitLabel, value } from "../stats";
 import { EMBER, useTheme, type Theme } from "../theme";
 import { activityCells } from "./activity";
+import { exposureMap } from "./exposure";
 
 // NASA GIBS: Blue Marble satellite imagery as map tiles, free, no key
 // (decision 39; see docs/REFERENCES.md). Dimmed a little in the dark theme so
@@ -32,6 +34,14 @@ export function utcDay(back: number, now = new Date()): string {
   return new Date(now.getTime() - back * 86400000).toISOString().slice(0, 10);
 }
 type Live = "off" | "today" | "yesterday";
+
+// Exposure classes 0, 1, 2 (other burning, high fire less populated, high
+// fire densely populated); checked for colour-vision deficiency, all pairs.
+const EXPOSURE_COLOURS: Record<Theme, [string, string, string]> = {
+  dark: ["#6e6c66", "#d95926", "#199e70"],
+  light: ["#6b6863", "#eb6834", "#1baf7a"],
+};
+type ColourBy = "fire" | "exposure";
 /** Milliseconds per month during playback. */
 const FRAME_MS = 220;
 
@@ -123,9 +133,17 @@ export default function MapView() {
 
 function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme: Theme }) {
   const ramp = EMBER[theme];
-  const { region, rows, mode, meta } = useSelection();
+  const { region, rows, mode, meta, population, from, to } = useSelection();
   const { polygon, setPolygon, regions, setRegion } = useSelectionActions();
   const [liveDay, setLiveDay] = useState<Live>("off");
+  const [colourBy, setColourBy] = useState<ColourBy>("fire");
+  const byExposure = colourBy === "exposure" && Boolean(population?.squares.length);
+  const exposure = useMemo(
+    () => (byExposure && region && population
+      ? exposureMap(rows, mode, region.cell_deg, population, polygon, from && to ? monthsBetween(from, to).length / 12 : 1)
+      : null),
+    [byExposure, rows, mode, region, population, polygon, from, to],
+  );
   // Playback: index into the months of the date range, or null when the map shows the whole range.
   const months = useMemo(() => (rows.length ? monthsBetween(rows.reduce((m, r) => (r.ym < m ? r.ym : m), rows[0].ym), rows.reduce((m, r) => (r.ym > m ? r.ym : m), rows[0].ym)) : []), [rows]);
   const [frame, setFrame] = useState<number | null>(null);
@@ -172,7 +190,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
       if (!map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
     });
     map.on("load", () => {
-      for (const id of ["areas", "activity", "region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
+      for (const id of ["areas", "activity", "exposure", "region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
       // The other study areas: faint, and a click switches to one.
       map.addLayer({ id: "areas-fill", type: "fill", source: "areas", paint: { "fill-color": "#f86f1d", "fill-opacity": 0.1 } });
       map.addLayer({ id: "areas-line", type: "line", source: "areas", paint: { "line-color": "#f86f1d", "line-width": 1.2, "line-opacity": 0.7, "line-dasharray": [2, 2] } });
@@ -184,6 +202,13 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
           "fill-color": ["interpolate", ["linear"], ["get", "t"], ...ramp.flatMap((c, i) => [i / (ramp.length - 1), c])],
           "fill-opacity": 0.82,
         },
+      });
+      const ex = EXPOSURE_COLOURS[theme];
+      map.addLayer({
+        id: "exposure-fill",
+        type: "fill",
+        source: "exposure",
+        paint: { "fill-color": ["match", ["get", "c"], 2, ex[2], 1, ex[1], ex[0]], "fill-opacity": ["match", ["get", "c"], 0, 0.45, 0.88] },
       });
       map.addSource("live", { type: "raster", tiles: [liveTiles(utcDay(0))], tileSize: 256, attribution: "Live fires: NASA GIBS, VIIRS NOAA-20/21" });
       map.addLayer({ id: "live", type: "raster", source: "live", layout: { visibility: "none" } });
@@ -325,8 +350,16 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    (map.getSource("activity") as GeoJSONSource).setData(activity ? activity.collection : empty);
-  }, [activity, ready]);
+    (map.getSource("activity") as GeoJSONSource).setData(activity && !byExposure ? activity.collection : empty);
+    (map.getSource("exposure") as GeoJSONSource).setData(exposure ? exposure.collection : empty);
+  }, [activity, exposure, byExposure, ready]);
+
+  // Exposure colours the whole date range: stop playback.
+  useEffect(() => {
+    if (!byExposure) return;
+    setPlaying(false);
+    setFrame(null);
+  }, [byExposure]);
 
   // Live NASA detections for one UTC day.
   useEffect(() => {
@@ -424,7 +457,16 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
             <span className="ml-hint">or click an orange outline</span>
           </div>
         )}
-        {months.length > 1 && (
+        {population && population.squares.length > 0 && (
+          <div className="ml-row">
+            <span className="ml-label">Colour</span>
+            <div className="seg" role="group" aria-label="Colour the squares by">
+              <button type="button" aria-pressed={colourBy === "fire"} onClick={() => setColourBy("fire")}>Fire</button>
+              <button type="button" aria-pressed={colourBy === "exposure"} onClick={() => setColourBy("exposure")}>Exposure</button>
+            </div>
+          </div>
+        )}
+        {months.length > 1 && !byExposure && (
           <div className="ml-row">
             <button
               type="button"
@@ -469,7 +511,34 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
           </p>
         )}
       </div>
-      {activity && (
+      <div className="map-legends">
+      {byExposure && exposure && (
+        <div className="map-legend">
+            <>
+              <p className="legend-title">Population exposure <span>(top thirds within this area, {mode === "raw" ? "raw" : "harmonized"})</span></p>
+              {exposure.burning === 0 ? (
+                <p className="fine-print">No square with fire in this period.</p>
+              ) : (
+                <>
+                  <ul className="legend-classes">
+                    {([2, 1, 0] as const).map((c) => (
+                      <li key={c}>
+                        <i style={{ background: EXPOSURE_COLOURS[theme][c] }} aria-hidden="true" />
+                        {c === 2 ? "High fire, densely populated" : c === 1 ? "High fire, less populated" : "Other squares with fire"}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="legend-figure">
+                    <strong>{fmtPeople(exposure.highFirePeople)}</strong> people in high-fire squares
+                    {exposure.areaPeople > 0 && <> ({fmtShare(exposure.highFirePeople / exposure.areaPeople)} of the area)</>};{" "}
+                    <strong>{fmtPeople(exposure.highDensePeople)}</strong> in densely populated ones.
+                  </p>
+                </>
+              )}
+            </>
+        </div>
+      )}
+      {activity && !byExposure && (
         <div className="map-legend">
           <p className="legend-title">Hotspot activity per cell <span>({unitLabel(meta, mode)})</span></p>
           {activity.max > 0 ? (
@@ -482,6 +551,7 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
           )}
         </div>
       )}
+      </div>
     </section>
   );
 }

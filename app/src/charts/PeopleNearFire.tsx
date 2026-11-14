@@ -10,14 +10,11 @@ import { useSelection, useSelectionActions } from "../selection";
 import { fmtShare, monthsBetween } from "../stats";
 import { EMBER, useTheme } from "../theme";
 import ChartFrame, { formatMonth } from "./ChartFrame";
-import { areaPopulation, LEVELS, peopleByLevel, populationIndex, shiftAtViirs, VIIRS_YEAR, yearlyLevels, type ByLevel, type Level } from "./population";
+import { areaPopulation, fmtPeople, LEVELS, peopleByLevel, populationIndex, shiftAtViirs, VIIRS_YEAR, yearlyLevels, type ByLevel, type Level } from "./population";
 import { usePlot } from "./usePlot";
 
-export function fmtPeople(n: number): string {
-  if (n >= 1e6) return `${(n / 1e6).toLocaleString("en-GB", { maximumFractionDigits: 1 })} million`;
-  if (n >= 1e4) return `${Math.round(n / 1e3).toLocaleString("en-GB")} thousand`;
-  return Math.round(n).toLocaleString("en-GB");
-}
+// Shared with the map's exposure layer, which must not load the chart library.
+export { fmtPeople };
 
 const RANGE: Record<Exclude<Level, "none">, string> = { heavy: "50 or more", moderate: "10 to 49", light: "1 to 9" };
 const ADVERB: Record<Exclude<Level, "none">, "heavily" | "moderately or heavily" | "lightly or more"> = { heavy: "heavily", moderate: "moderately or heavily", light: "lightly or more" };
