@@ -41,7 +41,7 @@ regions, not worldwide.
    passed on the same day, we measured how often MODIS also reported a fire
    VIIRS saw, at each fire strength. From 2012 the record counts the VIIRS
    fire cells at or above the midpoint of that curve (the hard floor). The
-   curve itself weights fires in no area.
+   curve does not weight that count; it weights the small-fire layer.
 3. **One conversion constant per calendar month.** How much MODIS misses
    changes with the season, so the count is scaled by a constant fitted for
    each calendar month. Our own held-out check found this (see below).

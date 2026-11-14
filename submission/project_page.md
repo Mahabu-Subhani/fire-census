@@ -97,8 +97,8 @@ Two things make MODIS and VIIRS disagree, and we fix each one separately.
    fires VIIRS sees at or above the midpoint of that curve (the "hard floor"),
    scaled by a constant fitted for each calendar month, because how much MODIS
    misses changes with the season. The record keeps one unit,
-   "Aqua-equivalent fire cells", from 2002 to now. The curve itself weights
-   fires in no area.
+   "Aqua-equivalent fire cells", from 2002 to now. The curve does not weight
+   that count; it weights the small-fire layer.
 
 We built the correction as a ladder, measuring what each step removes. The raw
 record steps up at 2012 by 1.648 in Córdoba and 1.674 in Punjab and Haryana
