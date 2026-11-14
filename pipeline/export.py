@@ -57,10 +57,17 @@ def display(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def build_cube(area: str, model: str, variant: str, rel_sd: float) -> pd.DataFrame:
+def keep_dates(df: pd.DataFrame, date_filter) -> pd.DataFrame:
+    if date_filter is None:
+        return df
+    return df[date_filter(pd.to_datetime(df["acq_date"])).to_numpy()]
+
+
+def build_cube(area: str, model: str, variant: str, rel_sd: float, date_filter=None) -> pd.DataFrame:
     key = ["lon", "lat", "ym"]
-    cells = display(pd.read_parquet(WORK / f"{area}_cells.parquet"))
-    raw = pd.read_parquet(WORK / f"{area}.parquet", columns=["cx", "cy", "acq_date", "sensor"])
+    cells = display(keep_dates(pd.read_parquet(WORK / f"{area}_cells.parquet"), date_filter))
+    raw = keep_dates(pd.read_parquet(WORK / f"{area}.parquet", columns=["cx", "cy", "acq_date", "sensor"]),
+                     date_filter)
     raw["ym"] = pd.to_datetime(raw["acq_date"]).dt.strftime("%Y-%m")
     raw = display(raw)
     cube = pd.DataFrame({
@@ -70,7 +77,7 @@ def build_cube(area: str, model: str, variant: str, rel_sd: float) -> pd.DataFra
         "terra": cells[cells["satellite"] == "Terra"].groupby(key).size(),
     })
 
-    w = display(pd.read_parquet(WORK / f"{area}_weights.parquet"))
+    w = display(keep_dates(pd.read_parquet(WORK / f"{area}_weights.parquet"), date_filter))
     col = f"{model}_{variant}"
     w["w"], w["w2"], w["sm"] = w[col], w[col] ** 2, 1.0 - w[f"p_{variant}"]
     per = w.groupby(key + ["satellite"])[["w", "w2", "sm"]].sum().reset_index()
@@ -108,11 +115,26 @@ def main() -> None:
         fd, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
         cube = build_cube(area_id, model, variant, fd["rel_sd_k"])
 
+        # Freshness and month-to-date (contract fields added 14 Nov, docs/APP_VISION.md).
+        dates = pd.read_parquet(WORK / f"{area_id}.parquet", columns=["acq_date", "is_nrt"])
+        dates["acq_date"] = pd.to_datetime(dates["acq_date"])
+        through = dates["acq_date"].max()
+        nrt_from = dates.loc[dates["is_nrt"], "acq_date"].min().strftime("%Y-%m")
+        mon, day = through.month, through.day
+        part = build_cube(area_id, model, variant, fd["rel_sd_k"],
+                          date_filter=lambda d: (d.dt.month == mon) & (d.dt.day <= day))
+        cube = cube.merge(part[["lon", "lat", "ym", "harm"]].rename(columns={"harm": "mtd"}),
+                          on=["lon", "lat", "ym"], how="left")
+        in_month = cube["ym"].str[5:7] == f"{mon:02d}"
+        cube.loc[in_month & cube["mtd"].isna(), "mtd"] = 0.0
+        cube.loc[~in_month, "mtd"] = np.nan
+
         rows = [{"lon": round(float(r.lon), 3), "lat": round(float(r.lat), 3), "ym": r.ym,
                  "raw_modis": int(r.raw_modis), "raw_viirs": int(r.raw_viirs),
                  "harm": round(float(r.harm), 2), "harm_lo": round(float(r.harm_lo), 2),
                  "harm_hi": round(float(r.harm_hi), 2), "small": round(float(r.small), 2),
-                 "terra_only": bool(r.terra_only)} for r in cube.itertuples()]
+                 "terra_only": bool(r.terra_only),
+                 "mtd": None if pd.isna(r.mtd) else round(float(r.mtd), 2)} for r in cube.itertuples()]
         out = APP_DATA / area_id
         out.mkdir(parents=True, exist_ok=True)
         (out / "cube.json").write_text(json.dumps(rows, separators=(",", ":")), encoding="utf-8")
@@ -162,6 +184,8 @@ def main() -> None:
             "data_version": "0.2.0",
             "code_commit": git_commit(),
             "generated_at": now,
+            "data_through": through.strftime("%Y-%m-%d"),
+            "nrt_from": nrt_from,
             "sources": ["MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive",
                         "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"],
         }
