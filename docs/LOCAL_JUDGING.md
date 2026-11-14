@@ -4,7 +4,7 @@
 
 The Bangalore panel scores 10 points each for Impact, Creativity, Validity
 (scientific principles and technical), Relevance (use of data) and
-Presentation: 50 in all. Scored on 14 November, about 17:00, against what is
+Presentation: 50 in all. Scored on 14 November, about 17:00, updated about 21:30 after the areas were fixed, against what is
 on `main` and the live app. This is our own estimate, written to find the
 gaps, not a prediction.
 
@@ -12,7 +12,7 @@ gaps, not a prediction.
 |---|---|---|---|
 | Impact | 7 | Solves a real, dated problem (MODIS ending; the author's own agency needs it); works for four audiences; but only four areas are processed, and it is not a live alert service | 8 |
 | Creativity | 8 | Detection-curve harmonization where others fit one ratio; the orbit-drift finding; every hotspot labelled with what harmonization did to it; checks fixed before the data was opened | 9 |
-| Validity | 8 | Ten pre-registered checks, failures shown; agreement with an independent physics paper; reproduced from a fresh clone; but C3 needed a revision after results, Punjab is fragile, Karnataka fails its held-out checks; C6 fails in Córdoba, though Aqua alone fails it identically | 8 |
+| Validity | 8 | Pre-registered checks with failures shown; physics agreement; two independent burned-area records (ESA and NASA); reproduced from a fresh clone; areas now match their names. In Punjab and Haryana the shipped method passes every check that applies to it. Against: C3 needed a revision in Córdoba, both burned-area checks fail there (Aqua alone fails them identically), Karnataka fails its held-out checks | 9 |
 | Relevance (data) | 9 | All five MODIS and VIIRS satellites from FIRMS, Aqua daily fire masks, the FIRMS live API; every feature the challenge names is in the app | 9 |
 | Presentation | 7 | Polished app with plain-question charts and exact numbers; project page drafted; but no demo video yet and the pitch is not rehearsed | 9 |
 | **Total** | **39 / 50** | | **43 to 44** |

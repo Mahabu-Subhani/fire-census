@@ -44,7 +44,7 @@ Code: https://github.com/Mahabu-Subhani/fire-census (public; opens without signi
 
 Open the link and the first line answers the question a manager asks first.
 For Punjab and Haryana with data to 13 November 2026, November so far (1 to 13
-November) ranks 23rd of 25 Novembers, at 0.11 times the median of the same days
+November) ranks 24th of 25 Novembers, at 0.09 times the median of the same days
 in earlier years. The app ranks first and
 gives the ratio second, because a ratio means nothing where the usual value is
 zero. The current month is never complete, so every earlier year is counted
@@ -95,10 +95,10 @@ Two things make MODIS and VIIRS disagree, and we fix each one separately.
    "Aqua-equivalent fire cells", from 2002 to now.
 
 We built the correction as a ladder, measuring what each step removes. The raw
-record steps up at 2012 by 1.648 in Córdoba and 1.686 in Punjab and Haryana
-(natural logarithms, about 5.2 and 5.4 times). Counting each square once
-leaves 1.305 and 1.550. The detection curve leaves 0.049 in Córdoba; in Punjab
-and Haryana the hard floor, which we ship there, leaves -0.004. A constant
+record steps up at 2012 by 1.648 in Córdoba and 1.674 in Punjab and Haryana
+(natural logarithms, about 5.2 and 5.3 times). Counting each square once
+leaves 1.305 and 1.528. The detection curve leaves 0.049 in Córdoba; in Punjab
+and Haryana the hard floor, which we ship there, leaves 0.028. A constant
 conversion ratio removes the step too, but its error follows the mix of weak
 and strong fires from year to year (in Córdoba, 2012 to 2021, rank correlation
 -0.76, p = 0.011); the detection curve's does not (0.35, p = 0.33).
@@ -134,14 +134,19 @@ app, including the failures. In Córdoba:
   reflectance with no 2012 seam (C6). Fire activity per km² burned is 36
   percent lower after 2012 than before (-0.440 against a limit of 0.25).
   But Aqua alone, which never changed sensor, gives -0.427 on the same test,
-  and the raw record +1.289. So burned area per detected fire in Córdoba
-  really changed; our record follows Aqua to within 0.013, while adding the
-  sensors up naively is off by a factor of about 3.6.
+  and the raw record +1.289. NASA's own burned-area product (MCD64A1) gives
+  the same answer: -0.392 for our record, -0.430 for Aqua alone. So burned
+  area per detected fire in Córdoba really changed, and two independent
+  burned-area records agree on it; our record follows Aqua closely, while
+  adding the sensors up naively is off by a factor of about 3.6.
 
-In Punjab and Haryana the same checks pass except C3 (0.291) and the curve's
-stability (C8: 57 percent against a limit of 50), which is why the hard floor
-ships there. C6 passes there (-0.153), but was only reported, not decisive,
-because Fire_cci misses many small crop fires. The record also reproduces a documented change: a 2019 study
+In Punjab and Haryana (exactly the two states and Chandigarh, 94,490 km²) the
+hard floor that ships **passes every pre-registered check that applies to it**,
+including the original month-by-month held-out check C3 (0.144 against 0.15),
+the 2012 step (0.028), NOAA-20 agreement (slope 1.025, correlation 0.993) and
+both burned-area checks (ESA -0.104, NASA -0.036). The detection curve is not
+used there because its midpoint is too uncertain (C8: 62 percent against a
+limit of 50). The record also reproduces a documented change: a 2019 study
 reported that Punjab's peak burning day moved later after 2009 groundwater laws
 delayed rice planting, and across both sensors our median burning day moves
 8.1 days later (C7, p = 0.0009).
@@ -158,26 +163,45 @@ its held-out checks, so the simple ratio is used there and the app labels it.
 
 The harmonized record also shows that Punjab and Haryana's rice-residue
 burning season has moved later by about 7 days per decade (peak day: 6.7 days
-per decade, 90 percent range 5.7 to 8.3) without getting longer, and the trend
+per decade, 90 percent range 5.3 to 8.2) without getting longer, and the trend
 runs straight through 2012, when the record switches from MODIS to VIIRS.
 
 ### Why it matters
 
-MODIS is near the end of its life, and its orbits have already drifted: in our
-own data Aqua's daytime pass over Punjab moved from 13:17 local time in 2021 to
-15:17 in 2026, and Aqua now reports 8.7 percent more fire there than the
-harmonized record (0.9 percent before 2022). A MODIS-only calendar would carry
-that drift; ours uses VIIRS after 2012, calibrated before the drift began. The
-first ten MODIS-only years stay usable on today's scale instead of being lost,
-the sensor of origin no longer matters, and the greater detail of VIIRS is kept
-in the small-fire layer.
+**The problem has a date.** NASA plans to stop collecting Terra's MODIS data
+in January 2027 and Aqua's around September 2027 (Copernicus CAMS), and Suomi
+NPP's VIIRS stopped on 2 November 2026. Without harmonization, every fire
+manager's history effectively starts again in 2012: the first ten years of the
+record cannot be compared with today. Fire Census keeps them, on today's scale.
 
-Tools that exist today each miss part of this. The FIRMS Fire Map shows recent
-hotspots with no history. Area dashboards that say whether activity is normal
-start in 2012 because they use VIIRS only. [CHECK on the live Global Forest
-Watch page; docs/APP_VISION.md still marks this VERIFY.] Fire Census gives one consistent
-record from 2002 to now, for any area a user names or draws, with its evidence
-one click away.
+**MODIS is already drifting.** In our own data, Aqua's daytime pass over
+Punjab and Haryana moved from 13:18 local time in 2021 to 15:27 in 2026, and
+Terra's from 10:53 to 09:14, because their orbits are no longer corrected.
+Since 2022 Aqua reports 6.2 percent more fire there than the harmonized record
+(2.2 percent less before). A MODIS-only calendar would carry that drift; ours
+uses VIIRS from 2012, calibrated before the drift began.
+
+**Who uses it, and for what decision**
+
+| User | Question they bring | What Fire Census answers |
+|---|---|---|
+| Emergency and early-warning teams (the challenge author's team at CONAE) | Is what is burning now unusual here? | The current month ranked against every earlier year on the same days; Chilecito's July 2026 fire shows as 8.8 times a normal July, the 2nd highest of 25 |
+| Fire services and forest departments | When should crews be ready? | The usual critical months and how the season has moved: Punjab and Haryana's rice-residue season now peaks about two weeks later than in the early 2000s |
+| Pollution-control boards (north India) | Is crop burning really falling, and when does it peak? | Detected burning in Punjab and Haryana's season fell from 14,142 fire cells in 2020 to 737 in 2025, read with the evening-burning caveat; the peak keeps moving later into November |
+| Land managers | Which places and years burned most? | Any district by name, drawn area or coordinates, with totals per 1,000 km² |
+| Researchers | Can I use a 24-year series without a fake 2012 step? | One consistent record, every hotspot with how it was treated, data dictionary, Python and R loaders, citation |
+
+**Why existing tools do not answer this.** The FIRMS Fire Map shows recent
+hotspots without history. Global Forest Watch compares fire with previous
+years back to 2012, using VIIRS; its MODIS alerts reach 2000 but as a separate
+series, not one harmonized record. CONAE's viewer shows MODIS and VIIRS side by
+side without harmonizing them. Fire Census gives one consistent record from
+2002 to now, for any area a user names or draws, with its evidence one click
+away, and it continues on VIIRS when MODIS ends.
+
+**It costs nothing to use or to extend.** No login, no key, works on a phone.
+The data is updated in about ten minutes with one script, and a new area needs
+only NASA FIRMS data, an outline, and its own checks written down first.
 
 ### What it does not do
 
@@ -186,9 +210,11 @@ one click away.
   does not prove there was no fire.
 - The unit is "Aqua-equivalent fire cells", not fires or hectares. It is built
   so that years can be compared, not to measure burned area.
-- It is calibrated in three places: Córdoba, Punjab and Haryana, and
-  Chilecito (borrowing Córdoba's calibration). Punjab's calibration is the
-  weakest, because crop-residue fires are small and brief. A fourth area,
+- It is calibrated in two places: the Córdoba area (a box covering Córdoba
+  province and parts of its neighbours) and Punjab and Haryana (the exact
+  states). Chilecito borrows Córdoba's calibration. Punjab's detection curve is
+  uncertain because crop-residue fires are small and brief, so the hard floor
+  is used there. A fourth area,
   south Karnataka's forests, is a case study whose held-out checks fail.
 - A single month can differ by about 20 percent from what MODIS would have
   reported. Years, and the same month across years, are more reliable.
@@ -225,23 +251,34 @@ Pages, built and tested by GitHub Actions. [CHECK with 8crsk: no
 
 ## Use of AI
 
-We used AI tools to speed up the work, not to come up with the idea. The team
-chose the approach, the regions and every decision, and recorded each choice
-with its reason in `docs/DECISIONS.md`.
+[CHECK: fill every bracket below with what actually happened, and delete any line that is not true, before pasting.]
 
-- **Claude (Anthropic)** helped write code and text: the data pipeline
-  (cleaning, harmonization, checks, export, figures), the web app shell and
-  controls, the charts and the statistics behind them, and drafts of this page
-  and the method notes. It also laid out options and evidence for team
-  decisions, read the challenge page and official guides, and critiqued
-  candidate approaches. Team members reviewed what it produced.
-- **Gemini (Google)** critiqued the proposed method and architecture before the
-  hackathon.
-- Every AI-assisted file carries a header saying so, and
-  `docs/AI_USE.md` logs each contribution with the person who reviewed it.
-- No images, video or audio in the submission were generated by AI. [CHECK
-  before recording the demo; if any AI image is used, it needs a visible
-  watermark.]
+We used AI heavily and want to be exact about where.
+
+**What AI did.** Claude (Anthropic) wrote most of the code in this project
+under our direction: the data pipeline, the statistical checks, and the web
+app. It also drafted most of the documentation and this page, proposed
+candidate harmonization approaches and the thresholds for our checks, and
+wrote a critical review of our own work. Gemini (Google) critiqued the method
+once, before the hackathon. Every AI-assisted file says so in its header, and
+`docs/AI_USE.md` logs each contribution.
+
+**What the team did.**
+
+- Chose the challenge, the regions and the users to design for: [who, and why Córdoba / Punjab / Karnataka].
+- Chose the approach from the options considered: [which options were on the table, who decided, and the reason].
+- Obtained the data: [who requested the FIRMS archives and set up Earthdata access].
+- Ran the pipeline, read the results and decided what to ship: [e.g. accepting the failed check C3 as failed, adopting C3r, shipping the simpler method in Punjab].
+- Reviewed the output: [which files or results each person actually checked, and anything you corrected or rejected].
+- Designed the app with the AI: [e.g. Charulekha's map-first layout].
+- Recorded the demo and presented the work.
+
+**Where AI went further than assisting.** The detection-curve approach was
+first proposed by the AI among several candidates; the team selected it. Four
+decisions (30, 31, 36, 37 in `docs/DECISIONS.md`) were made by the AI on a team
+member's instruction and are recorded that way.
+
+**No AI-generated images, video or audio** are in the submission.
 
 ## NASA data used
 
@@ -256,6 +293,9 @@ with its reason in `docs/DECISIONS.md`.
   record.
 - **MYD14A1 Collection 6.1,** Aqua daily 1 km fire mask, July 2002 to November
   2026, from NASA LP DAAC through earthaccess. Clear-view days per cell and month.
+- **MCD64A1 Collection 6.1,** MODIS monthly 500 m burned area, November 2000
+  to 2026, read through the Microsoft Planetary Computer. Second independent
+  burned-area check (C6m).
 
 "We acknowledge the use of data and/or imagery from NASA's Fire Information
 for Resource Management System (FIRMS) (https://www.earthdata.nasa.gov/data/tools/firms),
@@ -271,9 +311,11 @@ from ESA, a 2026 Space Apps partner agency:
 - **ESA Fire_cci burned area v5.1** (monthly, 0.25 degree, 2001 to 2020),
   read from the CEDA archive, for check C6.
 - **ESA WorldCover 2021** (10 m land cover), read through the Microsoft
-  Planetary Computer, to show what burns where: in Punjab and Haryana 87
-  percent of sampled VIIRS fire cells are cropland; in Córdoba 49 percent
-  grassland, 23 percent cropland and 19 percent shrubland. That difference
+  Planetary Computer, to show what burns where (6,000 sampled VIIRS fire cells
+  per area, 2012 to 2025): in Punjab and Haryana 92 percent are cropland; in
+  the Córdoba area 53 percent grassland, 20 percent cropland and 18 percent
+  shrubland; in Karnataka 40 percent tree cover (28 to 56 percent by year),
+  28 percent grassland, 20 percent cropland. That difference
   is why Punjab's small crop fires are hard for MODIS to see and its
   calibration is weaker.
 

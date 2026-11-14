@@ -21,7 +21,7 @@ const GIBS_BLUE_MARBLE =
 // NASA GIBS WMS: the VIIRS active-fire detections of one UTC day (NOAA-20 and
 // NOAA-21, 375 m), drawn by NASA as transparent images. Free, no key, CORS open.
 // These are raw detections straight from NASA, updated through the day: not
-// our harmonized record and not an alert service (decision 46).
+// our harmonized record and not an alert service (decision 49).
 const LIVE_LAYERS = "VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_NOAA21_Thermal_Anomalies_375m_All";
 export function liveTiles(day: string): string {
   return "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0" +
@@ -125,7 +125,6 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   const ramp = EMBER[theme];
   const { region, rows, mode, meta } = useSelection();
   const { polygon, setPolygon } = useSelectionActions();
-  const [showActivity, setShowActivity] = useState(true);
   const [liveDay, setLiveDay] = useState<Live>("off");
   // Playback: index into the months of the date range, or null when the map shows the whole range.
   const months = useMemo(() => (rows.length ? monthsBetween(rows.reduce((m, r) => (r.ym < m ? r.ym : m), rows[0].ym), rows.reduce((m, r) => (r.ym > m ? r.ym : m), rows[0].ym)) : []), [rows]);
@@ -234,7 +233,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !region) return;
-    (map.getSource("region") as GeoJSONSource).setData({ type: "FeatureCollection", features: [polygonFeature(bboxToPolygon(region.bbox))] });
+    const rings = region.outline && region.outline.length > 0 ? region.outline : [bboxToPolygon(region.bbox)];
+    (map.getSource("region") as GeoJSONSource).setData({ type: "FeatureCollection", features: rings.map((r) => polygonFeature(r)) });
     const [w, s, e, n] = region.bbox;
     map.fitBounds([[w, s], [e, n]], { padding: framePadding(), duration: 600 });
   }, [region, ready]);
@@ -243,8 +243,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    (map.getSource("activity") as GeoJSONSource).setData(showActivity && activity ? activity.collection : empty);
-  }, [activity, showActivity, ready]);
+    (map.getSource("activity") as GeoJSONSource).setData(activity ? activity.collection : empty);
+  }, [activity, ready]);
 
   // Live NASA detections for one UTC day.
   useEffect(() => {
@@ -344,7 +344,6 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
               onClick={() => {
                 if (playing) return setPlaying(false);
                 if (frame === null || frame >= months.length - 1) setFrame(0);
-                setShowActivity(true);
                 setPlaying(true);
               }}
             >
@@ -381,25 +380,19 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
           </p>
         )}
       </div>
-      <div className="map-legend">
-        <label className="check">
-          <input type="checkbox" checked={showActivity} onChange={(e) => setShowActivity(e.target.checked)} />
-          Show where it burned
-        </label>
-        {showActivity && activity && activity.max > 0 && (
-          <div className="legend-bar" aria-label={`Colour scale from low to ${fmtValue(activity.max, mode)}`}>
-            <span>Less</span>
-            <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ramp.join(", ")})` }} />
-            <span>More (up to {fmtValue(activity.max, mode)} per cell)</span>
-          </div>
-        )}
-        {showActivity && activity && (
-          <p className="fine-print">
-            Each square is about 11 km across, coloured by its total for {frame !== null && months[frame] ? "the month shown, on one scale for the whole range" : "the dates shown"} ({unitLabel(meta, mode)}).
-            {activity.max === 0 && " No activity in this area and date range."}
-          </p>
-        )}
-      </div>
+      {activity && (
+        <div className="map-legend">
+          <p className="legend-title">Hotspot activity per cell <span>({unitLabel(meta, mode)})</span></p>
+          {activity.max > 0 ? (
+            <div className="legend-scale" role="img" aria-label={`Colour scale from 0 to ${fmtValue(activity.max, mode)}`}>
+              <span className="legend-ramp" style={{ background: `linear-gradient(to right, ${ramp.join(", ")})` }} />
+              <span className="legend-ends"><span>0</span><span>{fmtValue(activity.max, mode)}</span></span>
+            </div>
+          ) : (
+            <p className="fine-print">No activity in this area and period.</p>
+          )}
+        </div>
+      )}
     </section>
   );
 }

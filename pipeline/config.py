@@ -19,7 +19,7 @@ FIGURES = REPO / "submission" / "figures"
 # Areas: id -> (name, west, south, east, north, country folder key).
 # Boxes are approximate and documented in docs/DECISIONS.md (decisions 13, 14, 26).
 AREAS = {
-    "cordoba": ("Córdoba province, Argentina", -65.8, -35.0, -61.7, -29.5, "argentina"),
+    "cordoba": ("Córdoba and neighbouring areas, Argentina", -65.8, -35.0, -61.7, -29.5, "argentina"),
     "punjab-haryana": ("Punjab and Haryana, India", 73.8, 27.6, 77.6, 32.6, "india"),
     "chilecito": ("Chilecito and Famatina, La Rioja, Argentina", -68.2, -29.8, -66.8, -28.4, "argentina"),
     # Added 14 Nov after the start (decision 36): forests of south Karnataka and the Nilgiri edge
@@ -56,3 +56,31 @@ def folder_info(name: str) -> tuple[str, str]:
         return country, family
     country, family, _ = REQUESTS[name.split("_")[-1]]
     return country, family
+
+
+# Areas clipped to an exact outline (pipeline/areas/<area>.json, made by make_areas.py).
+# Their box above is only used for the first, coarse cut.
+def area_outline(area: str):
+    """The outline record for an area, or None if the area is its box."""
+    import json
+    f = REPO / "pipeline" / "areas" / f"{area}.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+
+
+def area_cells(area: str):
+    """DataFrame of internal-grid cells (cx, cy) whose centre is inside the area's outline, or None."""
+    rec = area_outline(area)
+    if rec is None:
+        return None
+    import numpy as np
+    import pandas as pd
+    from shapely import contains_xy
+    from shapely.geometry import shape
+    geom = shape(rec["geometry"])
+    w, s, e, n = rec["bbox"]
+    cx = np.arange(int(np.floor(w / INTERNAL_CELL_DEG)), int(np.floor(e / INTERNAL_CELL_DEG)) + 1)
+    cy = np.arange(int(np.floor(s / INTERNAL_CELL_DEG)), int(np.floor(n / INTERNAL_CELL_DEG)) + 1)
+    gx, gy = np.meshgrid(cx, cy)
+    gx, gy = gx.ravel(), gy.ravel()
+    inside = contains_xy(geom, (gx + 0.5) * INTERNAL_CELL_DEG, (gy + 0.5) * INTERNAL_CELL_DEG)
+    return pd.DataFrame({"cx": gx[inside].astype("int32"), "cy": gy[inside].astype("int32")})

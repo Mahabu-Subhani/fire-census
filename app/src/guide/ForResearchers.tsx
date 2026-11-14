@@ -54,10 +54,10 @@ export default function ForResearchers() {
   const r = `library(jsonlite)\n\ncube <- fromJSON("${base}cube.json")\nmonthly <- aggregate(cbind(harm, small) ~ ym, data = cube, FUN = sum)\ntail(monthly)`;
   return (
     <section className="researchers" id="researchers" aria-labelledby="researchers-title">
-      <h2 id="researchers-title">For researchers</h2>
-      <h3>Cite this</h3>
+      <h2 id="researchers-title">Data access</h2>
+      <h3>Citation</h3>
       <CopyBox label="citation" text={citation} />
-      <h3>Whole files for {region.name}</h3>
+      <h3>Data files: {region.name}</h3>
       <ul>
         <li><a href={`${base}cube.json`}>cube.json</a>: every cell and month (missing rows mean zero).</li>
         <li><a href={`${base}meta.json`}>meta.json</a>: method, every check with its value and verdict, the detection curve, versions.</li>
@@ -75,11 +75,11 @@ export default function ForResearchers() {
           </tbody>
         </table>
       </div>
-      <h3>Load it in Python or R</h3>
+      <h3>Code examples</h3>
       <CopyBox label="Python code" text={python} />
       <CopyBox label="R code" text={r} />
       <p className="fine-print">
-        The pipeline, the tests and the pre-registered checks are in the{" "}
+        Pipeline, tests and pre-registered checks:{" "}
         <a href="https://github.com/Mahabu-Subhani/fire-census">source repository</a>.
       </p>
     </section>

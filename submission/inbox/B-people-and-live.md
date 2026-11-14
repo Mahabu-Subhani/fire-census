@@ -2,7 +2,7 @@
 # Draft for the project page: people near fires, and live NASA fires
 
 For Charulekha to place on the project page. Every number is from the app
-(decision 45); re-read it on screen before using it.
+(decision 48); re-read it on screen before using it.
 
 **Who lives near the fires?** We joined the record to WorldPop's 2020
 population map. In Punjab and Haryana, the raw satellite record says the

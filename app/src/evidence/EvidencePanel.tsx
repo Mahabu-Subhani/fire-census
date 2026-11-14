@@ -84,14 +84,13 @@ export default function EvidencePanel() {
 
   return (
     <section id="evidence" className="evidence" aria-labelledby="evidence-title">
-      <h2 id="evidence-title">How we made two satellites agree</h2>
+      <h2 id="evidence-title">Harmonization method</h2>
       <p className="ev-lead">{shortVersion(meta)}</p>
 
-      <h3>Checks for {region.name}</h3>
+      <h3>Pre-registered checks: {region.name}</h3>
       <p>
-        {s.preRegistered} checks were written down before the data was opened. Each is listed with its limit, its value
-        and whether it passed. {s.addedAfter > 0 && <>{s.addedAfter === 1 ? "One check was" : `${s.addedAfter} checks were`} added after the results, with the reason, and {s.addedAfter === 1 ? "is" : "are"} shown next to the original. </>}
-        Result: {s.pass} passed, {s.fail} failed, {s.notRun} not run.
+        Passed: {s.pass}. Failed: {s.fail}. Not run: {s.notRun}. Registered before data access: {s.preRegistered}
+        {s.addedAfter > 0 && <>; added after results: {s.addedAfter}</>}.
       </p>
       <ul className="ev-checks">
         {meta.checks.map((c) => (
@@ -107,7 +106,7 @@ export default function EvidencePanel() {
                 <dt>Value</dt><dd>{formatValue(c.value)}</dd>
               </dl>
               {isAddedAfter(c) && (
-                <p className="ev-note">Added after we saw the results, because the original limit was stricter than two satellites can agree month by month. Both are shown.</p>
+                <p className="ev-note">Revised limit, added after results. Original shown alongside.</p>
               )}
               {c.note && <p className="ev-note">{c.note}</p>}
             </div>
@@ -116,46 +115,44 @@ export default function EvidencePanel() {
       </ul>
 
       <details className="ev-detail">
-        <summary>Method in detail</summary>
+        <summary>Method details</summary>
         <p>
-          <strong>Unit.</strong> {meta.unit ?? "Not stated"}. From {monthName(region.harmonized_from)} (Aqua's first full
-          month) the calendar counts what Aqua MODIS reported, and from the start of VIIRS it counts what Aqua would have
-          reported, computed from VIIRS. Earlier months are marked "Terra only, not harmonized".
+          <strong>Unit.</strong> {meta.unit ?? "Not stated"}. From {monthName(region.harmonized_from)}: Aqua MODIS
+          detections; from VIIRS onset: Aqua-equivalent detections derived from VIIRS. Earlier months: Terra only, not
+          harmonized.
           {typeof meta.unit_note === "string" && <> {meta.unit_note}</>}
         </p>
         {obs && (
           <p>
-            <strong>Clear-view days.</strong> In this area a grid cell had a usable view on a median of{" "}
-            <span className="mono">{obs.mid}</span> days a month (lowest <span className="mono">{obs.lo}</span>, highest{" "}
-            <span className="mono">{obs.hi}</span>; from Aqua's daily fire masks, known for{" "}
+            <strong>Clear-view days.</strong> Median <span className="mono">{obs.mid}</span> per cell-month (range{" "}
+            <span className="mono">{obs.lo}</span>–<span className="mono">{obs.hi}</span>; Aqua daily fire masks;{" "}
             <span className="mono">{obs.n.toLocaleString("en-GB")}</span> of <span className="mono">{obs.of.toLocaleString("en-GB")}</span>{" "}
-            cell-months). The counts are not corrected for missed days: a month under cloud can read low.
+            cell-months). Counts are not corrected for cloud cover.
           </p>
         )}
         {aqua && (
           <p>
-            <strong>Why not carry on with MODIS alone?</strong> Aqua's orbit has drifted since 2022, so its afternoon pass
-            comes later each year. Aqua alone gave <span className="mono">{aqua.before.toFixed(2)}</span> times this record on
-            average in 2012 to 2021, and <span className="mono">{aqua.ratio.toFixed(2)}</span> times in {aqua.year}. A
-            MODIS-only calendar would drift with it; this record uses VIIRS from 2012. The pass times are drawn under{" "}
-            <a href="#sources">Do the satellites agree?</a>
+            <strong>Aqua MODIS orbital drift.</strong> Aqua's afternoon overpass has drifted later since 2022. Ratio of
+            Aqua to this record: <span className="mono">{aqua.before.toFixed(2)}</span> (2012–2021 mean),{" "}
+            <span className="mono">{aqua.ratio.toFixed(2)}</span> ({aqua.year}). This record uses VIIRS from 2012. See{" "}
+            <a href="#sources">Sensor agreement</a>.
           </p>
         )}
         <p>
-          <strong>Method shipped here: {meta.level_name ?? meta.level_shipped}.</strong> {reasonText(meta.shipping_reason, meta.level_name)}
+          <strong>Method applied: {meta.level_name ?? meta.level_shipped}.</strong> {reasonText(meta.shipping_reason, meta.level_name)}
         </p>
         <p>
-          <strong>The curve.</strong> Where Aqua and Suomi NPP passed over the same place on the same day, we asked: did
-          Aqua also report the fire VIIRS saw? The answer, by fire strength, is the curve below.{" "}
-          {floor?.day ? <>Half of fires at {floor.day} MW are caught by day (dashed line).</> : null}{" "}
+          <strong>Detection curve.</strong> Probability that Aqua MODIS detected a fire observed by Suomi NPP VIIRS on
+          coincident overpasses, by fire radiative power.{" "}
+          {floor?.day ? <>Daytime 50% detection at {floor.day} MW (dashed line).</> : null}{" "}
           {calibrationText(meta, region, regions)}
         </p>
         <DetectionCurve day={meta.curve.day} night={meta.curve.night} floorDay={floor?.day ?? null} />
 
         {meta.ladder.length > 0 && (
           <>
-            <h3>The ladder: what each step does to the 2012 seam</h3>
-            <p>A step of 0 at 2012 means no seam where VIIRS begins. The placebo is the same test at 2016, where nothing changed. Held-out is the error in years the method never saw.</p>
+            <h3>Method ladder</h3>
+            <p>Step at 2012: discontinuity at VIIRS onset (0 = none). Placebo 2016: same test, no sensor change. Held-out error: error in withheld years.</p>
             <div className="ev-table-wrap">
               <table className="ev-table">
                 <thead>
@@ -178,9 +175,9 @@ export default function EvidencePanel() {
 
         <h3>Limits</h3>
         <ul>
-          <li>Counts are detections, not every fire: cloud and smoke hide fires from all satellites. Zero detections does not prove there was no fire.</li>
-          <li>One month on its own is noisy; compare the same month across years.</li>
-          <li>{meta.nrt_from ? <>Months from {monthName(meta.nrt_from)} are provisional (near-real-time data).</> : <>Recent months are provisional.</>}</li>
+          <li>Counts are detections, not fires. Cloud and smoke obscure fires from all sensors; zero detections do not imply no fire.</li>
+          <li>Single months are noisy; compare the same month across years.</li>
+          <li>{meta.nrt_from ? <>Months from {monthName(meta.nrt_from)} are provisional (near-real-time).</> : <>Recent months are provisional.</>}</li>
         </ul>
         <p className="ev-meta">
           Data version {meta.data_version}, code commit {meta.code_commit || "not stated"}, processed {meta.generated_at.slice(0, 10)}.

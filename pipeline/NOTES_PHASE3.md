@@ -163,3 +163,32 @@ rule. Night 3.73 against 3.7: passes. So C5 fails for Karnataka.
 
 - C6 (ESA burned area): not run.
 - C5 for Karnataka: not run (evidence.py covers the two calibration areas).
+
+## Areas fixed and rerun (14 November, about 21:30)
+
+Punjab and Haryana was a box (73.8 to 77.6 E, 27.6 to 32.6 N) that was only
+46 percent Punjab, Haryana and Chandigarh by area; 23 percent Rajasthan, 15
+percent Himachal Pradesh, 9.5 percent Pakistani Punjab (no data: the FIRMS
+request was for India), and smaller parts of Uttar Pradesh, Delhi and Jammu
+and Kashmir. 91 percent of its detections were in the three units. It is now
+clipped to their exact outline (94,490 km²; official total about 94,700 km²).
+`clean.py` removes 268,289 detections outside it; 2,206,291 are kept.
+
+Everything was rerun. Punjab and Haryana, hard floor (ships): C0 1.674, C1
+0.028, C1b pass, C2 -0.060, **C3 0.144 (now passes)**, C3r 0.003, C4 slope
+1.025 and correlation 0.993, C5 pass (day 4.78 MW), C6 -0.104, C6m -0.036, C7
+8.1 days (p = 0.0009). The detection curve: midpoint 4.78 MW, C8 fails (62
+percent). Drift: ln(Aqua / harmonized) -0.022 before 2022, 0.060 after; Aqua
+day pass 13:18 (2021) to 15:27 (2026). Season peak +6.7 days per decade (5.3
+to 8.2). Land cover 92 percent cropland. November 1 to 13, 2026: 24th of 25.
+
+Córdoba is unchanged in method and numbers; renamed "Córdoba and neighbouring
+areas" because the box is 71 percent the province and holds 57 percent of its
+fires in the province.
+
+NASA MCD64A1 (C6m, added after results): Córdoba -0.392 (Aqua alone -0.430),
+Punjab and Haryana -0.036, Chilecito -0.237, Karnataka +0.374.
+
+Land cover now uses Suomi NPP fire cells from 2012 to 2025 (6,000 per area),
+not 2021 alone: Karnataka is 40 percent tree cover (28 to 56 percent by year),
+not the 2021 figure of 29 percent.

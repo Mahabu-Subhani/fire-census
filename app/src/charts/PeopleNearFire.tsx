@@ -2,7 +2,7 @@
 // "Who lives near the fires?" People (WorldPop 2020) in the 0.1 degree squares
 // that had fire in the area and dates shown, and the same count per year in
 // both records. Every number comes from <region>/population.json and the cube;
-// the rule is in ./population.ts (decision 45). Exposure means living in a
+// the rule is in ./population.ts (decision 48). Exposure means living in a
 // square with fire, not harm or risk.
 import * as Plot from "@observablehq/plot";
 import { useMemo } from "react";
@@ -90,8 +90,7 @@ export default function PeopleNearFire() {
 
   return (
     <ChartFrame
-      title="Who lives near the fires?"
-      lede="People living in the squares where it burned, and how that changed year by year in each record."
+      title="Population near fires"
       exportName="people-near-fire"
       notes={[sentence, stepText, caveat, pop.source]}
       table={() => ({

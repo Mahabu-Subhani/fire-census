@@ -145,6 +145,12 @@ both A and B to agree.
 ]
 ```
 
+`regions.json` entries may also carry `outline` (one or more rings of
+[lon, lat], not closed), `area_km2` (true area of the outline) and
+`outline_source`, for areas clipped to an exact outline (Punjab and Haryana,
+decision 44). The app draws the outline and uses `area_km2` for the whole
+region; without them it uses the box.
+
 ### `app/public/data/<region_id>/cube.json` (or `.parquet` if large; DECIDE)
 
 One row per cell and month that has any value. Missing rows mean zero.
@@ -266,7 +272,7 @@ Written by `app/scripts/make_population.py` (Person B) from WorldPop 2020,
 as in `cube.json`, squares with nobody left out. Each 1 km population pixel
 counts whole in the square holding its centre. The app joins it to the cube
 rows (`app/src/charts/population.ts`): a square counts when it had at least 3
-fire detections in the period (decision 45). Hidden if the file is missing.
+fire detections in the period (decision 48). Hidden if the file is missing.
 
 ### `app/public/data/<region_id>/sources.json`
 

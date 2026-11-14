@@ -8,7 +8,7 @@
 // square with fire at all is a footprint, and footprints are not harmonized:
 // VIIRS spreads the same fires over more squares, so that version jumped in
 // 2012 in Punjab even with the harmonized value. With MIN_FIRE = 3 a year the
-// harmonized series has no step at 2012 in Punjab (decision 45). The number
+// harmonized series has no step at 2012 in Punjab (decision 48). The number
 // was chosen after looking at the data; it is not pre-registered.
 import { pointInPolygon } from "../data/select";
 import type { CubeRow, Mode, Polygon, Population } from "../data/types";

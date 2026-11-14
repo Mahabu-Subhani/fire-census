@@ -14,7 +14,7 @@ import PlaceSearch from "./controls/PlaceSearch";
 import { buildSelectionCsv, saveText } from "./downloads/csv";
 import HotspotDownload from "./downloads/HotspotDownload";
 import ErrorBoundary from "./ErrorBoundary";
-import { isCaseStudy, summaryText } from "./evidence/checks";
+import { isCaseStudy } from "./evidence/checks";
 import ForResearchers from "./guide/ForResearchers";
 import Glossary from "./guide/Glossary";
 import { Reveal } from "./layout/motion";
@@ -83,10 +83,10 @@ function Controls({ withActions }: { withActions: boolean }) {
       <HotspotDownload />
       {status === "error" && <p className="note error">Could not load the data: {error}</p>}
       {status === "empty" && cellCount === 0 && (
-        <p className="note">This area contains no grid cell (cells are {region?.cell_deg} degree, about 11 km). Draw a larger area.</p>
+        <p className="note">No grid cell in this area (cell size {region?.cell_deg}°). Select a larger area.</p>
       )}
       {status === "empty" && cellCount !== 0 && (
-        <p className="note">No detections here in these dates. That does not prove there was no fire.</p>
+        <p className="note">No detections in this area and period.</p>
       )}
     </div>
   );
@@ -109,8 +109,7 @@ function AreaPicker() {
       </div>
       {meta && isCaseStudy(meta) && (
         <p className="note case-study">
-          <strong>Case study.</strong> This area was added after the start and its held-out checks fail, so it uses the
-          simpler fallback method. Read its numbers with care; the checks are under Data &amp; methods.
+          <strong>Case study.</strong> Held-out checks failed for this region; the fallback method is applied. See Data.
         </p>
       )}
       <PlaceSearch />
@@ -154,12 +153,9 @@ function PrintHeader() {
 }
 
 function ResearchHead() {
-  const { meta } = useSelection();
   return (
     <section className="research-head">
-      <p className="eyebrow">Data &amp; methods</p>
-      <h1>Every chart, every check, and the data behind them.</h1>
-      {meta && <p className="research-sub">Pre-registered checks for this region: {summaryText(meta.checks)}.</p>}
+      <h1>Chart Analysis</h1>
     </section>
   );
 }
@@ -192,16 +188,21 @@ function Answer() {
   const { place, drawn, region, meta } = useSelection();
   const area = place ?? (drawn ? "Drawn area" : region?.name ?? "");
   const caseStudy = meta !== null && isCaseStudy(meta);
+  const headline = s.headline.charAt(0).toUpperCase() + s.headline.slice(1);
   return (
     <div className="mf-answer" role="status">
+      <h1 className="mf-area">
+        {area}
+        {caseStudy && <span className="mf-tag">Case study</span>}
+      </h1>
       {s.state === "ready" ? (
         <>
-          <p className="mf-when">{s.when} · {area}{caseStudy ? " · case study" : ""}</p>
-          <p className="mf-headline">{s.headline}</p>
+          <p className="mf-when">{s.when}</p>
+          <p className="mf-headline">{headline}</p>
           {s.verdictText && <p className={`mf-verdict${s.alert ? " alert" : ""}`}>{s.verdictText}</p>}
         </>
       ) : (
-        <p className="mf-when">{s.state === "loading" ? "Reading the record…" : s.headline}</p>
+        <p className="mf-when">{s.state === "loading" ? "Loading…" : headline}</p>
       )}
     </div>
   );
@@ -221,13 +222,13 @@ function Section({ id, label, open, onToggle, children }: { id: string; label: s
 
 const OVERVIEW_CHARTS: Record<string, string> = {
   calendar: "Burning calendar",
-  comparison: "This month against past years",
-  outlook: "Next 3 months · past years",
+  comparison: "Monthly comparison",
+  outlook: "Three-month climatology",
   // Whole-region analyses; listed only where the file exists and no area is drawn.
-  season: "Critical period · has it moved?",
-  landcover: "Crops or wild land?",
-  people: "Who lives near the fires?",
-  episodes: "This fire against earlier ones",
+  season: "Fire season timing",
+  landcover: "Land cover",
+  people: "Population near fires",
+  episodes: "Fire episodes",
 };
 
 const Icon = {
@@ -249,6 +250,19 @@ function Overview() {
       {label}
     </button>
   );
+  // Order in the panel: the calendar, then where and when, then the other charts.
+  const shown = charts.filter((c) => c.id in OVERVIEW_CHARTS && (c.available?.(selection) ?? true));
+  const chartSection = ({ id, Component }: (typeof charts)[number]) => (
+    <Section key={id} id={id} label={OVERVIEW_CHARTS[id]} open={open === id} onToggle={toggle}>
+      <div className={`slot slot-${id}`}>
+        <ErrorBoundary name="this chart">
+          <Suspense fallback={<Loading height={220} />}>
+            <Component />
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+    </Section>
+  );
 
   return (
     <main className="mapfirst" id="explore">
@@ -261,19 +275,7 @@ function Overview() {
       </div>
       <aside className="mf-panel" aria-label="Results">
         <Answer />
-        {charts
-          .filter((c) => c.id in OVERVIEW_CHARTS && (c.available?.(selection) ?? true))
-          .map(({ id, Component }) => (
-            <Section key={id} id={id} label={OVERVIEW_CHARTS[id]} open={open === id} onToggle={toggle}>
-              <div className={`slot slot-${id}`}>
-                <ErrorBoundary name="this chart">
-                  <Suspense fallback={<Loading height={220} />}>
-                    <Component />
-                  </Suspense>
-                </ErrorBoundary>
-              </div>
-            </Section>
-          ))}
+        {shown.filter((c) => c.id === "calendar").map(chartSection)}
         <Section id="area" label="Area" open={open === "area"} onToggle={toggle}>
           <AreaPicker />
           <CoordinateEntry />
@@ -281,7 +283,8 @@ function Overview() {
         <Section id="dates" label="Dates and layers" open={open === "dates"} onToggle={toggle}>
           <Controls withActions={false} />
         </Section>
-        <Section id="satellites" label="Do the satellites agree?" open={open === "satellites"} onToggle={toggle}>
+        {shown.filter((c) => c.id !== "calendar").map(chartSection)}
+        <Section id="satellites" label="Sensor agreement" open={open === "satellites"} onToggle={toggle}>
           <ErrorBoundary name="the satellites section">
             <Suspense fallback={<Loading height={220} />}>
               <SourcesPanel />
@@ -293,7 +296,7 @@ function Overview() {
         {tool(Icon.download, "Download", download, !canDownload)}
         {tool(Icon.link, copied ? "Copied" : "Link", copyLink)}
         {tool(Icon.print, "Print", () => window.print())}
-        {tool(Icon.method, "Method", () => { setView("research"); window.scrollTo({ top: 0 }); })}
+        {tool(Icon.method, "Data", () => { setView("research"); window.scrollTo({ top: 0 }); })}
       </nav>
     </main>
   );

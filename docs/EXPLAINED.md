@@ -45,14 +45,15 @@ areas (`pipeline/NOTES.md`).
 
 | Area | Box (west, south, east, north) | Why | Role |
 |---|---|---|---|
-| Córdoba province, Argentina | -65.8, -35.0, -61.7, -29.5 | The challenge author works at CONAE's space centre in Córdoba; large grass and shrub fires | Lead area for the method |
-| Punjab and Haryana, India | 73.8, 27.6, 77.6, 32.6 | India's famous crop-residue burning; local judges know it | Second calibration area; the season story |
+| Córdoba and neighbouring areas, Argentina | -65.8, -35.0, -61.7, -29.5 (71% of it is Córdoba province; 57% of its fires) | The challenge author works at CONAE's space centre in Córdoba; large grass and shrub fires | Lead area for the method |
+| Punjab and Haryana, India | Exact outline of Punjab, Haryana and Chandigarh, 94,490 km² (since 14 Nov evening; before, a box that was only 46% these states) | India's famous crop-residue burning; local judges know it | Second calibration area; the season story |
 | Chilecito and Famatina, La Rioja | -68.2, -29.8, -66.8, -28.4 | The fire in the author's own video, July 2026 | Case study, borrows Córdoba's calibration |
 | Bandipur, Nagarhole and BR Hills, Karnataka | 75.8, 11.4, 77.8, 13.0 | Forests local judges know (Bandipur fire, Feb 2019) | Late case study; added after the start |
 
-**What burns there** (ESA WorldCover, sampled fire cells of 2021): Punjab 87%
-cropland; Córdoba 49% grassland, 23% cropland, 19% shrubland; Chilecito 42%
-shrubland, 28% trees; Karnataka 34% grassland, 29% trees, 22% cropland.
+**What burns there** (ESA WorldCover; 6,000 sampled VIIRS fire cells per area,
+2012 to 2025): Punjab and Haryana 92% cropland; Córdoba area 53% grassland,
+20% cropland, 18% shrubland; Chilecito 37% shrubland, 36% grassland, 16% trees;
+Karnataka 40% tree cover (28 to 56% by year), 28% grassland, 20% cropland.
 
 ---
 
@@ -70,11 +71,11 @@ Every step counts what it removes, and the counts add up exactly.
 
 Example, Córdoba: 348,248 detections in the box; 8,615 not vegetation; 87
 near-real-time at static sources; 23,193 low confidence; **316,353 kept**.
-Punjab and Haryana: 2,772,484 in the box; **2,423,562 kept** (before the
-November refresh). 16 automatic tests check the cleaned data.
+Punjab and Haryana: 2,780,913 in the old box; 268,289 outside the three
+states; 18,742 not vegetation; 286,965 low confidence; **2,206,291 kept**. 16 automatic tests check the cleaned data.
 
 **What the raw data shows** (yearly averages, 2009-11 against 2013-15): all
-sensors added together rise 2.8 times in Córdoba and 5.8 times in Punjab, while
+sensors added together rise 2.8 times in Córdoba and 5.8 times in Punjab and Haryana, while
 MODIS alone stays flat or falls. In Córdoba the naive record goes **up** while
 real burning went **down** (`submission/figures/raw_jump_*.png`).
 
@@ -121,12 +122,12 @@ VIIRS. Averaged over the VIIRS satellites flying that month, so more
 satellites never means more fire. **Unit: Aqua-equivalent fire cells.**
 
 **Where the curve crosses 50%** (the "midpoint"): Córdoba 9.9 MW by day (90%
-range 8.6 to 12.3) and 6.9 MW by night; Punjab 5.0 MW by day, 3.8 by night.
+range 8.6 to 12.3) and 6.9 MW by night; Punjab and Haryana 4.8 MW by day, 4.2 by night.
 
 ### Nothing is thrown away: the small-fire layer
 
 The part of each VIIRS cell MODIS would miss (1 minus its weight) becomes the
-**small-fire layer**, shown separately. In Punjab it is about 2.2 times the
+**small-fire layer**, shown separately. In Punjab and Haryana it is about 2.0 times the
 harmonized record, because crop fires are small; that is the "greater detail
 of VIIRS" the challenge asks to keep.
 
@@ -158,21 +159,23 @@ Step values are natural logarithms: 0.05 is about 5%; 1.65 is about 5.2 times.
 
 | Check | Question | Córdoba | Punjab and Haryana |
 |---|---|---|---|
-| C0 | Does the raw record really jump? (must be over 0.5) | Pass, 1.648 | Pass, 1.686 |
-| C1 | Is the jump gone after harmonizing? (at most 0.10) | Pass, 0.049 | Pass, -0.004 |
+| C0 | Does the raw record really jump? (must be over 0.5) | Pass, 1.648 | Pass, 1.674 |
+| C1 | Is the jump gone after harmonizing? (at most 0.10) | Pass, 0.049 | Pass, 0.028 |
 | C1b | Any statistical break near 2012? | Pass, none | Pass, none |
 | C2 | Any false jump in 2016, when nothing changed? | Pass, -0.089 | Pass, -0.057 |
-| C3 | Held-out 2018-19, month by month (at most 0.15) | **Fail**, 0.207 | **Fail**, 0.291 |
-| C3r | Held-out 2018-19, two-year total (at most 0.10), added after results | Pass, -0.072 | Pass, -0.022 |
+| C3 | Held-out 2018-19, month by month (at most 0.15) | **Fail**, 0.207 | **Pass**, 0.144 |
+| C3r | Held-out 2018-19, two-year total (at most 0.10), added after results | Pass, -0.072 | Pass, 0.003 |
 | C4 | Does NOAA-20 alone, never used for fitting, give the same record? | Pass, slope 0.951, correlation 0.987 | Pass, 1.024, 0.995 |
 | C5 | Does the curve agree with published MODIS detection limits? | Pass | Pass |
-| C6 | Stable against ESA burned area? (at most 0.25) | **Fail**, -0.440 | Pass, -0.153 |
+| C6 | Stable against ESA burned area? (at most 0.25) | **Fail**, -0.440 | Pass, -0.104 |
+| C6m | Same with NASA MCD64A1, added after results | **Fail**, -0.392 | Pass, -0.036 |
 | C7 | Did Punjab's burning peak move later after 2009? (5+ days) | | Pass, 8.1 days, p = 0.0009 |
-| C8 | Is the curve stable when resampled? (range at most 50%) | Pass, 38% | **Fail**, 57% |
+| C8 | Is the curve stable when resampled? (range at most 50%) | Pass, 38% | **Fail**, 62% (the curve; the hard floor ships here) |
 
 ### The two failures, and how to explain them
 
-**C3 (held-out months).** Two satellites passing at different times disagree
+**C3 (held-out months), Córdoba only.** In Punjab and Haryana the hard floor
+passes it (0.144). In Córdoba: two satellites passing at different times disagree
 by about 20% in a typical month even in the years we fitted on (0.18 to 0.23),
 and two *identical* VIIRS satellites disagree by 7-10%. So the 0.15 limit was
 below what any two satellites can achieve month by month. We kept the fail,
@@ -181,8 +184,10 @@ pass C3r, so it does not favour ours.** Say this first, before a judge asks.
 
 **C6 (ESA burned area).** In Córdoba, fire cells per km² burned are 36% lower
 after 2012. But **Aqua alone, which never changed sensor, gives -0.427** on the
-same test. So the relationship between hotspots and burned area really changed
-there; our record follows Aqua to within 0.013. The raw record would be +1.289.
+same test. NASA's own burned-area product, MCD64A1, agrees: -0.392 for our
+record, -0.430 for Aqua alone. So the relationship between hotspots and burned
+area really changed there, and two independent records say so; our record
+follows Aqua closely. The raw record would be +1.289.
 
 ### An honest caveat on C1
 
@@ -206,12 +211,13 @@ evidence is C4 (NOAA-20), C3r (2018-19) and C5 (physics).
   not (0.35, p = 0.33). Year to year, the curve tracks Aqua about twice as
   steadily.
 - **MODIS's orbit is drifting, measured from our own data.** Aqua's daytime
-  pass over Punjab moved from 13:17 local time (2021) to 15:17 (2026); Terra's
+  pass over Punjab and Haryana moved from 13:18 local time (2021) to 15:27 (2026); Terra's
   from 10:52 to 09:14. Aqua's last orbit correction was December 2021. Since
-  2022 Aqua reports 8.7% more fire than our record in Punjab (0.9% before).
+  2022 Aqua reports 6.2% more fire than our record in Punjab and Haryana (2.2% less before).
   A MODIS-only calendar would carry that drift; ours uses VIIRS after 2012.
 - **Robust to our own choices.** In Córdoba every verdict stayed the same
-  under five changes of settings. Punjab is fragile: two changes flip C3r.
+  under five changes of settings. Punjab and Haryana is less robust: keeping
+  low-confidence detections flips C3r, and one other change flips C1b.
 - **Reproducible.** A fresh copy of the repository rebuilt everything from the
   raw files; one value in 46,155 differed, by 0.01.
 - **Observable days.** NASA's daily fire masks say the ground was observable
@@ -224,13 +230,13 @@ evidence is C4 (NOAA-20), C3r (2018-19) and C5 (physics).
 ## 8. What the record discovered
 
 - **Punjab's burning season moved later** by about 7 days per decade (peak
-  day 6.7, range 5.7 to 8.3) without getting longer, straight through the 2012
+  day 6.7, range 5.3 to 8.2) without getting longer, straight through the 2012
   sensor change. It matches a published study: the peak moved from 24 October
   to 4 November after 2009 groundwater laws delayed rice planting. Same result
   for three different season windows.
 - **Córdoba's season peak moved later** by about 10 days per decade (2.7 to 16).
-- **Punjab's detected burning fell sharply:** 14,025 fire cells in the 2020
-  season, 1,913 in 2024, 944 in 2025. Caveat: satellites pass around 13:30, and
+- **Punjab's detected burning fell sharply:** 14,142 fire cells in the 2020
+  season, 1,677 in 2024, 737 in 2025. Caveat: satellites pass around 13:30, and
   burning reportedly moved to the evening, so this is *detected* burning.
 - **The author's Chilecito fire** (27 to 31 July 2026): July 2026 is 8.8 times
   the median July, 2nd highest of 25, and the 11th largest of 238 fire
@@ -263,8 +269,10 @@ evidence is C4 (NOAA-20), C3r (2018-19) and C5 (physics).
 - It counts what satellites **detected**, not every fire; zero detections is
   not proof of no fire.
 - The unit is fire cells, not hectares.
-- Four areas only. Punjab's calibration is weak; Karnataka fails its held-out
-  checks; Chilecito borrows Córdoba's calibration.
+- Two calibration areas (the Córdoba area and Punjab and Haryana) and two case
+  studies. Punjab's detection curve is uncertain, so the hard floor is used
+  there; Karnataka fails its held-out checks; Chilecito borrows Córdoba's
+  calibration.
 - One month alone is noisy (about 20%); compare years or the same month.
 - Not a live alert service and not a forecast; it does not update itself.
 - One check was revised after results (C3r), and the 2012 check is partly

@@ -20,7 +20,7 @@ import json
 import duckdb
 import pandas as pd
 
-from config import APP_DATA, AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, REPO, WORK, folder_info
+from config import APP_DATA, AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, REPO, WORK, area_cells, folder_info
 
 FIRMS_COLS = ["latitude", "longitude", "brightness", "scan", "track", "acq_date", "acq_time", "satellite",
               "instrument", "confidence", "version", "bright_t31", "frp", "daynight", "type"]
@@ -68,6 +68,11 @@ def main() -> None:
             w["p"] = (w["frp_sum"] >= w["daynight"].map(f50)).astype(float)
         con.register("w", w[["cx", "cy", "satellite", "acq_date", "daynight", "p"]])
 
+        cells = area_cells(area)
+        has_outline = cells is not None
+        cells_df = cells if has_outline else pd.DataFrame({"cx": pd.Series([], dtype="int32"),
+                                                            "cy": pd.Series([], dtype="int32")})
+        con.execute("create or replace temp table outline_cells as select * from cells_df")
         static = (WORK / f"{area}.parquet").as_posix()
         con.execute(f"""
             create or replace temp table static_cells as
@@ -89,6 +94,7 @@ def main() -> None:
                   and latitude::double >= {south} and latitude::double < {north})
             select r.*, w.p,
               case
+                when {str(has_outline).lower()} and oc.cx is null then 'excluded'
                 when not is_nrt and coalesce(try_cast(type as int), -1) <> 0 then 'excluded'
                 when is_nrt and s.cx is not null then 'excluded'
                 when (sensor = 'MODIS' and try_cast(confidence as int) < {MODIS_MIN_CONFIDENCE})
@@ -99,6 +105,7 @@ def main() -> None:
                 when w.p >= 0.5 then 'harmonized'
                 else 'small' end as harm_class,
               case
+                when {str(has_outline).lower()} and oc.cx is null then 'outside the area (another state or country)'
                 when not is_nrt and coalesce(try_cast(type as int), -1) <> 0
                      then 'not a vegetation fire (FIRMS type ' || coalesce(type, 'missing') || ')'
                 when is_nrt and s.cx is not null then 'near-real-time detection at a known static heat source'
@@ -112,6 +119,7 @@ def main() -> None:
                 else 'VIIRS fire cell MODIS would usually miss (small-fire layer)' end as harm_reason
             from r
             left join static_cells s on r.cx = s.cx and r.cy = s.cy
+            left join outline_cells oc on r.cx = oc.cx and r.cy = oc.cy
             left join w on w.cx = r.cx and w.cy = r.cy and w.satellite = r.satellite_name
                        and w.acq_date = r.d and w.daynight = r.daynight""")
         out = APP_DATA / area / "hotspots"
@@ -134,8 +142,8 @@ def main() -> None:
               f"VIIRS kept rows without a cell weight: {missing}")
         clean_n = con.execute(f"select count(*) from '{static}'").fetchone()[0]
         kept = counts.get("harmonized", 0) + counts.get("small", 0)
-        kept_modis_late = con.execute("select count(*) from hs where harm_class = 'excluded' and harm_reason like "
-                                      "'%Terra morning%' or harm_reason like 'Aqua after%'").fetchone()[0]
+        kept_modis_late = con.execute("select count(*) from hs where harm_class = 'excluded' and (harm_reason like "
+                                      "'%Terra morning%' or harm_reason like 'Aqua after%')").fetchone()[0]
         print(f"  check: cleaned rows {clean_n:,} = kept {kept:,} + MODIS rows not used after their period "
               f"{kept_modis_late:,} -> {clean_n == kept + kept_modis_late}")
 

@@ -56,8 +56,7 @@ export default function FireEpisodes() {
 
   return (
     <ChartFrame
-      title="How does this fire compare with earlier ones?"
-      lede="An episode is a run of days with fire. Rank 1 is the largest since July 2002."
+      title="Fire episodes"
       mode="harmonized"
       exportName="episodes"
       notes={[sentence, episodes.definition]}

@@ -67,7 +67,7 @@ export function useMonthStatus(): MonthStatus {
   );
   const empty = { when: "", headline: "", ratioText: "", detail: "", verdict: null, verdictText: null, alert: false, provisional: "", valueText: null, medianText: null };
   if (status === "loading" || status === "idle") return { state: "loading", ...empty };
-  if (!c || !month || c.year === null) return { state: "none", ...empty, headline: "No data to compare for this area." };
+  if (!c || !month || c.year === null) return { state: "none", ...empty, headline: "No data" };
 
   const name = MONTH_FULL[month - 1];
   const when = `${name} ${c.year}${c.toDay ? ` so far (1 to ${c.toDay} ${name.slice(0, 3)})` : ""}`;
@@ -82,13 +82,13 @@ export function useMonthStatus(): MonthStatus {
     ratioText = c.ratio !== null ? `${formatRatio(c.ratio)} times the median` : "the median is 0";
     detail = `This month ${num(c.value!)}; median of ${earlier} ${num(c.median!)}.${c.toDay ? ` Every year counts days 1 to ${c.toDay} only.` : ""}`;
   } else if (c.status === "too-little") {
-    headline = "too little activity to judge";
+    headline = "Insufficient data";
     detail = `This month ${num(c.value!)} and the median of ${earlier} ${num(c.median!)} are both below ${MIN_ACTIVITY}.`;
   } else if (c.status === "not-enough-history") {
-    headline = "not enough history to judge";
+    headline = "Insufficient history";
     detail = `Only ${earlier} in the harmonized record; at least ${MIN_HISTORY_YEARS} are needed.`;
   } else {
-    headline = "no data to compare";
+    headline = "No data";
     detail = "The month-to-date count is missing for this month.";
   }
   const ym = `${c.year}-${String(month).padStart(2, "0")}`;
@@ -110,7 +110,7 @@ export function useMonthStatus(): MonthStatus {
 export default function UnusualBanner() {
   const s = useMonthStatus();
   return (
-    <ChartFrame title="Is now unusual?" mode="harmonized" lede="This month so far, against the same days of the same month in earlier years.">
+    <ChartFrame title="Current month status" mode="harmonized">
       {s.state === "loading" ? (
         <p className="cf-empty">Loading…</p>
       ) : s.state === "none" ? (
@@ -124,7 +124,7 @@ export default function UnusualBanner() {
           </p>
           <p className="status-detail">{s.detail} {s.provisional}</p>
           <div className="chart-controls">
-            <span>Compare with</span>
+            <span>Baseline</span>
             <BaselineSwitch />
           </div>
         </div>

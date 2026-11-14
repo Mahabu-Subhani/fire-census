@@ -83,8 +83,7 @@ export default function TrendChart() {
 
   return (
     <ChartFrame
-      title="Is it getting more or less?"
-      lede="Each dot is one full year. The line is the trend; the shading is how sure we are of it."
+      title="Annual trend"
       mode="harmonized"
       exportName="trend"
       notes={[sentence, detail].filter(Boolean)}
