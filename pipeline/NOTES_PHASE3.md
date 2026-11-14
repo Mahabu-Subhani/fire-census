@@ -105,8 +105,28 @@ call. These rows are near-real-time and have no `type` field.
 See `README.md`, "Reproduction test": exact except one Córdoba cell-month that
 differs by 0.01.
 
+## `obs`: days the MODIS fire algorithm could see the ground
+
+Processed all 4,480 MYD14A1 files (four tiles, July 2002 to November 2026;
+the first search was silently capped, so the India tiles were fetched again in
+four-year windows). `obs` is the mean, over the 1 km pixels of a 0.1 degree
+cell, of the days in the month whose daily fire mask was water, land or fire.
+
+It hardly varies. In Punjab and Haryana the median is 30 days, the 5th
+percentile 24 and the 1st percentile 13; even July (monsoon) has a 10th
+percentile of 24. Córdoba: median 28, 5th percentile 24. The only months with
+many cells under 10 are November 2026, which is incomplete. Reasons: the daily
+mask keeps the best of all Aqua passes that day, day and night, and the fire
+algorithm's own cloud test is lenient.
+
+So `obs` is not a cloud climatology. It says how many days NASA's fire
+algorithm judged the ground observable, which is the right denominator for
+detection, and it shows that in these regions observation gaps do not explain
+changes in the calendar, nor the month-to-month scatter behind check C3. That
+points to overpass timing as the cause. Not fetched for the Karnataka area
+(tile h25v08), where `obs` is null.
+
 ## Still open
 
-- `obs` from Aqua's daily fire masks: the first search was capped and the India
-  tiles stopped in mid-2019; re-downloading in four-year search windows.
 - C6 (ESA burned area): not run.
+- C5 for Karnataka: not run (evidence.py covers the two calibration areas).

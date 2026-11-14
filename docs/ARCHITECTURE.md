@@ -195,6 +195,10 @@ agreement of all three (docs/APP_VISION.md).
 Optional cube field, present only if the observation-aware step is completed:
 `obs` (integer or null), the number of valid clear observations of the cell in
 that month. The app must treat a missing or null `obs` as "unknown", never as zero.
+Filled since 14 November for Córdoba, Punjab and Haryana and Chilecito from
+Aqua's daily fire masks (MYD14A1): the mean number of days the MODIS fire
+algorithm judged the ground observable. It is nearly always 24 to 31, so it is
+best shown as a data-quality note, not a chart. The current month is partial.
 
 ### Stretch files (optional; written by A with `pipeline/stretch.py`, added 14 November)
 
