@@ -33,6 +33,7 @@ Add a row whenever an AI tool contributes. Be specific and truthful.
 | 14 Nov 2026 | Claude (Anthropic) | Drafted docs/APP_VISION.md (user questions, gaps against existing tools, a first-principles reading of the challenge text) and the contract fields it needs. The team chose to adopt it (decision 28); the first-principles additions await a team decision (29) | 8crsk, team |
 | 14 Nov 2026 | Claude (Anthropic) | Phase 1 and 2 pipeline code (inventory, cleaning, harmonization, checks, export, figures) and the notes in pipeline/; proposed the revised check C3r and recommended shipping the detection curve. Mahabu chose (DECISIONS.md, 30) | Mahabu |
 | 14 Nov 2026 | Claude (Anthropic) | Turned 8crsk's draft request into the decision protocol (AGENTS.md, "Before a decision"), the prompts in docs/prompts/DEEPEN.md and the research-note template in docs/research/ | 8crsk, team pending |
+| 14 Nov 2026 | Claude (Anthropic) | Wrote app/src/stats/ (value, toCalendar, monthHistory with month-to-date, median, rank, 90th percentile, with tests), ChartFrame, the usePlot helper and the BurningCalendar chart, and checked it at 400 px and 1280 px in headless Chrome | Charulekha Rajesh (pending) |
 
 ## The team's own decisions
 

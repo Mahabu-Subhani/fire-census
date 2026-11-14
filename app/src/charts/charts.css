@@ -1,0 +1,29 @@
+/* AI-assisted: written with help from Claude (Anthropic). Reviewed by Charulekha Rajesh (pending). */
+/* Styles for Person C's charts. Uses the colour tokens from styles.css. */
+
+.cf { margin: 0; display: grid; gap: 8px; min-width: 0; }
+.cf-head { display: grid; gap: 2px; }
+.cf-title { margin: 0; font-size: 1.1rem; }
+.cf-sub { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+.cf-mode {
+  display: inline-block; padding: 0 6px; border-radius: 4px; font-weight: 600;
+  border: 1px solid var(--border); color: var(--text);
+}
+.cf-mode-raw { border-color: var(--accent); color: var(--accent); }
+.cf-body { min-width: 0; }
+.cf-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.cf-actions:empty { display: none; }
+.cf-empty { color: var(--muted); margin: 8px 0; }
+
+.cal-plot { width: 100%; min-width: 0; overflow: hidden; }
+.cal-plot svg { display: block; max-width: 100%; height: auto; }
+.cal-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+.cal-legend svg { display: block; max-width: 100%; }
+.cal-legend-item { display: inline-flex; gap: 6px; align-items: center; }
+.cal-swatch { width: 18px; height: 12px; border: 1px solid var(--border); flex: none; }
+
+.cal-table summary { cursor: pointer; color: var(--focus); font-size: 0.85rem; }
+.cal-table-scroll { overflow-x: auto; }
+.cal-table table { border-collapse: collapse; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+.cal-table th, .cal-table td { padding: 2px 6px; text-align: right; border-bottom: 1px solid var(--border); }
+.cal-table td.terra { font-style: italic; color: var(--muted); }
