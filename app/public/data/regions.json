@@ -1,0 +1,44 @@
+[
+  {
+    "id": "cordoba",
+    "name": "Córdoba province, Argentina",
+    "bbox": [
+      -65.8,
+      -35.0,
+      -61.7,
+      -29.5
+    ],
+    "cell_deg": 0.1,
+    "first_month": "2000-11",
+    "last_month": "2026-11",
+    "harmonized_from": "2002-07"
+  },
+  {
+    "id": "punjab-haryana",
+    "name": "Punjab and Haryana, India",
+    "bbox": [
+      73.8,
+      27.6,
+      77.6,
+      32.6
+    ],
+    "cell_deg": 0.1,
+    "first_month": "2000-11",
+    "last_month": "2026-11",
+    "harmonized_from": "2002-07"
+  },
+  {
+    "id": "chilecito",
+    "name": "Chilecito and Famatina, La Rioja, Argentina",
+    "bbox": [
+      -68.2,
+      -29.8,
+      -66.8,
+      -28.4
+    ],
+    "cell_deg": 0.1,
+    "first_month": "2001-07",
+    "last_month": "2026-11",
+    "harmonized_from": "2002-07"
+  }
+]
