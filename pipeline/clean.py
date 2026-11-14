@@ -18,7 +18,7 @@ import json
 
 import duckdb
 
-from config import AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, WORK, folder_info
+from config import AREAS, INTERNAL_CELL_DEG, MODIS_MIN_CONFIDENCE, RAW, WORK, area_cells, folder_info
 
 SAT_NAMES = {"Terra": "Terra", "Aqua": "Aqua", "T": "Terra", "A": "Aqua",
              "SNPP": "S-NPP", "N": "S-NPP", "N20": "NOAA-20", "N21": "NOAA-21"}
@@ -76,9 +76,18 @@ def clean_area(con: duckdb.DuckDBPyConnection, area_id: str) -> dict:
           and lat >= {south} and lat < {north}""")
     report["rows_in_box"] = con.execute("select count(*) from a0").fetchone()[0]
 
+    cells = area_cells(area_id)
+    report["removed_outside_outline"] = 0
+    if cells is not None:                       # clip to the exact outline (make_areas.py)
+        con.execute("create or replace temp table outline_cells as select * from cells")   # pandas scan
+        con.execute("create or replace temp table a0 as select a0.* from a0 join outline_cells using (cx, cy)")
+        n_in = con.execute("select count(*) from a0").fetchone()[0]
+        report["removed_outside_outline"] = report["rows_in_box"] - n_in
+
+    n0 = con.execute("select count(*) from a0").fetchone()[0]          # after the outline, if any
     con.execute("create or replace temp table a1 as select distinct * from a0")
     n1 = con.execute("select count(*) from a1").fetchone()[0]
-    report["removed_exact_duplicates"] = report["rows_in_box"] - n1
+    report["removed_exact_duplicates"] = n0 - n1
 
     # Static mask from standard rows: cells with repeated non-vegetation detections.
     con.execute(f"""
@@ -128,7 +137,7 @@ def main() -> None:
     reports = [clean_area(con, a) for a in AREAS]
     (WORK / "clean_report.json").write_text(json.dumps(reports, indent=2), encoding="utf-8")
     for r in reports:
-        accounted = (r["rows_out"] + r["removed_exact_duplicates"] + r["removed_non_vegetation_standard"]
+        accounted = (r["rows_out"] + r["removed_outside_outline"] + r["removed_exact_duplicates"] + r["removed_non_vegetation_standard"]
                      + r["removed_nrt_in_static_cells"] + r["removed_low_confidence"])
         assert accounted == r["rows_in_box"], f"{r['area']}: rows not conserved"
         print(json.dumps(r))

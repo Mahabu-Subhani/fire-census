@@ -203,7 +203,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !region) return;
-    (map.getSource("region") as GeoJSONSource).setData({ type: "FeatureCollection", features: [polygonFeature(bboxToPolygon(region.bbox))] });
+    const rings = region.outline && region.outline.length > 0 ? region.outline : [bboxToPolygon(region.bbox)];
+    (map.getSource("region") as GeoJSONSource).setData({ type: "FeatureCollection", features: rings.map((r) => polygonFeature(r)) });
     const [w, s, e, n] = region.bbox;
     map.fitBounds([[w, s], [e, n]], { padding: framePadding(), duration: 600 });
   }, [region, ready]);

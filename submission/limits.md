@@ -7,7 +7,7 @@
   all sensors. Zero detections does not prove there was no fire.
 - **The unit is "Aqua-equivalent fire cells", not fires or hectares.** It is
   built so that 2005 and 2025 can be compared, not to measure absolute area.
-- **Calibrated in three places only:** Córdoba, Punjab and Haryana, and the
+- **Calibrated in two places only:** the Córdoba area (a box around the province, including parts of its neighbours) and Punjab and Haryana (the exact states), plus the
   Chilecito area, which borrows Córdoba's calibration because it has too few
   fires of its own.
 - **Punjab's calibration is weak.** Crop-residue fires are small and last

@@ -9,7 +9,7 @@
     "punjab-haryana": {
       "model": "L2",
       "variant": "A",
-      "reason": "Hard floor. The detection curve fails C8 here (its midpoint is too uncertain), so the rule moves to the hard floor, which passes C0, C1, C1b, C2, C3r and C4. Fails the original C3 (0.291). Both verdicts are shown."
+      "reason": "Hard floor. Since Punjab was clipped to Punjab, Haryana and Chandigarh (decision 44) it passes every pre-registered check that applies to it, including the original held-out check C3 (0.144 against 0.15), so it ships under the original rule. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship."
     },
     "chilecito": {
       "model": "S0",

@@ -7,6 +7,7 @@
 | MODIS Collection 6.1 active fire locations, standard and near-real-time (MCD14ML, MCD14DL) | NASA FIRMS archive download | Terra, Aqua | 1 Nov 2000 to 5 Nov 2026 | Fire detections before VIIRS; the reference for calibration |
 | VIIRS 375 m active fire locations, Collection 2, standard and near-real-time (VNP14IMGTDL family) | NASA FIRMS archive download | Suomi NPP, NOAA-20, NOAA-21 | 20 Jan 2012 to 5 Nov 2026 | Fire detections from 2012; the harmonized record |
 | MYD14A1 Collection 6.1, daily 1 km fire mask | NASA LP DAAC, through earthaccess | Aqua | Jul 2002 to Nov 2026 | Clear-view days per cell and month (`obs`) |
+| MCD64A1 Collection 6.1, monthly 500 m burned area | Microsoft Planetary Computer | Terra and Aqua | Nov 2000 to 2026 | Check C6m, a second burned-area reference |
 
 Requests: FIRMS archive requests 845406 to 845413 (whole of India and
 Argentina), submitted 13 Nov 2026.

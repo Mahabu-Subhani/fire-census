@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from config import APP_DATA, AREAS, DISPLAY_CELL_DEG, HARMONIZED_FROM, REPO, WORK
+from config import APP_DATA, AREAS, DISPLAY_CELL_DEG, HARMONIZED_FROM, REPO, WORK, area_outline
 from harmonize import VIIRS_OPS
 
 VIIRS_START = "2012-02"
@@ -35,6 +35,7 @@ CHECKS = [
     ("C4", "NOAA-20 alone reproduces the record", "slope 0.90 to 1.10 and correlation at least 0.90"),
     ("C5", "Curve midpoint is physically plausible", "within a factor of 2 of published limits"),
     ("C6", "Burned-area relationship is stable", "absolute log ratio at most 0.25"),
+    ("C6m", "Same, against NASA MCD64A1 burned area (added after results)", "absolute log ratio at most 0.25"),
     ("C7", "Punjab peak moves later after 2009", "at least +5 days, p < 0.05"),
     ("C8", "Curve is stable under resampling", "90% range at most 50% of the midpoint"),
 ]
@@ -185,6 +186,13 @@ def main() -> None:
                 else:
                     got = {"value": None, "verdict": "not run",
                            "note": "ESA Fire_cci burned area not processed"}
+            if cid == "C6m":
+                f6 = WORK / "c6m.json"
+                c = json.loads(f6.read_text(encoding="utf-8")).get(area_id) if f6.exists() else None
+                got = ({"value": c["value"], "verdict": c["verdict"],
+                        "note": (f"{c['note']}. 2013 to 2025: {c['value_2013_2025']}. Aqua alone, with no sensor "
+                                 f"change: {c['aqua_only_same_statistic']}. Raw record: {c['raw_record_same_statistic']}")}
+                       if c else {"value": None, "verdict": "not run", "note": "MCD64A1 not processed"})
             if cid == "C8" and model != "S0":
                 got = dict(res["checks"]["S0"].get("C8", {}))
                 got["note"] = "applies to the detection curve, which is used for the small-fire layer"
@@ -233,9 +241,14 @@ def main() -> None:
                         "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive"],
         }
         (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
-        regions.append({"id": area_id, "name": name, "bbox": [west, south, east, north],
-                        "cell_deg": DISPLAY_CELL_DEG, "first_month": cube["ym"].min(),
-                        "last_month": cube["ym"].max(), "harmonized_from": HARMONIZED_FROM})
+        region = {"id": area_id, "name": name, "bbox": [west, south, east, north],
+                  "cell_deg": DISPLAY_CELL_DEG, "first_month": cube["ym"].min(),
+                  "last_month": cube["ym"].max(), "harmonized_from": HARMONIZED_FROM}
+        rec = area_outline(area_id)
+        if rec is not None:          # exact outline: the app draws it and uses its true area
+            region.update({"bbox": rec["bbox"], "outline": rec["outline"], "area_km2": rec["area_km2"],
+                           "outline_source": rec["source"]})
+        regions.append(region)
         size = (out / "cube.json").stat().st_size / 1e6
         print(f"{area_id}: model {model} variant {variant}, {len(rows):,} rows, cube.json {size:.2f} MB")
     (APP_DATA / "regions.json").write_text(json.dumps(regions, indent=2, ensure_ascii=False), encoding="utf-8")

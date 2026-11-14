@@ -45,7 +45,8 @@ Times are from a 32 GB Windows laptop.
 |---|---|---|---|
 | 0. Bring data up to date (before submitting) | `$PY refresh.py` | `$FIRE_DATA/raw/NRTAPI_<country>_<sensor>_<source>/` from the FIRMS area API, from the day after the last date held to yesterday; needs `FIRMS_MAP_KEY` in `.env` | 1 min |
 | 1. Inventory of raw files | `$PY inventory.py` | prints a table (copied into NOTES.md) | 1 min |
-| 2. Clean, cut out the three areas | `$PY clean.py` | `$FIRE_DATA/work/<area>.parquet`, `clean_report.json` | 30 s |
+| 1b. Exact outlines (Punjab and Haryana) | `$PY make_areas.py` | `pipeline/areas/<area>.json` (in git) | 5 s |
+| 2. Clean, cut out the areas (and clip to an outline) | `$PY clean.py` | `$FIRE_DATA/work/<area>.parquet`, `clean_report.json` | 30 s |
 | 3. Raw record figures | `$PY raw_jump.py` | `submission/figures/raw_jump_<area>.png` | 20 s |
 | 4. Harmonize (fire cells, detection curve, floor, ratio) | `$PY harmonize.py` | `work/<area>_{cells,weights,series,daily}.parquet`, `curves.json` | 30 s |
 | 5. Pre-registered checks | `$PY validate.py` | `work/checks.json` | 10 s |
@@ -53,11 +54,14 @@ Times are from a 32 GB Windows laptop.
 | 7. Reviewer objections, C5, drift figure | `$PY evidence.py` | `work/evidence.json`, `figures/orbit_drift.png` | 30 s |
 | 8. Daily fire masks (optional) | `$PY obs.py download` then `$PY obs.py process` | `$FIRE_DATA/modis/MYD14A1/`, `work/obs_<area>.parquet` | about 3 h download, 20 min process |
 | 8b. ESA burned area, check C6 | `$PY firecci.py` | `work/firecci_monthly.parquet`, `work/c6.json` | 10 min (network) |
+| 8b2. NASA burned area, check C6m | `$PY mcd64.py` | `work/mcd64_monthly.parquet`, `work/c6m.json` | 5 min (network) |
 | 8c. Land cover at fire cells | `$PY landcover.py` | `work/landcover.json` | 7 min (network) |
 | 8d. Stretch analyses | `$PY stretch.py` (after step 9) | `app/public/data/<area>/{season,drift,episodes}.json`, season figures | 1 min |
 | 9. App data | `$PY export.py` | `app/public/data/regions.json`, `<area>/cube.json`, `<area>/meta.json` | 1 min |
 | 10. Figures | `$PY figures.py` | `submission/figures/*.png` | 20 s |
 | 11. Hotspot files | `$PY hotspots.py` | `app/public/data/<area>/hotspots/<year>.csv.gz` | 2 min |
+
+Every headline number the documents quote: `$PY key_numbers.py`.
 
 Tests, from the repository root:
 

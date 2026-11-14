@@ -23,11 +23,28 @@ import netCDF4
 import numpy as np
 import pandas as pd
 
-from config import AREAS, REPO, WORK
+from config import AREAS, REPO, WORK, area_outline
+
+_MASKS: dict = {}
 
 URL = ("https://dap.ceda.ac.uk/neodc/esacci/fire/data/burned_area/MODIS/grid/v5.1/"
        "{y}/{y}{m:02d}01-ESACCI-L4_FIRE-BA-MODIS-fv5.1.nc#mode=bytes")
 YEARS = range(2001, 2021)
+
+
+def outline_mask(area, lat, lon):
+    """1 where a 0.25 degree cell's centre is inside the area's exact outline, else 0 (None: no outline)."""
+    key = (area, len(lat), len(lon), float(lat[0]), float(lon[0]))
+    if key not in _MASKS:
+        rec = area_outline(area)
+        if rec is None:
+            _MASKS[key] = None
+        else:
+            from shapely import contains_xy
+            from shapely.geometry import shape
+            gx, gy = np.meshgrid(np.asarray(lon), np.asarray(lat))
+            _MASKS[key] = contains_xy(shape(rec["geometry"]), gx, gy).astype(float)
+    return _MASKS[key]
 
 
 def one_month(args):
@@ -41,7 +58,11 @@ def one_month(args):
                 yi = np.where((lat <= north) & (lat >= south))[0]
                 xi = np.where((lon >= west) & (lon <= east))[0]
                 block = ds["burned_area"][0, yi.min():yi.max() + 1, xi.min():xi.max() + 1]
-                out[area] = float(np.ma.filled(block, 0).sum()) / 1e6      # km2
+                block = np.ma.filled(block, 0)
+                mask = outline_mask(area, lat[yi.min():yi.max() + 1], lon[xi.min():xi.max() + 1])
+                if mask is not None:
+                    block = block * mask
+                out[area] = float(block.sum()) / 1e6      # km2
             ds.close()
             return {"ym": f"{y}-{m:02d}", **out}
         except Exception as exc:                                          # retried, then reported

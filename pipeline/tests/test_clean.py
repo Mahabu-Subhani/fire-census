@@ -28,7 +28,7 @@ def report():
 @pytest.mark.parametrize("area", list(AREAS))
 def test_rows_conserved(area, report):
     r = report[area]
-    removed = (r["removed_exact_duplicates"] + r["removed_non_vegetation_standard"]
+    removed = (r.get("removed_outside_outline", 0) + r["removed_exact_duplicates"] + r["removed_non_vegetation_standard"]
                + r["removed_nrt_in_static_cells"] + r["removed_low_confidence"])
     assert r["rows_out"] + removed == r["rows_in_box"]
     n = con.execute(f"select count(*) from '{(WORK / (area + '.parquet')).as_posix()}'").fetchone()[0]
@@ -63,3 +63,16 @@ def test_pixel_sizes_plausible(area):
             assert 0.9 <= lo and hi <= 5.0
         else:
             assert 0.3 <= lo and hi <= 0.85
+
+
+def test_outline_areas_are_clipped():
+    """Areas with an exact outline keep only detections whose 1 km cell centre is inside it."""
+    from config import area_cells
+    for area in AREAS:
+        cells = area_cells(area)
+        if cells is None:
+            continue
+        con.register("oc", cells)
+        src = (WORK / f"{area}.parquet").as_posix()
+        outside = con.execute(f"select count(*) from '{src}' t anti join oc using (cx, cy)").fetchone()[0]
+        assert outside == 0

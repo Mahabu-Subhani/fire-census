@@ -15,48 +15,48 @@
     "area": "punjab-haryana"
   },
   "floor_mw": {
-    "day": 4.95,
-    "night": 3.81
+    "day": 4.78,
+    "night": 4.17
   },
   "constants": {
-    "day": 0.3888,
-    "night": 0.1599
+    "day": 0.3881,
+    "night": 0.205
   },
   "ladder": [
     {
       "level": "L0 raw detections",
-      "step_2012": 1.686
+      "step_2012": 1.674
     },
     {
       "level": "L1 fire cells",
-      "step_2012": 1.55,
-      "placebo_2016": "-0.014",
-      "held_out": 2.001
+      "step_2012": 1.528,
+      "placebo_2016": "-0.031",
+      "held_out": 1.781
     },
     {
       "level": "L1r constant ratio",
-      "step_2012": -0.03,
-      "placebo_2016": "-0.035",
-      "held_out": 0.245
+      "step_2012": -0.029,
+      "placebo_2016": "-0.037",
+      "held_out": 0.322
     },
     {
       "level": "L2 hard floor",
-      "step_2012": -0.004,
-      "placebo_2016": "-0.057",
-      "held_out": 0.291
+      "step_2012": 0.028,
+      "placebo_2016": "-0.060",
+      "held_out": 0.144
     },
     {
       "level": "S0 detection curve",
       "step_2012": -0.02,
-      "placebo_2016": "-0.048",
-      "held_out": 0.267
+      "placebo_2016": "-0.052",
+      "held_out": 0.273
     }
   ],
   "checks": [
     {
       "id": "C0",
       "name": "The raw record shows the 2012 jump",
-      "value": 1.686,
+      "value": 1.674,
       "threshold": "greater than 0.5",
       "verdict": "pass",
       "note": ""
@@ -64,7 +64,7 @@
     {
       "id": "C1",
       "name": "No seam at 2012",
-      "value": -0.004,
+      "value": 0.028,
       "threshold": "absolute value at most 0.10",
       "verdict": "pass",
       "note": ""
@@ -72,15 +72,15 @@
     {
       "id": "C1b",
       "name": "No change point at 2012 (Pettitt)",
-      "value": "p=1.000 at 2015-02",
+      "value": "p=1.000 at 2013-02",
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
       "verdict": "pass",
-      "note": "133 months with at least 30 Aqua fire cells"
+      "note": "119 months with at least 30 Aqua fire cells"
     },
     {
       "id": "C2",
       "name": "No seam at placebo dates (2016, 2008)",
-      "value": "2016: -0.057; 2008: +0.000",
+      "value": "2016: -0.060; 2008: +0.000",
       "threshold": "absolute value at most 0.10 at both",
       "verdict": "pass",
       "note": "2008 is zero by construction: H equals the Aqua reference before 2012"
@@ -88,23 +88,23 @@
     {
       "id": "C3",
       "name": "Held-out years 2018 to 2019",
-      "value": 0.291,
+      "value": 0.144,
       "threshold": "median absolute log ratio at most 0.15",
-      "verdict": "fail",
-      "note": "17 of 24 months have at least 30 Aqua fire cells"
+      "verdict": "pass",
+      "note": "15 of 24 months have at least 30 Aqua fire cells"
     },
     {
       "id": "C3r",
       "name": "Held-out years, two-year total (revised after results)",
-      "value": -0.022,
+      "value": 0.003,
       "threshold": "absolute log ratio at most 0.10",
       "verdict": "pass",
-      "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); reported beside C3, never instead of it; 17 months"
+      "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); reported beside C3, never instead of it; 15 months"
     },
     {
       "id": "C4",
       "name": "NOAA-20 alone reproduces the record",
-      "value": "slope 1.024, correlation 0.995",
+      "value": "slope 1.025, correlation 0.993",
       "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
       "verdict": "pass",
       "note": "103 months"
@@ -112,7 +112,7 @@
     {
       "id": "C5",
       "name": "Curve midpoint is physically plausible",
-      "value": "day 4.95 MW vs published 5.7 (x0.87); night 3.81 MW vs 3.7 (x1.03)",
+      "value": "day 4.78 MW vs published 5.7 (x0.84); night 4.17 MW vs 3.7 (x1.13)",
       "threshold": "within a factor of 2 of published limits",
       "verdict": "pass",
       "note": "published nadir limits from Sofiev and Kouznetsov (2026), GMD 19, 10123. At the mean Aqua pixel size over this area the published day limit is 7.84 MW"
@@ -120,10 +120,18 @@
     {
       "id": "C6",
       "name": "Burned-area relationship is stable",
-      "value": -0.153,
+      "value": -0.104,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "pass",
-      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; reported, not gated: Fire_cci misses many small fires here. Aqua alone, which has no sensor change, gives -0.185 on the same statistic and the raw record 1.534: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.031. ESA months missing: 2019-10, 2019-11, 2019-12"
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; reported, not gated: Fire_cci misses many small fires here. Aqua alone, which has no sensor change, gives -0.125 on the same statistic and the raw record 1.553: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.021. ESA months missing: 2019-10, 2019-11, 2019-12"
+    },
+    {
+      "id": "C6m",
+      "name": "Same, against NASA MCD64A1 burned area (added after results)",
+      "value": -0.036,
+      "threshold": "absolute log ratio at most 0.25",
+      "verdict": "pass",
+      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.036. Aqua alone, with no sensor change: -0.089. Raw record: 1.726"
     },
     {
       "id": "C7",
@@ -136,7 +144,7 @@
     {
       "id": "C8",
       "name": "Curve is stable under resampling",
-      "value": "midpoint 5.0 MW, 90% range 4.4 to 7.3 (width 57% of midpoint)",
+      "value": "midpoint 4.8 MW, 90% range 4.2 to 7.1 (width 62% of midpoint)",
       "threshold": "90% range at most 50% of the midpoint",
       "verdict": "fail",
       "note": "applies to the detection curve, which is used for the small-fire layer"
@@ -158,7 +166,7 @@
       "C1": "pass",
       "C1b": "pass",
       "C2": "pass",
-      "C3": "fail",
+      "C3": "pass",
       "C3r": "pass",
       "C4": "pass"
     },
@@ -220,102 +228,102 @@
         "frp": 0.562,
         "p": 0.0,
         "p_lo": 0.0,
-        "p_hi": 0.1862
+        "p_hi": 0.1627
       },
       {
         "frp": 0.708,
-        "p": 0.1435,
+        "p": 0.0,
         "p_lo": 0.0,
-        "p_hi": 0.2393
+        "p_hi": 0.2335
       },
       {
         "frp": 0.891,
-        "p": 0.1589,
-        "p_lo": 0.025,
-        "p_hi": 0.2493
+        "p": 0.189,
+        "p_lo": 0.026,
+        "p_hi": 0.2658
       },
       {
         "frp": 1.122,
-        "p": 0.2067,
-        "p_lo": 0.1128,
-        "p_hi": 0.269
+        "p": 0.2242,
+        "p_lo": 0.1234,
+        "p_hi": 0.288
       },
       {
         "frp": 1.413,
-        "p": 0.2406,
-        "p_lo": 0.1766,
-        "p_hi": 0.2912
+        "p": 0.2703,
+        "p_lo": 0.1949,
+        "p_hi": 0.3175
       },
       {
         "frp": 1.778,
-        "p": 0.2583,
-        "p_lo": 0.1961,
-        "p_hi": 0.3079
+        "p": 0.2755,
+        "p_lo": 0.2113,
+        "p_hi": 0.3242
       },
       {
         "frp": 2.239,
-        "p": 0.2825,
-        "p_lo": 0.2292,
-        "p_hi": 0.3229
+        "p": 0.2976,
+        "p_lo": 0.246,
+        "p_hi": 0.3379
       },
       {
         "frp": 2.818,
-        "p": 0.3343,
-        "p_lo": 0.2706,
-        "p_hi": 0.3894
+        "p": 0.3539,
+        "p_lo": 0.2865,
+        "p_hi": 0.4064
       },
       {
         "frp": 3.548,
-        "p": 0.3985,
-        "p_lo": 0.3294,
-        "p_hi": 0.4488
+        "p": 0.4216,
+        "p_lo": 0.346,
+        "p_hi": 0.4701
       },
       {
         "frp": 4.467,
-        "p": 0.4477,
-        "p_lo": 0.3708,
-        "p_hi": 0.5028
+        "p": 0.4659,
+        "p_lo": 0.3844,
+        "p_hi": 0.5189
       },
       {
         "frp": 5.623,
-        "p": 0.5641,
-        "p_lo": 0.4676,
-        "p_hi": 0.632
+        "p": 0.5835,
+        "p_lo": 0.4812,
+        "p_hi": 0.6496
       },
       {
         "frp": 7.079,
-        "p": 0.5799,
-        "p_lo": 0.4883,
-        "p_hi": 0.646
+        "p": 0.5952,
+        "p_lo": 0.498,
+        "p_hi": 0.6593
       },
       {
         "frp": 8.913,
-        "p": 0.6739,
-        "p_lo": 0.5826,
-        "p_hi": 0.7276
+        "p": 0.693,
+        "p_lo": 0.5864,
+        "p_hi": 0.7417
       },
       {
         "frp": 11.22,
-        "p": 0.7127,
-        "p_lo": 0.6152,
-        "p_hi": 0.7711
+        "p": 0.7266,
+        "p_lo": 0.6225,
+        "p_hi": 0.785
       },
       {
         "frp": 14.125,
-        "p": 0.8098,
-        "p_lo": 0.7055,
-        "p_hi": 0.8688
+        "p": 0.8282,
+        "p_lo": 0.7078,
+        "p_hi": 0.8888
       },
       {
         "frp": 17.783,
-        "p": 0.8846,
-        "p_lo": 0.791,
-        "p_hi": 0.9361
+        "p": 0.9008,
+        "p_lo": 0.7913,
+        "p_hi": 0.9493
       },
       {
         "frp": 22.387,
         "p": 1.0,
-        "p_lo": 0.8927,
+        "p_lo": 0.865,
         "p_hi": 1.0
       },
       {
@@ -472,87 +480,87 @@
       },
       {
         "frp": 0.282,
-        "p": 0.0084,
+        "p": 0.0046,
         "p_lo": 0.0,
-        "p_hi": 0.0155
+        "p_hi": 0.0161
       },
       {
         "frp": 0.355,
-        "p": 0.0084,
+        "p": 0.0046,
         "p_lo": 0.0,
-        "p_hi": 0.0155
+        "p_hi": 0.0161
       },
       {
         "frp": 0.447,
-        "p": 0.0084,
+        "p": 0.0046,
         "p_lo": 0.0,
-        "p_hi": 0.016
+        "p_hi": 0.0161
       },
       {
         "frp": 0.562,
-        "p": 0.0084,
-        "p_lo": 0.0017,
-        "p_hi": 0.0171
+        "p": 0.0046,
+        "p_lo": 0.0,
+        "p_hi": 0.0161
       },
       {
         "frp": 0.708,
-        "p": 0.0157,
-        "p_lo": 0.004,
-        "p_hi": 0.031
+        "p": 0.0184,
+        "p_lo": 0.0,
+        "p_hi": 0.0492
       },
       {
         "frp": 0.891,
-        "p": 0.0293,
-        "p_lo": 0.0159,
-        "p_hi": 0.0451
+        "p": 0.0234,
+        "p_lo": 0.0067,
+        "p_hi": 0.0656
       },
       {
         "frp": 1.122,
-        "p": 0.0506,
-        "p_lo": 0.0317,
-        "p_hi": 0.0788
+        "p": 0.0404,
+        "p_lo": 0.0124,
+        "p_hi": 0.1306
       },
       {
         "frp": 1.413,
-        "p": 0.1025,
-        "p_lo": 0.0691,
-        "p_hi": 0.1425
+        "p": 0.0645,
+        "p_lo": 0.0142,
+        "p_hi": 0.1852
       },
       {
         "frp": 1.778,
-        "p": 0.1694,
-        "p_lo": 0.1172,
-        "p_hi": 0.2429
+        "p": 0.2249,
+        "p_lo": 0.1274,
+        "p_hi": 0.4792
       },
       {
         "frp": 2.239,
-        "p": 0.2355,
-        "p_lo": 0.1779,
-        "p_hi": 0.3083
+        "p": 0.2533,
+        "p_lo": 0.178,
+        "p_hi": 0.5284
       },
       {
         "frp": 2.818,
-        "p": 0.3403,
-        "p_lo": 0.2337,
-        "p_hi": 0.4228
+        "p": 0.2533,
+        "p_lo": 0.1986,
+        "p_hi": 0.5302
       },
       {
         "frp": 3.548,
-        "p": 0.4108,
-        "p_lo": 0.347,
-        "p_hi": 0.4948
+        "p": 0.3253,
+        "p_lo": 0.2352,
+        "p_hi": 0.6758
       },
       {
         "frp": 4.467,
-        "p": 0.7012,
-        "p_lo": 0.5575,
-        "p_hi": 0.8442
+        "p": 0.5727,
+        "p_lo": 0.4187,
+        "p_hi": 1.0
       },
       {
         "frp": 5.623,
-        "p": 0.7293,
-        "p_lo": 0.6163,
-        "p_hi": 0.904
+        "p": 0.5727,
+        "p_lo": 0.4629,
+        "p_hi": 1.0
       },
       {
         "frp": 7.079,
@@ -720,29 +728,29 @@
   },
   "curve_stats": {
     "day": {
-      "n_snpp_cells": 470972,
-      "n_aqua_cells": 100332,
-      "match_rate": 0.15792446260074908,
-      "control_rate": 0.08772283702640497,
-      "plateau": 0.12336613305918637,
-      "f50": 4.95339679841274,
-      "f50_lo": 4.4269698058141405,
-      "f50_hi": 7.268515001518873
+      "n_snpp_cells": 445828,
+      "n_aqua_cells": 95616,
+      "match_rate": 0.16044976986640588,
+      "control_rate": 0.09128856868568147,
+      "plateau": 0.11760660247592847,
+      "f50": 4.775037062988307,
+      "f50_lo": 4.156766932911939,
+      "f50_hi": 7.109873730698541
     },
     "night": {
-      "n_snpp_cells": 15842,
-      "n_aqua_cells": 350,
-      "match_rate": 0.035412195429869966,
-      "control_rate": 0.0005681100871102134,
-      "plateau": 0.14432989690721648,
-      "f50": 3.808107825687572,
-      "f50_lo": 3.5636941324604154,
-      "f50_hi": 4.149120938607757
+      "n_snpp_cells": 6926,
+      "n_aqua_cells": 156,
+      "match_rate": 0.028876696505919723,
+      "control_rate": 0.00014438348252959862,
+      "plateau": 0.15714285714285714,
+      "f50": 4.174523197544453,
+      "f50_lo": 2.1098009097865513,
+      "f50_hi": 5.713512735924192
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "3ef6975",
-  "generated_at": "2026-11-14T11:13:19Z",
+  "code_commit": "ae5374b",
+  "generated_at": "2026-11-14T15:54:01Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [

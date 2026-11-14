@@ -48,6 +48,7 @@ Add a row whenever an AI tool contributes. Be specific and truthful.
 | 14 Nov 2026 | Claude (Anthropic) | Stretch analyses (season, drift, episodes), the Karnataka case-study area, a self-score against the local rubric and a hostile self-review (docs/REVIEW.md; Gemini was unavailable, so the review is not independent). On Mahabu's instruction the assistant also made decisions 30, 31, 36 and 37 | Mahabu |
 | 14 Nov 2026 | Claude (Anthropic) | Designed the map-first retro UI with Charulekha in a design mockup (FIRMS as inspiration), rendered the satellite globe and map pictures from our data, then built it into the app: map-first overview, Arial, NASA GIBS satellite base map, square corners (decision 39) | Charulekha Rajesh (pending) |
 | 14 Nov 2026 | Claude (Anthropic) | Put 8crsk's 'Do the satellites agree?' section into the Overview panel, marked case-study areas in the answer line, and stopped wide sections from stretching the panel (decision 39 UI) | Charulekha Rajesh (pending) |
+| 14 Nov 2026 | Claude (Anthropic) | Found that the Punjab box was mostly other states and partly Pakistan; built the exact state outline and reran everything; added the NASA MCD64A1 burned-area check and whole-record land cover; updated every document to the new numbers; small app change to draw the outline and use its true area (in 8crsk's folder, with his task list's agreement for the deadline). Gemini still unavailable | Mahabu |
 
 ## The team's own decisions
 

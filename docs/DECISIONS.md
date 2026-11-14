@@ -131,6 +131,15 @@ early warning and emergency response. Points that change our plan:
 | 42 | Check C6 with ESA Fire_cci | **Run.** Córdoba fails (-0.440); Aqua alone, with no sensor change, gives -0.427, so the change is in burned area per detected fire, not a seam. Reported with that diagnosis | Same |
 | 43 | Partner and Global Offer data | ESA Fire_cci (C6) and ESA WorldCover through the Microsoft Planetary Computer (land cover at fire cells). Other Global Offers (cloud credits, weather API, domain, collaboration tools) not used: the app is static and needs none, and a new domain this close to the deadline risks a broken link | Same |
 
+## Areas fixed (14 November, about 21:30)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 44 | Punjab and Haryana area | Clipped to the exact outline of Punjab, Haryana and Chandigarh (94,490 km², from geoBoundaries districts; `pipeline/make_areas.py`). The old box was only 46% these states; 23% was Rajasthan, 15% Himachal Pradesh and 9.5% Pakistani Punjab, for which we had no data. Everything was rerun. Result: the hard floor now passes every pre-registered check that applies to it, including the original C3 | Decided by the AI assistant on Mahabu's instruction, after Mahabu reported he could not see the region properly |
+| 45 | Córdoba area name | Renamed "Córdoba and neighbouring areas, Argentina". The box is 71% Córdoba province and holds 57% of its fires in the province; all of its data is present, so the method and numbers are unchanged | Same |
+| 46 | Second burned-area reference | NASA MCD64A1 added as check C6m, after the results and labelled so. Córdoba fails (-0.392; Aqua alone -0.430), Punjab and Haryana passes (-0.036) | Mahabu asked for MCD64A1; the AI assistant ran it |
+| 47 | Land cover period | Whole VIIRS record (2012 to 2025), not 2021 alone, after 8crsk's assistant showed 2021 was not typical for Karnataka | Same |
+
 ## Change log
 
 | Date | Who | Change | Reason |

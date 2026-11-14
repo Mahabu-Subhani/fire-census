@@ -141,6 +141,12 @@ both A and B to agree.
 ]
 ```
 
+`regions.json` entries may also carry `outline` (one or more rings of
+[lon, lat], not closed), `area_km2` (true area of the outline) and
+`outline_source`, for areas clipped to an exact outline (Punjab and Haryana,
+decision 44). The app draws the outline and uses `area_km2` for the whole
+region; without them it uses the box.
+
 ### `app/public/data/<region_id>/cube.json` (or `.parquet` if large; DECIDE)
 
 One row per cell and month that has any value. Missing rows mean zero.

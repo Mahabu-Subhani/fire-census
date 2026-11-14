@@ -15,6 +15,10 @@ export interface Region {
   first_month: string; // "YYYY-MM"
   last_month: string;
   harmonized_from: string;
+  /** Exact outline (one or more rings of [lon, lat], not closed), when the area is not just its box. */
+  outline?: [number, number][][];
+  /** True area of the outline, km². When absent, the box's area is used. */
+  area_km2?: number;
 }
 
 /** One cell and month; same fields as cube.json. */
