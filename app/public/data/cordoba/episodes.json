@@ -1,6 +1,6 @@
 {
- "definition": "Consecutive days with at least 1 harmonized fire cell in the area, allowing gaps of up to 2 quiet days. Ranks are among all 436 episodes since July 2002.",
- "count": 436,
+ "definition": "Consecutive days with at least 1 harmonized fire cell in the area, allowing gaps of up to 2 quiet days. Ranks are among all 463 episodes since July 2002.",
+ "count": 463,
  "largest": [
   {
    "start": "2003-07-01",
@@ -11,7 +11,7 @@
    "peak_day": "2003-08-18",
    "sensor": "MODIS (Aqua)",
    "rank_total": 1,
-   "rank_peak": 4
+   "rank_peak": 5
   },
   {
    "start": "2002-08-08",
@@ -22,14 +22,14 @@
    "peak_day": "2002-09-28",
    "sensor": "MODIS (Aqua)",
    "rank_total": 2,
-   "rank_peak": 7
+   "rank_peak": 8
   },
   {
    "start": "2020-07-24",
    "end": "2020-11-07",
    "days": 107,
-   "total": 2815.13,
-   "peak": 192.18,
+   "total": 3239.57,
+   "peak": 229.53,
    "peak_day": "2020-09-30",
    "sensor": "VIIRS, harmonized",
    "rank_total": 3,
@@ -55,7 +55,7 @@
    "peak_day": "2005-07-27",
    "sensor": "MODIS (Aqua)",
    "rank_total": 5,
-   "rank_peak": 18
+   "rank_peak": 19
   },
   {
    "start": "2006-07-18",
@@ -66,7 +66,7 @@
    "peak_day": "2006-09-27",
    "sensor": "MODIS (Aqua)",
    "rank_total": 6,
-   "rank_peak": 5
+   "rank_peak": 6
   },
   {
    "start": "2008-07-23",
@@ -91,22 +91,22 @@
    "rank_peak": 2
   },
   {
-   "start": "2022-07-28",
-   "end": "2022-12-22",
-   "days": 148,
-   "total": 1401.73,
-   "peak": 131.03,
+   "start": "2022-08-05",
+   "end": "2022-12-11",
+   "days": 129,
+   "total": 1410.12,
+   "peak": 149.1,
    "peak_day": "2022-09-07",
    "sensor": "VIIRS, harmonized",
    "rank_total": 9,
-   "rank_peak": 8
+   "rank_peak": 7
   },
   {
-   "start": "2013-07-12",
+   "start": "2013-07-24",
    "end": "2013-09-12",
-   "days": 63,
-   "total": 1201.52,
-   "peak": 382.07,
+   "days": 51,
+   "total": 1378.83,
+   "peak": 459.66,
    "peak_day": "2013-09-10",
    "sensor": "VIIRS, harmonized",
    "rank_total": 10,
@@ -116,12 +116,12 @@
    "start": "2024-08-23",
    "end": "2024-10-06",
    "days": 45,
-   "total": 1168.34,
-   "peak": 171.02,
+   "total": 1359.23,
+   "peak": 207.87,
    "peak_day": "2024-09-20",
    "sensor": "VIIRS, harmonized",
    "rank_total": 11,
-   "rank_peak": 6
+   "rank_peak": 4
   },
   {
    "start": "2009-09-05",
@@ -165,64 +165,64 @@
    "peak_day": "2010-08-26",
    "sensor": "MODIS (Aqua)",
    "rank_total": 15,
-   "rank_peak": 20
+   "rank_peak": 22
   }
  ],
  "latest": [
   {
-   "start": "2026-08-16",
-   "end": "2026-09-26",
-   "days": 42,
-   "total": 174.49,
-   "peak": 22.04,
+   "start": "2026-08-18",
+   "end": "2026-10-07",
+   "days": 51,
+   "total": 189.38,
+   "peak": 20.82,
    "peak_day": "2026-09-08",
    "sensor": "VIIRS, harmonized",
-   "rank_total": 45,
-   "rank_peak": 62
-  },
-  {
-   "start": "2026-09-30",
-   "end": "2026-10-07",
-   "days": 8,
-   "total": 23.78,
-   "peak": 8.25,
-   "peak_day": "2026-10-03",
-   "sensor": "VIIRS, harmonized",
-   "rank_total": 177,
-   "rank_peak": 143
+   "rank_total": 47,
+   "rank_peak": 72
   },
   {
    "start": "2026-10-17",
    "end": "2026-10-17",
    "days": 1,
-   "total": 2.9,
-   "peak": 2.9,
+   "total": 3.06,
+   "peak": 3.06,
    "peak_day": "2026-10-17",
    "sensor": "VIIRS, harmonized",
-   "rank_total": 364,
-   "rank_peak": 310
+   "rank_total": 372,
+   "rank_peak": 309
   },
   {
    "start": "2026-10-21",
-   "end": "2026-10-31",
-   "days": 11,
-   "total": 25.98,
-   "peak": 6.32,
-   "peak_day": "2026-10-30",
+   "end": "2026-10-22",
+   "days": 2,
+   "total": 5.65,
+   "peak": 3.77,
+   "peak_day": "2026-10-21",
    "sensor": "VIIRS, harmonized",
-   "rank_total": 166,
-   "rank_peak": 178
+   "rank_total": 329,
+   "rank_peak": 282
+  },
+  {
+   "start": "2026-10-26",
+   "end": "2026-10-31",
+   "days": 6,
+   "total": 14.66,
+   "peak": 5.98,
+   "peak_day": "2026-10-31",
+   "sensor": "VIIRS, harmonized",
+   "rank_total": 219,
+   "rank_peak": 212
   },
   {
    "start": "2026-11-06",
-   "end": "2026-11-13",
-   "days": 8,
-   "total": 18.01,
-   "peak": 4.44,
+   "end": "2026-11-12",
+   "days": 7,
+   "total": 12.48,
+   "peak": 3.94,
    "peak_day": "2026-11-11",
    "sensor": "VIIRS, harmonized",
-   "rank_total": 194,
-   "rank_peak": 239
+   "rank_total": 228,
+   "rank_peak": 278
   }
  ]
 }

@@ -89,7 +89,7 @@
     "S-NPP": 13.28,
     "Terra": 10.62
    },
-   "aqua_over_harmonized": 1.212
+   "aqua_over_harmonized": 1.123
   },
   {
    "year": 2013,
@@ -98,7 +98,7 @@
     "S-NPP": 13.32,
     "Terra": 10.68
    },
-   "aqua_over_harmonized": 0.707
+   "aqua_over_harmonized": 0.691
   },
   {
    "year": 2014,
@@ -107,7 +107,7 @@
     "S-NPP": 13.38,
     "Terra": 10.64
    },
-   "aqua_over_harmonized": 1.015
+   "aqua_over_harmonized": 0.946
   },
   {
    "year": 2015,
@@ -116,7 +116,7 @@
     "S-NPP": 13.39,
     "Terra": 10.59
    },
-   "aqua_over_harmonized": 0.956
+   "aqua_over_harmonized": 0.897
   },
   {
    "year": 2016,
@@ -125,7 +125,7 @@
     "S-NPP": 13.34,
     "Terra": 10.64
    },
-   "aqua_over_harmonized": 0.869
+   "aqua_over_harmonized": 0.835
   },
   {
    "year": 2017,
@@ -134,7 +134,7 @@
     "S-NPP": 13.37,
     "Terra": 10.66
    },
-   "aqua_over_harmonized": 1.119
+   "aqua_over_harmonized": 1.063
   },
   {
    "year": 2018,
@@ -144,7 +144,7 @@
     "S-NPP": 13.29,
     "Terra": 10.65
    },
-   "aqua_over_harmonized": 1.192
+   "aqua_over_harmonized": 1.121
   },
   {
    "year": 2019,
@@ -154,7 +154,7 @@
     "S-NPP": 13.28,
     "Terra": 10.64
    },
-   "aqua_over_harmonized": 1.324
+   "aqua_over_harmonized": 1.229
   },
   {
    "year": 2020,
@@ -164,7 +164,7 @@
     "S-NPP": 13.26,
     "Terra": 10.71
    },
-   "aqua_over_harmonized": 0.706
+   "aqua_over_harmonized": 0.673
   },
   {
    "year": 2021,
@@ -174,7 +174,7 @@
     "S-NPP": 13.26,
     "Terra": 10.68
    },
-   "aqua_over_harmonized": 0.908
+   "aqua_over_harmonized": 0.844
   },
   {
    "year": 2022,
@@ -184,7 +184,7 @@
     "S-NPP": 13.28,
     "Terra": 10.46
    },
-   "aqua_over_harmonized": 0.612
+   "aqua_over_harmonized": 0.585
   },
   {
    "year": 2023,
@@ -195,7 +195,7 @@
     "S-NPP": 13.33,
     "Terra": 10.3
    },
-   "aqua_over_harmonized": 0.814
+   "aqua_over_harmonized": 0.767
   },
   {
    "year": 2024,
@@ -206,7 +206,7 @@
     "S-NPP": 13.31,
     "Terra": 10.04
    },
-   "aqua_over_harmonized": 0.847
+   "aqua_over_harmonized": 0.806
   },
   {
    "year": 2025,
@@ -217,7 +217,7 @@
     "S-NPP": 13.32,
     "Terra": 9.69
    },
-   "aqua_over_harmonized": 1.519
+   "aqua_over_harmonized": 1.417
   },
   {
    "year": 2026,
@@ -228,7 +228,7 @@
     "S-NPP": 13.41,
     "Terra": 9.11
    },
-   "aqua_over_harmonized": 1.24
+   "aqua_over_harmonized": 1.158
   }
  ],
  "note": "Mean local solar time of daytime detections. Aqua's last orbit-maintenance manoeuvre was in December 2021; since then its afternoon pass moves later each year and Terra's morning pass earlier. aqua_over_harmonized above 1 means a MODIS-only calendar would show more fire than the harmonized record."

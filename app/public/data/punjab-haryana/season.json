@@ -123,26 +123,26 @@
   },
   {
    "year": 2012,
-   "start": "10-19",
+   "start": "10-18",
    "peak": "11-02",
    "end": "11-11",
-   "start_doy": 293,
+   "start_doy": 292,
    "peak_doy": 307,
    "end_doy": 316,
-   "length_days": 24,
-   "total": 13280.77,
+   "length_days": 25,
+   "total": 14310.67,
    "sensor": "VIIRS, harmonized"
   },
   {
    "year": 2013,
-   "start": "10-22",
+   "start": "10-21",
    "peak": "11-02",
    "end": "11-12",
-   "start_doy": 295,
+   "start_doy": 294,
    "peak_doy": 306,
    "end_doy": 316,
-   "length_days": 22,
-   "total": 12029.11,
+   "length_days": 23,
+   "total": 12962.66,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -154,7 +154,7 @@
    "peak_doy": 307,
    "end_doy": 316,
    "length_days": 24,
-   "total": 14369.6,
+   "total": 15498.09,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -166,7 +166,7 @@
    "peak_doy": 308,
    "end_doy": 318,
    "length_days": 25,
-   "total": 12242.47,
+   "total": 13192.66,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -178,7 +178,7 @@
    "peak_doy": 308,
    "end_doy": 316,
    "length_days": 25,
-   "total": 16528.53,
+   "total": 17810.25,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -190,7 +190,7 @@
    "peak_doy": 304,
    "end_doy": 324,
    "length_days": 34,
-   "total": 10684.03,
+   "total": 11505.8,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -202,7 +202,7 @@
    "peak_doy": 309,
    "end_doy": 320,
    "length_days": 23,
-   "total": 11297.15,
+   "total": 12170.93,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -214,7 +214,7 @@
    "peak_doy": 307,
    "end_doy": 316,
    "length_days": 22,
-   "total": 8609.34,
+   "total": 9275.29,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -226,7 +226,7 @@
    "peak_doy": 308,
    "end_doy": 316,
    "length_days": 23,
-   "total": 13521.07,
+   "total": 14584.07,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -238,7 +238,7 @@
    "peak_doy": 311,
    "end_doy": 318,
    "length_days": 19,
-   "total": 14798.18,
+   "total": 15955.03,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -250,7 +250,7 @@
    "peak_doy": 308,
    "end_doy": 317,
    "length_days": 21,
-   "total": 8751.26,
+   "total": 9428.57,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -262,7 +262,7 @@
    "peak_doy": 310,
    "end_doy": 322,
    "length_days": 24,
-   "total": 6039.85,
+   "total": 6511.22,
    "sensor": "VIIRS, harmonized"
   },
   {
@@ -274,19 +274,19 @@
    "peak_doy": 312,
    "end_doy": 326,
    "length_days": 36,
-   "total": 1604.57,
+   "total": 1729.45,
    "sensor": "VIIRS, harmonized"
   },
   {
    "year": 2025,
    "start": "10-20",
    "peak": "11-04",
-   "end": "11-15",
+   "end": "11-14",
    "start_doy": 293,
    "peak_doy": 308,
-   "end_doy": 319,
-   "length_days": 27,
-   "total": 705.86,
+   "end_doy": 318,
+   "length_days": 26,
+   "total": 762.03,
    "sensor": "VIIRS, harmonized"
   }
  ],
@@ -307,8 +307,8 @@
    "hi": 8.9
   },
   "length": {
-   "days_per_decade": -1.1,
-   "lo": -3.0,
+   "days_per_decade": -1.2,
+   "lo": -3.3,
    "hi": 0.8
   }
  },
