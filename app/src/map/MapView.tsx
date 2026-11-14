@@ -124,7 +124,7 @@ export default function MapView() {
 function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme: Theme }) {
   const ramp = EMBER[theme];
   const { region, rows, mode, meta } = useSelection();
-  const { polygon, setPolygon } = useSelectionActions();
+  const { polygon, setPolygon, regions, setRegion } = useSelectionActions();
   const [liveDay, setLiveDay] = useState<Live>("off");
   // Playback: index into the months of the date range, or null when the map shows the whole range.
   const months = useMemo(() => (rows.length ? monthsBetween(rows.reduce((m, r) => (r.ym < m ? r.ym : m), rows[0].ym), rows.reduce((m, r) => (r.ym > m ? r.ym : m), rows[0].ym)) : []), [rows]);
@@ -145,8 +145,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   const [points, setPoints] = useState<Polygon>([]);
 
   // Handlers registered once read the latest state through this ref.
-  const live = useRef({ tool, points, setPolygon });
-  live.current = { tool, points, setPolygon };
+  const live = useRef({ tool, points, setPolygon, setRegion });
+  live.current = { tool, points, setPolygon, setRegion };
 
   useEffect(() => {
     if (!container.current) return;
@@ -172,7 +172,10 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
       if (!map.hasImage(e.id)) map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
     });
     map.on("load", () => {
-      for (const id of ["activity", "region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
+      for (const id of ["areas", "activity", "region", "selection", "draft"]) map.addSource(id, { type: "geojson", data: empty });
+      // The other study areas: faint, and a click switches to one.
+      map.addLayer({ id: "areas-fill", type: "fill", source: "areas", paint: { "fill-color": "#f86f1d", "fill-opacity": 0.1 } });
+      map.addLayer({ id: "areas-line", type: "line", source: "areas", paint: { "line-color": "#f86f1d", "line-width": 1.2, "line-opacity": 0.7, "line-dasharray": [2, 2] } });
       map.addLayer({
         id: "activity-fill",
         type: "fill",
@@ -198,6 +201,17 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
       setPoints([]);
       setTool("none");
     };
+
+    map.on("click", "areas-fill", (e) => {
+      const id = e.features?.[0]?.properties?.id;
+      if (live.current.tool === "none" && typeof id === "string") live.current.setRegion(id);
+    });
+    map.on("mouseenter", "areas-fill", () => {
+      if (live.current.tool === "none") map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "areas-fill", () => {
+      if (live.current.tool === "none") map.getCanvas().style.cursor = "";
+    });
 
     map.on("click", (e: MapMouseEvent) => {
       const { tool: t, points: pts } = live.current;
@@ -238,6 +252,48 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
     const [w, s, e, n] = region.bbox;
     map.fitBounds([[w, s], [e, n]], { padding: framePadding(), duration: 600 });
   }, [region, ready]);
+
+  // Every other study area: its outline and a name tag that switches to it.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    const others = regions.filter((r) => r.id !== region?.id);
+    (map.getSource("areas") as GeoJSONSource).setData({
+      type: "FeatureCollection",
+      features: others.flatMap((r) =>
+        (r.outline && r.outline.length > 0 ? r.outline : [bboxToPolygon(r.bbox)]).map((ring) => ({ ...polygonFeature(ring), properties: { id: r.id } })),
+      ),
+    });
+    const markers = others.map((r) => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "area-pin";
+      el.textContent = r.name.split(",")[0];
+      el.title = `Show ${r.name}`;
+      el.setAttribute("aria-label", `Show ${r.name}`);
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        live.current.setRegion(r.id);
+      });
+      const [w, s, e, n] = r.bbox;
+      return new maplibregl.Marker({ element: el }).setLngLat([(w + e) / 2, (s + n) / 2]).addTo(map);
+    });
+    return () => markers.forEach((m) => m.remove());
+  }, [regions, region, ready]);
+
+  /** Zoom out to every study area at once. */
+  const showAll = () => {
+    const map = mapRef.current;
+    if (!map || regions.length === 0) return;
+    const w = Math.min(...regions.map((r) => r.bbox[0]));
+    const s = Math.min(...regions.map((r) => r.bbox[1]));
+    const e = Math.max(...regions.map((r) => r.bbox[2]));
+    const n = Math.max(...regions.map((r) => r.bbox[3]));
+    // Extra room at the sides so the name tags, centred on each area, stay on screen.
+    const pad = framePadding();
+    const wide = window.innerWidth > 860;
+    map.fitBounds([[w, s], [e, n]], { padding: { ...pad, left: pad.left + (wide ? 160 : 70), right: pad.right + (wide ? 90 : 50) }, duration: 900, maxZoom: 4 });
+  };
 
   // Fire activity per cell for the area and dates shown.
   useEffect(() => {
@@ -335,6 +391,13 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
         </div>
       )}
       <div className="map-layers" role="group" aria-label="Map layers">
+        {regions.length > 1 && (
+          <div className="ml-row">
+            <span className="ml-label">{regions.length} study areas</span>
+            <button type="button" onClick={showAll}>Show all</button>
+            <span className="ml-hint">or click an orange outline</span>
+          </div>
+        )}
         {months.length > 1 && (
           <div className="ml-row">
             <button

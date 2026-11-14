@@ -154,6 +154,13 @@ early warning and emergency response. Points that change our plan:
 |---|---|---|---|
 | 50 | Answer the in-sample objection to C1, and put a range on the ranking | `pipeline/loyo.py`, added after results and labelled so. (a) Check **C1x**: fitted on Feb 2015 to Dec 2021 only, tested on the C1 window (Feb 2012 to Jan 2015). Córdoba detection curve +0.087, pass; the constant ratio fails the same test there (+0.143), the first held-out evidence that the curve beats a ratio. Punjab and Haryana hard floor +0.024, pass. (b) Leaving one year out (2012 to 2021): Córdoba curve 8 of 10 years within 0.10, Punjab floor 8 of 10. (c) The out-of-sample monthly scatter (`meta.month_log_sd`: Córdoba 0.244, Punjab 0.423) gives a 90 percent range on "Nth highest of N" in the answer line, treating errors in different years as independent | Mahabu asked for it after an outside review; the AI assistant wrote and ran it |
 
+
+## Loading and the study areas (added 14 November, about 22:30)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 51 | Slow first load, and finding the other areas | (a) A loading bar with the share of the area's record received. Measured on the live site: the answer waits for `cube.json` (Punjab 14.5 MB, 1 MB gzipped), which took 15 to 27 s when GitHub Pages had not cached it (about 60 KB/s) and 3 s when it had; reading it takes about 0.1 s. Pages sends it gzipped, so the build records each cube's uncompressed size (`vite.config.ts`) to show a true percentage. The selection contract is unchanged (`cubeProgress` in `app/src/data/load.ts`). (b) One area is still loaded at a time, since loading all four would double the wait; the map now shows the other areas' outlines and name tags, a click on either switches area, and "Show all" zooms out to all four. A columnar cube (measured: Punjab 913 KB to 520 KB gzipped) is left for later: it changes the data contract with Person A | 8crsk, 14 Nov, as team lead: "why does it take a lot of time for it to load the data" and asked whether to keep one area at a time. The AI assistant measured the load and proposed both parts; 8crsk chose them |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -166,4 +173,5 @@ early warning and emergency response. Points that change our plan:
 | 14 Nov 2026 | 8crsk | Decision 38: rules for comparing the satellites | See row 38 |
 | 14 Nov 2026 | 8crsk | Decision 44: land cover in the app | See row 44 |
 | 14 Nov 2026 | 8crsk | Decisions 48 and 49: people near fires; live NASA fires and playback on the map | See rows 48 and 49 |
+| 14 Nov 2026 | 8crsk | Decision 51: loading bar and the study areas on the map | See row 51 |
 | 14 Nov 2026 | Charulekha | Decision 39: map-first retro UI, Arial, satellite base map | See row 39 |

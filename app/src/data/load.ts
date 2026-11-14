@@ -13,12 +13,73 @@ async function getJson<T>(path: string): Promise<T> {
 
 export const loadRegions = () => getJson<Region[]>("regions.json");
 
+/** How far a cube download has got: bytes read (uncompressed) and the expected total, when known. */
+export interface Progress {
+  regionId: string;
+  read: number;
+  total: number | null;
+}
+let progress: Progress | null = null;
+const listeners = new Set<() => void>();
+function setProgress(p: Progress | null) {
+  progress = p;
+  listeners.forEach((l) => l());
+}
+/** For useSyncExternalStore: the loading bar subscribes here, outside the selection contract. */
+export const cubeProgress = {
+  subscribe(l: () => void) {
+    listeners.add(l);
+    return () => listeners.delete(l);
+  },
+  get: () => progress,
+};
+
+/** The expected size of a cube, from the build (vite.config.ts); null in tests or for a region added later. */
+function expectedBytes(regionId: string): number | null {
+  const sizes = typeof __CUBE_BYTES__ === "object" ? __CUBE_BYTES__ : {};
+  return sizes[regionId] ?? null;
+}
+
+/** Reads cube.json as a stream so the page can show how much has arrived. Falls back to a plain read. */
+async function fetchCube(regionId: string): Promise<CubeRow[]> {
+  const response = await fetch(`${base}${regionId}/cube.json`);
+  if (!response.ok) throw new Error(`Could not load ${regionId}/cube.json (HTTP ${response.status})`);
+  if (!response.body || typeof TextDecoder === "undefined") return (await response.json()) as CubeRow[];
+  const total = expectedBytes(regionId);
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const parts: string[] = [];
+  let read = 0;
+  let last = 0;
+  setProgress({ regionId, read: 0, total });
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    read += value.byteLength;
+    parts.push(decoder.decode(value, { stream: true }));
+    // A few updates a second are enough for the bar.
+    const now = Date.now();
+    if (now - last > 120) {
+      last = now;
+      setProgress({ regionId, read, total });
+    }
+  }
+  parts.push(decoder.decode());
+  setProgress({ regionId, read, total: total ?? read });
+  try {
+    return JSON.parse(parts.join("")) as CubeRow[];
+  } finally {
+    setProgress(null);
+  }
+}
+
 // Cubes are large, so keep each one after its first load.
 const cubeCache = new Map<string, Promise<CubeRow[]>>();
 export function loadCube(regionId: string): Promise<CubeRow[]> {
   let cube = cubeCache.get(regionId);
   if (!cube) {
-    cube = getJson<CubeRow[]>(`${regionId}/cube.json`);
+    cube = fetchCube(regionId);
+    cube.catch(() => setProgress(null));
     cube.catch(() => cubeCache.delete(regionId));
     cubeCache.set(regionId, cube);
   }

@@ -4,7 +4,8 @@
 // at a time, and a small toolbar holds the actions (decision 39). "research"
 // is the full page: every chart, the method and every check, the data.
 // Chart slots hold Person C's components.
-import { lazy, Suspense, useState, type ReactNode } from "react";
+import { lazy, Suspense, useState, useSyncExternalStore, type ReactNode } from "react";
+import { cubeProgress } from "./data/load";
 import { charts } from "./charts";
 import { formatMonth, useAreaLabel } from "./charts/ChartFrame";
 import { useMonthStatus } from "./charts/UnusualBanner";
@@ -182,6 +183,38 @@ function Footer() {
   );
 }
 
+/**
+ * While the area's record downloads: how much has arrived. The whole 26-year
+ * record (cube.json) is needed before the answer can be worked out, and on a
+ * slow connection it takes several seconds.
+ */
+function LoadingBar({ regionId }: { regionId: string | null }) {
+  const p = useSyncExternalStore(cubeProgress.subscribe, cubeProgress.get);
+  const mine = p && p.regionId === regionId ? p : null;
+  const share = mine && mine.total ? Math.min(1, mine.read / mine.total) : null;
+  const mb = (n: number) => (n / 1e6).toLocaleString("en-GB", { maximumFractionDigits: 1 });
+  const text = !mine
+    ? "Loading…"
+    : share !== null
+      ? `Loading the fire record since 2000: ${Math.round(share * 100)} %`
+      : `Loading the fire record since 2000: ${mb(mine.read)} MB`;
+  return (
+    <div className="mf-loading">
+      <p className="mf-when">{text}</p>
+      <div
+        className="mf-bar"
+        role="progressbar"
+        aria-label="Loading the fire record"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={share !== null ? Math.round(share * 100) : undefined}
+      >
+        <span style={share !== null ? { width: `${share * 100}%` } : undefined} className={share === null ? "indeterminate" : undefined} />
+      </div>
+    </div>
+  );
+}
+
 /** The answer, always visible at the top of the panel. */
 function Answer() {
   const s = useMonthStatus();
@@ -203,7 +236,7 @@ function Answer() {
           {s.verdictText && <p className={`mf-verdict${s.alert ? " alert" : ""}`}>{s.verdictText}</p>}
         </>
       ) : (
-        <p className="mf-when">{s.state === "loading" ? "Loading…" : headline}</p>
+        s.state === "loading" ? <LoadingBar regionId={region?.id ?? null} /> : <p className="mf-when">{headline}</p>
       )}
     </div>
   );

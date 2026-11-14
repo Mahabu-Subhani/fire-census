@@ -495,6 +495,13 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 .ml-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff2a1a; box-shadow: 0 0 0 0 rgba(255, 42, 26, 0.6); animation: ml-pulse 1.8s infinite; }
 @keyframes ml-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 42, 26, 0.6); } 70% { box-shadow: 0 0 0 7px rgba(255, 42, 26, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 42, 26, 0); } }
 @media (prefers-reduced-motion: reduce) { .ml-dot { animation: none; } }
+.ml-hint { color: var(--muted); font-size: 0.72rem; }
+.area-pin {
+  padding: 3px 8px; min-height: 0; background: var(--surface); color: var(--text); border: 1px solid #f86f1d;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; white-space: nowrap;
+}
+.area-pin:hover, .area-pin:focus-visible { background: #f86f1d; color: #0a0a09; }
+@media print { .area-pin { display: none; } }
 .ml-note { margin: 0; color: var(--muted); font-size: 0.72rem; line-height: 1.35; max-width: 360px; }
 .map-stamp { display: none; }
 .mf-map .map-layers {
@@ -515,6 +522,12 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 .mf-area { margin: 0; font-size: 1.6rem; font-weight: 700; line-height: 1.15; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .mf-tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 6px; border: 1px solid var(--accent); color: var(--accent-2); }
 .mf-when { margin: 0; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.mf-loading { display: grid; gap: 8px; }
+.mf-bar { height: 6px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; position: relative; }
+.mf-bar span { display: block; height: 100%; background: var(--accent); transition: width 0.15s linear; }
+.mf-bar span.indeterminate { width: 30%; position: absolute; animation: mf-slide 1.2s ease-in-out infinite; }
+@keyframes mf-slide { 0% { left: -30%; } 100% { left: 100%; } }
+@media (prefers-reduced-motion: reduce) { .mf-bar span.indeterminate { animation: none; width: 100%; opacity: 0.4; } }
 .mf-headline { margin: 6px 0 0; font-size: 1.05rem; font-weight: 600; line-height: 1.25; }
 .mf-range { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
 .mf-verdict { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
