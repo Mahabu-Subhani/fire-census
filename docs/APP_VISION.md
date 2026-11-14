@@ -84,8 +84,9 @@ video (`docs/DECISIONS.md` 21 to 27).
    highest of 24") always works and a manager understands it. Below a minimum
    amount of activity, show "too little activity to judge" instead of a label.
 3. **Naming the unit.** The harmonized value is not a hotspot count: it is
-   MODIS-equivalent fire cells. Call it one thing everywhere, for example
-   "fire activity (MODIS-equivalent detections)", and say so on every chart. A
+   MODIS-equivalent fire cells. Call it one thing everywhere: take the label
+   from `meta.unit` (currently "Aqua-equivalent fire cells"), never type it by
+   hand, and say so on every chart. A
    manager who sees fewer "hotspots" than FIRMS shows will otherwise stop
    trusting us.
 4. **Freshness.** State what the data covers: "Data to 7 Nov 2026. The last
