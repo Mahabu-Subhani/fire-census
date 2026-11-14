@@ -15,3 +15,5 @@ Add a row when you add the resource, not at the end.
 | OpenFreeMap (Positron style) | Map tiles | https://openfreemap.org | Base map, no key needed | Free to use with attribution; VERIFY terms before submission |
 | OpenStreetMap data | Map data | https://www.openstreetmap.org/copyright | Base map content, via OpenFreeMap | ODbL; attribution "© OpenStreetMap contributors" shown on the map |
 | GitHub Pages and GitHub Actions | Hosting | https://pages.github.com | Publishing the app | GitHub terms of service |
+| Observable Plot 0.6.16 | Library (app) | https://observablehq.com/plot/ | Burning calendar and the other charts (cells, tooltips, colour legend) | ISC |
+| Cividis colour map, via d3-scale-chromatic | Colour scale (app) | https://github.com/d3/d3-scale-chromatic | Calendar colour ramp, readable with colour-vision deficiency. Paper: Nuñez, Anderton and Renslow (2018), PLOS ONE, doi:10.1371/journal.pone.0199239 (VERIFY the citation; not opened) | ISC (library) |
