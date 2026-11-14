@@ -80,6 +80,7 @@ Times are from a 32 GB Windows laptop.
 | 8c. Land cover at fire cells | `$PY landcover.py` | `work/landcover.json` | 7 min (network) |
 | 8d. Stretch analyses | `$PY stretch.py` (after step 9) | `app/public/data/<area>/{season,drift,episodes}.json`, season figures | 1 min |
 | 8e. Out-of-sample checks | `$PY loyo.py` (after step 4) | `work/loyo.json`: check C1x, leave-one-year-out, monthly scatter for the rank range | 3 min |
+| 8g. Two findings, reproducible (changes nothing) | `$PY findings.py` (after step 9) | `work/findings.json`: the shipped constants against the height of the midday sun; Aqua against the record by season, before and after its orbit drift | 2 s |
 | 8f. Year-round against monthly constants | `$PY seasonal.py` (after step 5) | `work/seasonal.json`: for each model the checks under one year-round constant and under a constant per calendar month, and the error by calendar month, read from `checks.json`; see `docs/research/20261115-checks-audit-seasonal-bias.md` | 2 s |
 | 9. App data | `$PY export.py` | `app/public/data/regions.json`, `<area>/cube.json`, `<area>/meta.json` | 1 min |
 | 10. Figures | `$PY figures.py` | `submission/figures/*.png` | 20 s |
@@ -98,6 +99,7 @@ $FIRE_DATA/venv/Scripts/python -m pytest pipeline/tests -q
 | `tests/test_clean.py` | The cleaned tables: rows conserved, inside the area, mission dates, pixel sizes | Yes (skipped without it) |
 | `tests/test_method.py` | The method on simulated fires with a known answer: the code gets a known detection curve back, the curve record stays within 5 percent when the mix of weak and strong fires changes, one constant ratio is off by more than 30 percent in the same cases; the step statistic, the change-point test and the shipping rule; one test for each error corrected on 14 November (hard-floor constant, daily series for C7, change-point check on too few months) | No |
 | `tests/test_docs_numbers.py` | `README.md` and `submission/results.md` quote the values in `app/public/data/<area>/meta.json` | No |
+| `tests/test_findings.py` | The sun's height on known answers (overhead at the equator at the equinoxes, summer in opposite months in the two hemispheres); constants read from the shipped files; borrowed constants not reported | No |
 | `tests/test_seasonal.py` | The constant per calendar month on known answers: no fires gives the year-round constant, many fires give the ratio of the three-month window, December and January are neighbours, a simulated seasonal bias is removed; the year-round versions are checked with the same code | No |
 
 The last two run in a fresh clone. Simulated fires test the code and the

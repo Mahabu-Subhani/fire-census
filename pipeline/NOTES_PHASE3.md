@@ -349,7 +349,9 @@ run).
    `L2y`, `L1ry`.
 2. **What the rule ships, as first written.** Córdoba: hard floor (the curve
    fails C2). Punjab and Haryana: hard floor (the curve fails C3 and C8).
-   Chilecito: Córdoba's. Karnataka: ratio. The detection curve ships nowhere.
+   Chilecito: Córdoba's. Karnataka: ratio. The detection curve weights the
+   harmonized count nowhere; it still sets the floor's cut-off and weights
+   the small-fire layer (`export.py`: `sm = 1 - p`).
 3. **Shipped models, before (year-round, as shipped until 15 Nov) and after.**
 
 | | Córdoba before (curve) | Córdoba after (hard floor) | Punjab and Haryana before (hard floor) | Punjab and Haryana after (hard floor) |
