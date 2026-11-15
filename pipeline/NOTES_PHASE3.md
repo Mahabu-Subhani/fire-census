@@ -161,8 +161,8 @@ rule. Night 3.73 against 3.7: passes. So C5 fails for Karnataka.
 
 ## Still open
 
-- C6 (ESA burned area): not run.
-- C5 for Karnataka: not run (evidence.py covers the two calibration areas).
+- C6 (ESA burned area): not run. *(Resolved later the same day; see "Check C6" above.)*
+- C5 for Karnataka: not run (evidence.py covers the two calibration areas). *(Resolved; see "C5 for Karnataka" above.)*
 
 ## Areas fixed and rerun (14 November, about 21:30)
 
@@ -235,7 +235,7 @@ files (`from_hotspots.py`). Reviewed by: Mahabu Subhani (pending).
 7. **`obs`** counted the first days of January twice (`obs.py` fixed; data
    capped at the days in the month, not yet recomputed).
 8. **C6** included 2019 with three ESA months missing (`firecci.py` now uses
-   complete years; value not yet recomputed). C6 and C6m for Punjab and Haryana
+   complete years; value not yet recomputed; *recomputed 15 Nov, see the last section*). C6 and C6m for Punjab and Haryana
    predate item 1 (about -0.05 each when recomputed; still inside the limit).
 9. **`refresh.py`** took the last fetched date across all sources, so a run
    that stopped after one sensor could leave a gap in the others. Now per source.
@@ -244,3 +244,197 @@ files (`from_hotspots.py`). Reviewed by: Mahabu Subhani (pending).
 
 Sensitivity, rerun: every verdict is unchanged under all five alternative
 settings in both calibrated areas (before item 1, two Punjab verdicts moved).
+
+## Check C6 recomputed (15 November)
+
+AI-assisted, at Mahabu's request. Reviewed by: Mahabu Subhani (pending).
+
+1. **Why October to December 2019 were "missing".** Not a server failure. ESA
+   found an error in the processing of November 2019 (October and December
+   less affected), reprocessed the three months and put them in
+   `2019/new-corrected/` on the CEDA archive; the top-level path is a 404.
+   `firecci.py` now reads them there (`CORRECTED`, `url()`).
+2. **Failed months were never retried.** They were dropped before the cache
+   was saved, and the cache was reused whenever it existed. Now every month
+   missing from the cache is fetched again on each run, and the fetched
+   months are merged into it.
+3. **Rerun** from a fresh clone: `from_hotspots.py`, `harmonize.py`
+   (constants as published: Punjab floor 0.371 day, 0.221 night; Córdoba
+   midpoint 9.9 MW), then `firecci.py`; 240 of 240 months read.
+4. **Reproduction first.** With October to December 2019 removed and 2019
+   kept (the old rule), the numbers are Córdoba -0.440, Karnataka +0.276,
+   Chilecito +0.430: the published values. Punjab gives -0.149 under both
+   rules; the published -0.104 predates the hard-floor correction.
+5. **Result.** With 2019 complete: Córdoba -0.440 (fail; Aqua alone -0.427),
+   Punjab and Haryana -0.149 (pass; Aqua alone -0.125; seam part -0.024),
+   Chilecito +0.430 (fail), Karnataka +0.276 (fail). 2019 is not the median
+   year of 2013 to 2019 in any area, so completing it changes no value.
+6. **Into the app.** Only the C6 rows of the four `meta.json` files changed,
+   worded exactly as `export.py` writes them from `work/c6.json` (a full
+   `export.py` run with that file present writes the same rows).
+7. **Still to recompute:** C6m for Punjab and Haryana (before the hard-floor
+   correction; about -0.08 expected). *Done: item 8.*
+8. **C6m recomputed** the same day (`mcd64.py`, 2,114 tile-months): Punjab
+   and Haryana -0.036 to **-0.081** (pass; Aqua alone -0.089); Córdoba -0.392,
+   Chilecito -0.237, Karnataka +0.374 unchanged. `mcd64.py` had the same
+   never-retry flaw as `firecci.py` (fixed). Its 289 "failed" tile-months
+   were tiles the catalogue search returns because they touch the box but
+   that hold no pixel of it ("Intersection is empty"); they now count as
+   zero, and no value changes.
+
+## Second audit of the pipeline (15 November)
+
+AI-assisted: an independent AI read of `pipeline/` (given the code, not our
+conclusions), then a full rerun from the shipped hotspot files: `harmonize`,
+`validate`, `loyo`, `sensitivity`, `evidence`, `firecci`, `mcd64`, `export`,
+`stretch`. Reviewed by: Mahabu Subhani (pending).
+
+**Reproduction.** Every `cube.json` and every season, drift and episode file
+came out byte for byte as shipped; in `meta.json` every check value except
+C6 and C6m (recomputed above) matched. The reviewer confirmed the step
+windows (36 months each side), every threshold comparison, the C3/C3r cell
+filter, the C4 period (103 months), C7's windows and test, the Pettitt
+p-value, and the shipping rule.
+
+**Fixed:**
+
+1. **Chilecito showed Córdoba's numbers as its own** in two places. Its C1x
+   row had Córdoba's value (+0.087) beside "not run", and its `month_log_sd`
+   (the monthly error behind the rank range) was Córdoba's 0.244, so its rank
+   range was too narrow for an area that fails C1 and C4. Now C1x has no
+   value (the note gives Córdoba's result as Córdoba's), and `month_log_sd` is
+   null, so the app shows no range there (`loyo.py`).
+2. **Stale note would come back on a rebuild.** `shipping.json` still told
+   `export.py` to mark Punjab's C6 and C6m as computed before the
+   correction; on a fresh clone without the burned-area work files that note
+   would be attached to the recomputed values. Removed.
+3. **Season label by year, not by date** (`stretch.py`): a season window
+   starting in January 2012 (Karnataka) was labelled VIIRS although January
+   2012 is still Aqua. Now the record in use on the peak day. No shipped file
+   changes (Karnataka's 2012 peak falls after February).
+4. **Notes for borrowing areas** ended in a lower-case sentence fragment with
+   the area id ("curve and constants borrowed from cordoba"); now a sentence
+   with the area's name (`export.py`). The C2 note now says that only the 2016
+   placebo tests anything (`validate.py`; wording asked for by the session
+   reviewing the project page).
+
+**Not fixed, reported:**
+
+- **PELT was not run.** The pre-registration lists PELT as an ungated second
+  opinion for C1b; no code computes it. Its penalty was never fixed in
+  advance, so choosing one now would be a choice made after seeing results.
+  Stated in `limits.md` and in a dated note in `PREREGISTRATION.md`.
+- **Variant A is assumed** in `stretch.py`, `firecci.py`, `mcd64.py`,
+  `evidence.py` and `figures.py`. Every area ships variant A, so no number is
+  wrong; switching an area to B in `shipping.json` would need these changed.
+- **`docs/ARCHITECTURE.md`'s file list** says `season.json` and
+  `episodes.json` exist for fewer areas, and `drift.json` for three; the code
+  writes them for all four (Punjab's `episodes.json` is an explicit null).
+  It is the shared contract, so the change is left to Mahabu and 8crsk.
+- **`obs` (clear-view days)** is still up to 3 days high in January. It needs
+  the Aqua daily fire masks (Earthdata login, about 3 hours of download).
+
+## One constant per calendar month (15 November, decision 57)
+
+AI-assisted. Reviewed by: Mahabu Subhani (pending). Every number is from
+`checks.json`, `loyo.json`, `sensitivity.json`, `evidence.json`, `c6.json`
+and `c6m.json` of the rebuild of 15 November (from the raw FIRMS files:
+`clean.py` to `hotspots.py`; data to 13 November as before, `refresh.py` not
+run).
+
+1. **Why.** Check C3's error followed the season, the same in the fitting
+   years and in 2018 to 2019 (`docs/research/20261115-checks-audit-seasonal-
+   bias.md`). `harmonize.seasonal_constants` fits each model's daytime
+   constant per calendar month; the year-round versions are kept as `S0y`,
+   `L2y`, `L1ry`.
+2. **What the rule ships, as first written.** Córdoba: hard floor (the curve
+   fails C2). Punjab and Haryana: hard floor (the curve fails C3 and C8).
+   Chilecito: Córdoba's. Karnataka: ratio. The detection curve weights the
+   harmonized count nowhere; it still sets the floor's cut-off and weights
+   the small-fire layer (`export.py`: `sm = 1 - p`).
+3. **Shipped models, before (year-round, as shipped until 15 Nov) and after.**
+
+| | Córdoba before (curve) | Córdoba after (hard floor) | Punjab and Haryana before (hard floor) | Punjab and Haryana after (hard floor) |
+|---|---|---|---|---|
+| C1 | 0.049 | 0.077 | -0.016 | -0.020 |
+| C2 (2016) | -0.089 | -0.094 | -0.060 | -0.059 |
+| C3 | 0.207 fail | 0.117 | 0.169 fail | 0.148 |
+| C3x (2020 to 2021) | 0.125 | 0.124 | 0.223 fail | 0.169 fail |
+| C3r | -0.072 | -0.068 | -0.042 | -0.081 |
+| C4 slope, correlation | 0.951, 0.987 | 0.938, 0.977 | 1.025, 0.993 | 1.026, 0.989 |
+| C1x | 0.087 | 0.072 | 0.023 | 0.024 |
+| C6 | -0.440 fail | -0.403 fail | -0.149 | -0.148 |
+| C6m | -0.392 fail | -0.404 fail | -0.081 | -0.080 |
+| Leave one year out: years within 0.10, largest miss | 8 of 10, 0.181 | 3 of 10, 0.233 (2013) | 8 of 10, 0.129 | 8 of 10, 0.135 |
+| Monthly error used for the rank range (`month_log_sd`) | 0.244 | 0.246 | 0.426 | 0.361 |
+
+   Córdoba's detection curve with monthly constants, which does not ship: C1
+   0.066, C2 -0.114 fail, C3 0.072, C3x 0.125, C1x 0.100 fail, 9 of 10 years
+   within 0.10 (largest 0.193, 2013), `month_log_sd` 0.186.
+4. **Sensitivity of the shipped models** (five other settings). Córdoba: C1
+   0.070 to 0.088; C2 -0.094 to -0.111, a fail in three; C3 0.098 to 0.222, a
+   fail in three; C3x 0.114 to 0.143; C3r -0.088 to -0.056. Punjab and
+   Haryana: C1 -0.025 to -0.008; C2 -0.086 to -0.047; C3 0.154 to 0.242, a
+   fail in all five; C3x 0.148 to 0.173, a fail in three; C3r -0.100 to
+   -0.072, one a fail.
+5. **Mix test, Córdoba 2012 to 2021.** Hard floor 0.76 (p = 0.011), ratio
+   -0.75 (p = 0.013), curve 0.32 (p = 0.37).
+6. **Aqua against the record, ln(Aqua / record).** Córdoba -0.011 (2012 to
+   2021) and 0.025 (2022 to 2026). Punjab and Haryana 0.028 and 0.258; in
+   October and November alone 0.032 and 0.395; in April to June -0.000 and
+   -0.041.
+7. **Other values that changed.** Season totals, Punjab and Haryana rice
+   season: 2020 14,584; 2024 1,729; 2025 762 (timing trends unchanged: peak
+   +6.7 days per decade). Córdoba season peak +7.5 days per decade (1.0 to
+   14.4). Chilecito July 2026: 65.21 against a median of 4.83 (13.5 times),
+   2nd of 25; its episode is the 9th of 277 by total. 1 to 13 November 2026:
+   Punjab and Haryana 23rd of 25 (0.09 times the median), Córdoba 22nd of 25
+   (0.30 times). Small-fire layer over the record, median 2013 to 2025: 2.17
+   and 1.75.
+8. **Hotspot files.** Rows changed class only in Córdoba and Chilecito from
+   2012 on (30 files), where the model changed from the curve to the floor.
+   The Punjab and Haryana and Karnataka files have the same rows as before
+   and were left as committed.
+9. **Not rerun.** `landcover.json`, `sources.json` and `population.json`
+   (app scripts; the first two use the hotspot classes, so Córdoba's and
+   Chilecito's are slightly out of date) and `obs` (carried in from the
+   daily-mask tables as before).
+
+## The detection curve ships in Córdoba and Chilecito (15 November, decision 58)
+
+AI-assisted. Reviewed by: Mahabu Subhani (pending). Numbers from the same
+work files as the section above (`checks.json`, `loyo.json`,
+`sensitivity.json`, `evidence.json`), with `c6.json`, `c6m.json`,
+`sensitivity.json` and `findings.json` rerun for the curve.
+
+1. **What changed.** Only `pipeline/shipping.json`: Córdoba and Chilecito ship
+   the detection curve (`S0`) with the monthly constants. No code, setting,
+   threshold or fitted value changed. Mahabu's decision sets the shipping
+   rule aside in Córdoba; by the rule the hard floor ships there.
+2. **Rebuilt.** `export.py`, `stretch.py`, `figures.py`, `hotspots.py`,
+   `firecci.py`, `mcd64.py`, `sensitivity.py`, `findings.py` in an isolated
+   copy; only Córdoba's and Chilecito's files were copied into the
+   repository (`meta.json`, `cube.json`, `season.json`, `drift.json`,
+   `episodes.json`, 15 hotspot files each, three figures). Punjab and
+   Haryana's and Karnataka's files are untouched. The hotspot files from 2012
+   on are, row for row, the ones committed before decision 57.
+3. **Every verdict that flips** (shown to Mahabu before any file was
+   written). Córdoba: C2 pass to fail (-0.094 to -0.114), C1x pass to fail
+   (0.072 to 0.100). Chilecito: C2 fail to pass (+0.359 to -0.065), C6 pass
+   to fail (+0.034 to +0.394), C6m fail to pass (-0.535 to -0.226).
+4. **Córdoba, curve against hard floor.** C1 0.066, 0.077. C3 0.072, 0.117.
+   C3x 0.125, 0.124. C3r -0.062, -0.068. C4 slope 0.951, 0.938. C6 -0.446,
+   -0.403. C6m -0.381, -0.404. Leave one year out: 9 of 10 within 0.10
+   (largest 0.193, 2013), 3 of 10 (0.233, 2013). `month_log_sd` 0.186, 0.246.
+5. **Sensitivity of the curve in Córdoba** (five other settings): C1 0.065 to
+   0.070; C2 -0.114 to -0.117, a fail in all five; C3 0.075 to 0.105, a pass
+   in all five; C3x 0.093 to 0.129, a pass in all five; C3r -0.069 to -0.059.
+6. **Other values that changed.** Córdoba: 1 to 13 November 2026 is 16.63
+   against a median of 44.49 (0.37 times), 22nd of 25; trend -85.00 a year,
+   49.2 percent of a typical year per decade, Mann-Kendall p = 0.004 (the
+   app's tests, recomputed from `cube.json` and checked against the app's
+   earlier figure); season peak +6.9 days per decade (0.6 to 13.6); Aqua
+   against the record +0.015 (2012 to 2021) and +0.064 (2022 to 2026); small
+   over harmonized 1.83; constants against the midday sun -0.92. Chilecito:
+   July 2026 is 50.84 against 5.00 (10.2 times), 2nd of 25; its episode is
+   the 9th of 230 by total and by peak.

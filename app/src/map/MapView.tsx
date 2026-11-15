@@ -148,6 +148,8 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
   const months = useMemo(() => (rows.length ? monthsBetween(rows.reduce((m, r) => (r.ym < m ? r.ym : m), rows[0].ym), rows.reduce((m, r) => (r.ym > m ? r.ym : m), rows[0].ym)) : []), [rows]);
   const [frame, setFrame] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
+  // On a phone the layer controls cover most of the map, so they start folded behind one button.
+  const [layersOpen, setLayersOpen] = useState(false);
   // One colour scale for every frame: the largest single cell-month in the range.
   const frameMax = useMemo(() => rows.reduce((m, r) => Math.max(m, value(r, mode)), 0), [rows, mode]);
   const activity = useMemo(() => {
@@ -449,7 +451,10 @@ function MapCanvas({ onFail, theme }: { onFail: (reason: string) => void; theme:
           {MONTH_NAMES[Number(months[frame].slice(5)) - 1]} {months[frame].slice(0, 4)}
         </div>
       )}
-      <div className="map-layers" role="group" aria-label="Map layers">
+      <div className={`map-layers${layersOpen ? "" : " ml-folded"}`} role="group" aria-label="Map layers">
+        <button type="button" className="ml-toggle" aria-expanded={layersOpen} onClick={() => setLayersOpen((o) => !o)}>
+          {layersOpen ? "Hide map layers" : "Map layers"}
+        </button>
         {regions.length > 1 && (
           <div className="ml-row">
             <span className="ml-label">{regions.length} study areas</span>

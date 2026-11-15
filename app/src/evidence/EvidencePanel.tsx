@@ -11,6 +11,17 @@ import { calibrationText, formatValue, isAddedAfter, monthName, shortVersion, su
 
 export { ChecksBadge } from "./ChecksBadge";
 
+/** Why a check that was added after the results is there, and what it does not replace. */
+export function addedAfterNote(id: string): string {
+  switch (id) {
+    case "C3r": return "Added after results as a revised version of C3. C3 is shown with its original verdict.";
+    case "C3x": return "Added after results: C3's statistic and limit on two later years, 2020 to 2021. It does not replace C3.";
+    case "C1x": return "Added after results to repeat C1 out of sample. It does not replace C1.";
+    case "C6m": return "Added after results: C6 repeated with NASA's own burned-area product. It does not replace C6.";
+    default: return "Added after results, so not pre-registered.";
+  }
+}
+
 /** The shipping reason without a repeat of the level name it often starts with. */
 function reasonText(reason: string | undefined, levelName: string | undefined): string {
   if (!reason) return "";
@@ -106,7 +117,7 @@ export default function EvidencePanel() {
                 <dt>Value</dt><dd>{formatValue(c.value)}</dd>
               </dl>
               {isAddedAfter(c) && (
-                <p className="ev-note">Revised limit, added after results. Original shown alongside.</p>
+                <p className="ev-note">{addedAfterNote(c.id)}</p>
               )}
               {c.note && <p className="ev-note">{c.note}</p>}
             </div>
@@ -152,7 +163,11 @@ export default function EvidencePanel() {
         {meta.ladder.length > 0 && (
           <>
             <h3>Method ladder</h3>
-            <p>Step at 2012: discontinuity at VIIRS onset (0 = none). Placebo 2016: same test, no sensor change. Held-out error: error in withheld years.</p>
+            <p>
+              Step at 2012: discontinuity at VIIRS onset (0 = none). Placebo 2016: same test, no sensor change. Held-out
+              error: month-by-month error in 2018 to 2019 (check C3, limit 0.15). Each method is shown with one
+              year-round constant and with a constant per calendar month; the difference is the seasonal error.
+            </p>
             <div className="ev-table-wrap">
               <table className="ev-table">
                 <thead>

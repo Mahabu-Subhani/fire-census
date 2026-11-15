@@ -513,6 +513,7 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 @media (max-width: 860px) { .mf-map .map-legends { display: none; } }
 .ml-note { margin: 0; color: var(--muted); font-size: 0.72rem; line-height: 1.35; max-width: 360px; }
 .map-stamp { display: none; }
+.map-layers .ml-toggle { display: none; }
 .mf-map .map-layers {
   position: absolute; top: 64px; left: 56px; z-index: 5; padding: 8px 10px; width: min(380px, calc(100% - 520px));
   min-width: 280px; background: var(--surface); border: 1px solid var(--border);
@@ -541,6 +542,7 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
 .mf-range { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
 .mf-verdict { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .mf-verdict.alert { color: var(--accent-2); }
+.mf-caveat { margin: 4px 0 0; font-size: 0.72rem; line-height: 1.35; color: var(--muted); }
 .mf-sec {
   width: 100%; min-height: 42px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center;
   background: var(--surface-2); border: 0; border-bottom: 1px solid var(--border); color: var(--text);
@@ -570,6 +572,10 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px v
   .mf-map .map-legend { display: none; }
   .mf-map .map-layers { top: 12px; left: 12px; width: auto; min-width: 0; max-width: calc(100% - 24px); }
   .mf-map .map-layers .ml-row button { min-height: 44px; }
+  .mf-map .map-layers.ml-folded { left: auto; right: 12px; padding: 0; border: 0; background: transparent; }
+  .mf-map .map-layers.ml-folded > :not(.ml-toggle) { display: none; }
+  .mf-map .map-layers .ml-toggle { display: block; min-height: 44px; margin-bottom: 6px; padding: 0 14px; background: var(--surface); border: 1px solid var(--border); }
+  .mf-map .map-layers.ml-folded .ml-toggle { margin: 0; }
   .mf-map .map-stamp { top: auto; bottom: 76px; font-size: 1.15rem; }
   .mf-panel { position: static; width: auto; border-left: 0; border-right: 0; }
   .mf-tools { position: static; transform: none; width: 100%; justify-content: space-around; border-left: 0; border-right: 0; }

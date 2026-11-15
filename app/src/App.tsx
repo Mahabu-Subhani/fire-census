@@ -235,6 +235,7 @@ function Answer() {
           <p className="mf-headline">{headline}</p>
           {s.rangeText && <p className="mf-range">{s.rangeText}, allowing for the harmonization error</p>}
           {s.verdictText && <p className={`mf-verdict${s.alert ? " alert" : ""}`}>{s.verdictText}</p>}
+          {s.caveat && <p className="mf-caveat">{s.caveat}</p>}
         </>
       ) : (
         s.state === "loading" ? <LoadingBar regionId={region?.id ?? null} /> : <p className="mf-when">{headline}</p>

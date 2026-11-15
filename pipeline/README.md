@@ -80,6 +80,8 @@ Times are from a 32 GB Windows laptop.
 | 8c. Land cover at fire cells | `$PY landcover.py` | `work/landcover.json` | 7 min (network) |
 | 8d. Stretch analyses | `$PY stretch.py` (after step 9) | `app/public/data/<area>/{season,drift,episodes}.json`, season figures | 1 min |
 | 8e. Out-of-sample checks | `$PY loyo.py` (after step 4) | `work/loyo.json`: check C1x, leave-one-year-out, monthly scatter for the rank range | 3 min |
+| 8g. Two findings, reproducible (changes nothing) | `$PY findings.py` (after step 9) | `work/findings.json`: the shipped constants against the height of the midday sun; Aqua against the record by season, before and after its orbit drift | 2 s |
+| 8f. Year-round against monthly constants | `$PY seasonal.py` (after step 5) | `work/seasonal.json`: for each model the checks under one year-round constant and under a constant per calendar month, and the error by calendar month, read from `checks.json`; see `docs/research/20261115-checks-audit-seasonal-bias.md` | 2 s |
 | 9. App data | `$PY export.py` | `app/public/data/regions.json`, `<area>/cube.json`, `<area>/meta.json` | 1 min |
 | 10. Figures | `$PY figures.py` | `submission/figures/*.png` | 20 s |
 | 11. Hotspot files | `$PY hotspots.py` | `app/public/data/<area>/hotspots/<year>.csv.gz` | 2 min |
@@ -97,6 +99,8 @@ $FIRE_DATA/venv/Scripts/python -m pytest pipeline/tests -q
 | `tests/test_clean.py` | The cleaned tables: rows conserved, inside the area, mission dates, pixel sizes | Yes (skipped without it) |
 | `tests/test_method.py` | The method on simulated fires with a known answer: the code gets a known detection curve back, the curve record stays within 5 percent when the mix of weak and strong fires changes, one constant ratio is off by more than 30 percent in the same cases; the step statistic, the change-point test and the shipping rule; one test for each error corrected on 14 November (hard-floor constant, daily series for C7, change-point check on too few months) | No |
 | `tests/test_docs_numbers.py` | `README.md` and `submission/results.md` quote the values in `app/public/data/<area>/meta.json` | No |
+| `tests/test_findings.py` | The sun's height on known answers (overhead at the equator at the equinoxes, summer in opposite months in the two hemispheres); constants read from the shipped files; borrowed constants not reported | No |
+| `tests/test_seasonal.py` | The constant per calendar month on known answers: no fires gives the year-round constant, many fires give the ratio of the three-month window, December and January are neighbours, a simulated seasonal bias is removed; the year-round versions are checked with the same code | No |
 
 The last two run in a fresh clone. Simulated fires test the code and the
 logic; they are not evidence about real fires and are not a pre-registered check.
@@ -114,8 +118,8 @@ unknown. `export.py` reads `pipeline/shipping.json` to decide which model fills
 | `inventory.py` | Row counts, columns, codes and ranges of every raw file, before cleaning |
 | `clean.py` | One schema; satellite names; removes non-vegetation, static-source and low-confidence detections, counting each |
 | `raw_jump.py` | The raw record per satellite (the problem) |
-| `harmonize.py` | Fire cells; matches every S-NPP fire cell to Aqua; fits the detection curve with a month-block bootstrap; builds the constant-ratio, hard-floor and curve series |
-| `validate.py` | Checks C0 to C4, C3r, C7, C8 exactly as `docs/PREREGISTRATION.md` defines them; the shipping rule |
+| `harmonize.py` | Fire cells; matches every S-NPP fire cell to Aqua; fits the detection curve with a month-block bootstrap; builds the ratio, hard-floor and curve series, each with one constant per calendar month (what ships, decision 57) and with one year-round constant (kept for comparison) |
+| `validate.py` | Checks C0 to C4, C3r, C3x, C7, C8 exactly as `docs/PREREGISTRATION.md` defines them, on both kinds of constant; the error by calendar month; the shipping rule |
 | `sensitivity.py` | Reruns steps 4 and 5 with one setting changed at a time; Aqua against the record before and after its orbit drift |
 | `evidence.py` | Tests of reviewer objections; check C5 against the published detection limits; the drift figure |
 | `obs.py` | Clear-view days per cell and month from Aqua's daily fire masks |
@@ -126,6 +130,39 @@ unknown. `export.py` reads `pipeline/shipping.json` to decide which model fills
 | `shipping.json` | Which model ships in each area, and why |
 | `refresh.py` | Near-real-time detections after the archive ends (FIRMS area API, at most 5 days per call; S-NPP not requested since it stopped on 2 Nov 2026) |
 | `obs_probe.py` | One-off: sizes of the fire-mask files before downloading |
+| `walkthrough.py` | Writes `submission/inbox/A-what-we-show.md`: every screen of the app, every check in plain words and why C6 fails, with every number read from `app/public/data/` |
+
+### The presenter's walkthrough
+
+Rerun after every `export.py`, so the team never quotes a stale number. No
+downloaded data and no network needed. Run on 14 November from the repo root:
+
+```bash
+python pipeline/walkthrough.py     # wrote submission/inbox/A-what-we-show.md (415 lines)
+```
+
+`pipeline/tests/test_walkthrough.py` checks that every check row in the output
+matches `meta.json` and that the C6 notes were parsed (no "n/a").
+
+### Recomputing C6 and C6m from a fresh clone (run 15 November)
+
+The short way plus ESA's and NASA's burned area, which need a network but no
+account (about 15 minutes; Git Bash, `FIRE_DATA` and the venv as in "Set up
+once"; the venv also needs `rasterio pystac-client planetary-computer pyproj`):
+
+```bash
+cd pipeline
+$PY from_hotspots.py && $PY harmonize.py && $PY validate.py && $PY loyo.py
+$PY firecci.py      # fetching 240 months from ESA CCI ... writes work/c6.json
+$PY mcd64.py        # 2114 tile-months in the catalogue ... writes work/c6m.json
+$PY sensitivity.py && $PY evidence.py && $PY export.py && $PY stretch.py
+```
+
+Months or tiles that fail to download are fetched again on the next run.
+October to December 2019 are read from ESA's `new-corrected` folder. Run on
+15 November: every `cube.json`, season, drift and episode file came out byte
+for byte as shipped. Results and fixes in `NOTES_PHASE3.md`, "Check C6
+recomputed" and "Second audit of the pipeline".
 
 ## Reproduction test (14 November)
 

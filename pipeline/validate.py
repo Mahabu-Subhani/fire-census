@@ -8,6 +8,9 @@ Reading of the definitions (recorded in pipeline/NOTES.md):
   H  = R up to January 2012, then the model's VIIRS-based value.
   Step statistic at 2012: 36 months from Feb 2012 over the 36 months of 2009-2011.
 
+Since 15 Nov (decision 57) the models use one constant per calendar month. The same checks are
+also run on the year-round-constant versions (checks_year_round), so both sets of verdicts are kept.
+
 Run: python pipeline/validate.py     Output: WORK/checks.json
 """
 
@@ -101,7 +104,8 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
     c2b = step(h, *W2008) - step(r, *W2008)
     out["C2"] = {"value": f"2016: {c2a:+.3f}; 2008: {c2b:+.3f}",
                  "verdict": verdict(abs(c2a) <= 0.10 and abs(c2b) <= 0.10),
-                 "note": "2008 is zero by construction: H equals the Aqua reference before 2012"}
+                 "note": ("Only the 2016 placebo tests anything: 2008 is zero by construction, because before "
+                          "2012 the harmonized record is the Aqua reference itself.")}
 
     m3 = (ser.index >= "2018-01") & (ser.index <= "2019-12") & (r >= MIN_CELLS) & (h > 0)
     if m3.sum() >= 6:
@@ -111,6 +115,20 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
     else:
         out["C3"] = {"value": None, "verdict": "not run",
                      "note": f"only {int(m3.sum())} months with at least {MIN_CELLS} Aqua fire cells"}
+
+    # C3x: C3's statistic and limit on 2020 to 2021, two years no result had been looked at for when
+    # the constants per calendar month were adopted (decision 57). Added after results.
+    m3x = (ser.index >= "2020-01") & (ser.index <= "2021-12") & (r >= MIN_CELLS) & (h > 0)
+    if m3x.sum() >= 6:
+        c3x = float(np.median(np.abs(np.log(h[m3x] / r[m3x]))))
+        out["C3x"] = {"value": round(c3x, 3), "verdict": verdict(c3x <= 0.15),
+                      "note": "added after results (PREREGISTRATION.md note of 15 Nov): C3's statistic and limit "
+                              f"on two later years; {int(m3x.sum())} of 24 months have at least {MIN_CELLS} "
+                              "Aqua fire cells"}
+    else:
+        out["C3x"] = {"value": None, "verdict": "not run",
+                      "note": f"added after results; only {int(m3x.sum())} months with at least {MIN_CELLS} "
+                              "Aqua fire cells"}
 
     m3r = (ser.index >= "2018-01") & (ser.index <= "2019-12") & (r >= MIN_CELLS)
     if m3r.sum() >= 6:
@@ -145,6 +163,28 @@ def run_model(ser: pd.DataFrame, model: str, variant: str, fits: dict) -> dict:
                              f"({100 * night_width:.0f}%); night fires are {100 * night_share:.1f}% of the "
                              f"reference fire cells in the fitting years"}
     return out
+
+
+def annual_view(ser: pd.DataFrame) -> pd.DataFrame:
+    """The same table with each model's year-round-constant version (S0y, L2y, L1ry) under the model's name.
+
+    Lets run_model() measure the versions that shipped until 15 Nov with exactly the same code.
+    """
+    out = ser.copy()
+    for c in ser.columns:
+        for m in ("S0", "L2", "L1r"):
+            if c.startswith(f"V_{m}y_") or c.startswith(f"{m}y_"):
+                out[c.replace(f"{m}y_", f"{m}_", 1)] = ser[c]
+    return out
+
+
+def error_by_calendar_month(ser: pd.DataFrame, model: str, variant: str, lo: str, hi: str) -> dict:
+    """ln(sum of H / sum of Aqua) for each calendar month over a window; None where either is zero."""
+    h, r = h_series(ser, model, variant), ser["R"].astype(float)
+    m = (ser.index >= lo) & (ser.index <= hi)
+    mon = ser.index[m].str[5:7].astype(int)
+    hs, rs = h[m].groupby(mon).sum(), r[m].groupby(mon).sum()
+    return {int(k): (round(float(np.log(hs[k] / rs[k])), 2) if hs[k] > 0 and rs[k] > 0 else None) for k in hs.index}
 
 
 def daily_series(area: str, model: str, variant: str) -> tuple[pd.Series, pd.Series]:
@@ -218,15 +258,28 @@ def main() -> None:
         result[area] = {"donor": donor, "variants": {}}
         for variant in VARIANTS:
             checks = {m: run_model(ser, m, variant, fits) for m in MODELS}
+            ser_y = annual_view(ser)
+            checks_y = {m: run_model(ser_y, m, variant, fits) for m in ("S0", "L2", "L1r")}
             ladder = [{"level": "L0 raw detections", "step_2012": round(step(ser["L0"].astype(float), *W2012)
                                                                           - step(ser["R"].astype(float), *W2012), 3)}]
-            for label, m in (("L1 fire cells", "cells"), ("L1r constant ratio", "L1r"),
-                             ("L2 hard floor", "L2"), ("S0 detection curve", "S0")):
-                ladder.append({"level": label, "step_2012": checks[m]["C1"]["value"],
-                               "placebo_2016": checks[m]["C2"]["value"].split(";")[0].replace("2016: ", ""),
-                               "held_out": checks[m]["C3"]["value"]})
+            ladder.append({"level": "L1 fire cells", "step_2012": checks["cells"]["C1"]["value"],
+                           "placebo_2016": checks["cells"]["C2"]["value"].split(";")[0].replace("2016: ", ""),
+                           "held_out": checks["cells"]["C3"]["value"]})
+            for label, m in (("L1r conversion ratio", "L1r"), ("L2 hard floor", "L2"), ("S0 detection curve", "S0")):
+                for how, got in (("one year-round constant", checks_y), ("a constant per calendar month", checks)):
+                    ladder.append({"level": f"{label}, {how}", "step_2012": got[m]["C1"]["value"],
+                                   "placebo_2016": got[m]["C2"]["value"].split(";")[0].replace("2016: ", ""),
+                                   "held_out": got[m]["C3"]["value"]})
             entry = {"checks": checks, "ladder": ladder, "ship": shipping(checks),
-                     "ship_revised": shipping(checks, "C3r")}
+                     "ship_revised": shipping(checks, "C3r"),
+                     # The versions with one year-round constant, which shipped until 15 Nov (decision 57).
+                     "checks_year_round": checks_y, "ship_year_round": shipping(checks_y),
+                     "ship_year_round_revised": shipping(checks_y, "C3r"),
+                     "error_by_calendar_month": {
+                         m: {how: {"fitting_years": error_by_calendar_month(s, m, variant, "2012-02", "2017-12"),
+                                   "held_out_2018_2019": error_by_calendar_month(s, m, variant, "2018-01", "2019-12")}
+                             for how, s in (("year_round", ser_y), ("per_calendar_month", ser))}
+                         for m in ("S0", "L2", "L1r")}}
             if area == "punjab-haryana":      # one result per model; export.py shows the shipped model's
                 entry["C7"] = {m: peak_shift(area, variant, m) for m in ("S0", "L2", "L1r")}
             result[area]["variants"][variant] = entry

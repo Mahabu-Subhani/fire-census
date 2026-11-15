@@ -15,6 +15,7 @@ Run: python pipeline/export.py
 """
 
 import json
+import re
 import subprocess
 from datetime import datetime, timezone
 
@@ -32,6 +33,7 @@ CHECKS = [
     ("C2", "No seam at placebo dates (2016, 2008)", "absolute value at most 0.10 at both"),
     ("C3", "Held-out years 2018 to 2019", "median absolute log ratio at most 0.15"),
     ("C3r", "Held-out years, two-year total (revised after results)", "absolute log ratio at most 0.10"),
+    ("C3x", "Held-out years 2020 to 2021 (added after results)", "median absolute log ratio at most 0.15"),
     ("C4", "NOAA-20 alone reproduces the record", "slope 0.90 to 1.10 and correlation at least 0.90"),
     ("C5", "Curve midpoint is physically plausible", "within a factor of 2 of published limits"),
     ("C6", "Burned-area relationship is stable", "absolute log ratio at most 0.25"),
@@ -39,11 +41,11 @@ CHECKS = [
     ("C7", "Punjab peak moves later after 2009", "at least +5 days, p < 0.05"),
     ("C8", "Curve is stable under resampling", "90% range at most 50% of the midpoint"),
 ]
-MODEL_NAMES = {"S0": "Detection curve", "L2": "Hard floor", "L1r": "Constant ratio (fallback)"}
+MODEL_NAMES = {"S0": "Detection curve", "L2": "Hard floor", "L1r": "Conversion ratio (fallback)"}
 # How the shipped model turns VIIRS into the unit; ends the sentence in meta.unit_note.
 UNIT_HOW = {"S0": "the detection curve",
-            "L2": "the hard floor (only fires at or above MODIS's detection limit are counted)",
-            "L1r": "one constant conversion ratio"}
+            "L2": "the hard floor (only fire cells at or above a measured strength cut-off are counted)",
+            "L1r": "a conversion ratio"}
 
 
 def verdict_of(ok: bool) -> str:
@@ -85,6 +87,8 @@ def carried(prev: dict, cid: str, borrowed: str, stale: str = "") -> dict:
     row = prev.get(cid)
     if not row or row.get("verdict") == "not run":
         return {}
+    row = dict(row, note=re.sub(r"\.? ?curve and constants borrowed from \w+; too few fires here to calibrate$", "",
+                                row.get("note") or ""))      # wording before 15 Nov
     note = (row.get("note") or "").replace(borrowed, "").replace(stale, "").strip() if stale else \
         (row.get("note") or "").replace(borrowed, "").strip()
     return {"value": row.get("value"), "verdict": row["verdict"], "note": (note + " " + stale).strip()}
@@ -105,10 +109,11 @@ def keep_dates(df: pd.DataFrame, date_filter) -> pd.DataFrame:
 
 
 REL_SD_KEY = {"S0": "rel_sd_k", "L2": "rel_sd_k_floor", "L1r": "rel_sd_k_ratio"}
+KNAME = {"S0": "k_curve", "L2": "k_floor", "L1r": "k_ratio"}
 
 
 def build_cube(area: str, model: str, variant: str, rel_sd: dict, date_filter=None) -> pd.DataFrame:
-    """rel_sd: relative spread of the shipped model's constant, {"D": day, "N": night}."""
+    """rel_sd: relative spread of the shipped model's constants, {"D": twelve values by calendar month, "N": night}."""
     key = ["lon", "lat", "ym"]
     cells = display(keep_dates(pd.read_parquet(WORK / f"{area}_cells.parquet"), date_filter))
     raw = keep_dates(pd.read_parquet(WORK / f"{area}.parquet", columns=["cx", "cy", "acq_date", "sensor"]),
@@ -140,7 +145,8 @@ def build_cube(area: str, model: str, variant: str, rel_sd: dict, date_filter=No
     early = cube["ym"] < HARMONIZED_FROM
     cube["harm"] = np.where(late, cube["w"], np.where(early, cube["terra"], cube["aqua"]))
     # Counting noise of the cells, plus the uncertainty of the day and of the night constant.
-    sd = np.where(late, np.sqrt(cube["w2"] + (rel_sd["D"] * cube["wd"]) ** 2
+    rel_day = np.array(rel_sd["D"])[cube["ym"].str[5:7].astype(int).to_numpy() - 1]
+    sd = np.where(late, np.sqrt(cube["w2"] + (rel_day * cube["wd"]) ** 2
                                 + (rel_sd["N"] * cube["wn"]) ** 2), 0.0)
     cube["harm_lo"] = np.clip(cube["harm"] - 1.645 * sd, 0, None)
     cube["harm_hi"] = cube["harm"] + 1.645 * sd
@@ -163,8 +169,9 @@ def main() -> None:
         fits = curves["areas"][donor]
         fd, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
         prev_rows, prev_obs = previous_export(area_id)
-        borrowed = f"curve and constants borrowed from {donor}; too few fires here to calibrate"
-        rel_sd = {"D": fd[REL_SD_KEY[model]], "N": fn[REL_SD_KEY[model]]}
+        borrowed = (f"Curve and constants borrowed from {AREAS[donor][0].rsplit(',', 1)[0]}; too few fires "
+                    f"here to calibrate.")
+        rel_sd = {"D": fd[REL_SD_KEY[model] + "_m"], "N": fn[REL_SD_KEY[model]]}
         cube = build_cube(area_id, model, variant, rel_sd)
 
         # Freshness and month-to-date (contract fields added 14 Nov, docs/APP_VISION.md).
@@ -255,7 +262,7 @@ def main() -> None:
                         "C6": "burned-area data not yet obtained",
                         "C7": "defined for Punjab and Haryana only"}.get(cid, "")
             if donor != area_id:
-                note = (note + " " if note else "") + borrowed
+                note = (note.rstrip() + ("" if note.rstrip().endswith((".", ")")) else ".") + " " if note else "") + borrowed
             check_rows.append({"id": cid, "name": cname, "value": got.get("value"), "threshold": threshold,
                                "verdict": got.get("verdict", "not run"), "note": note.strip()})
 
@@ -267,17 +274,27 @@ def main() -> None:
             "unit": "Aqua-equivalent fire cells",
             "unit_note": ("One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. "
                           "Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua "
-                          "would have reported, computed from VIIRS with " + UNIT_HOW[model] + "."),
+                          "would have reported, computed from VIIRS with " + UNIT_HOW[model] + ", scaled by a "
+                          "constant fitted for each calendar month because the two sensors' relation "
+                          "follows the season."),
             "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
             "calibration": {"variant": variant, "months": curves["calibration"][variant],
                             "reference_pair": "Aqua MODIS and S-NPP VIIRS", "area": donor},
             "floor_mw": {"day": round(fd["f50"], 2), "night": round(fn["f50"], 2)},
-            "constants": {"day": round(fd[{"S0": "k_curve", "L2": "k_floor", "L1r": "k_ratio"}[model]], 4),
-                          "night": round(fn[{"S0": "k_curve", "L2": "k_floor", "L1r": "k_ratio"}[model]], 4)},
+            "constants": {"day": round(fd[KNAME[model]], 4), "night": round(fn[KNAME[model]], 4)},
+            # Daytime constant of each calendar month, January first (decision 57). `constants` above is
+            # the year-round value each of them is pulled towards, and the night constant.
+            "constants_by_month": {"day": [round(float(x), 4) for x in fd[KNAME[model] + "_m"]]},
             "ladder": res["ladder"],
             "checks": check_rows,
             "all_models": {m: {c: v["verdict"] for c, v in res["checks"][m].items()}
                            for m in ("S0", "L2", "L1r")},
+            # The same checks on the versions with one year-round constant, which shipped until 15 Nov.
+            "year_round_constant": {m: {c: {"value": v["value"], "verdict": v["verdict"]}
+                                        for c, v in res["checks_year_round"][m].items()
+                                        if c in ("C1", "C1b", "C2", "C3", "C3r", "C3x", "C4")}
+                                    for m in ("S0", "L2", "L1r")},
+            "error_by_calendar_month": res["error_by_calendar_month"][model],
             "curve": {dn_key: [{"frp": round(c, 3), "p": round(p, 4), "p_lo": round(a, 4), "p_hi": round(b, 4)}
                                for c, p, a, b in zip(centres, f["p_norm"], f["p_lo"], f["p_hi"])]
                       for dn_key, f in (("day", fd), ("night", fn))},

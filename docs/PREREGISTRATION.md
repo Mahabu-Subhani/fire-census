@@ -1,7 +1,9 @@
 # Pre-registered checks
 
 Written **before any fire data was opened or analysed** (committed 14 November
-2026, about 00:30 IST; the data files were still zipped). The thresholds below
+2026, 00:15 IST; the data files were still zipped). *Corrected on 15 November:
+this said "about 00:30 IST"; the commit is dated 00:15:11 (`git log`, commit
+64ef07e).* The thresholds below
 must not be edited after results exist. If a threshold turns out to be badly
 chosen, add a dated note explaining why and report both the original verdict
 and the revised one.
@@ -57,7 +59,9 @@ source before the verdict is reported.
 
 ## Notes added after results
 
-### 14 November 2026, about 12:30 IST: check C3 (drafted by the AI assistant; awaiting Mahabu's decision)
+### 14 November 2026: check C3 (drafted by the AI assistant; awaiting Mahabu's decision)
+
+*Time corrected on 15 November. The heading said "about 12:30 IST"; that was an estimate and it was wrong. This note was first committed at 11:08 IST and the decision at its end at 11:13 IST (`git log -S`, commits 87fcb84 and de7b52c).*
 
 The thresholds above are unchanged. This note records what was found and
 proposes a revised reading, as the first paragraph of this file requires.
@@ -91,7 +95,9 @@ ratio ships everywhere.
 and `meta.json` show C3 with its fail verdict and C3r beside it, labelled as
 added after results.
 
-### 14 November 2026, about 22:30 IST: out-of-sample C1 (check C1x, added after results)
+### 14 November 2026: out-of-sample C1 (check C1x, added after results)
+
+*Time corrected on 15 November. The heading said "about 22:30 IST", an estimate; the note was first committed at 21:48 IST (`git log -S`, commit 73cabed).*
 
 C1 fits its constant on 2012 to 2017 and tests on 2012 to 2015, so part of its
 pass is in-sample. Check C1x repeats C1's statistic with the model fitted on
@@ -131,3 +137,135 @@ one it was applied with. Values in the notes above that change:
   test needs to reach p < 0.05 at all (Chilecito, 4 months).
 - **C8** is read on the daytime curve, as before; the check row now states
   that the night curve would be over the limit.
+
+### 15 November 2026: check C6 recomputed (drafted by the AI assistant, at Mahabu's request)
+
+No threshold and no definition is changed. C6 is now computed as defined,
+with complete years 2003 to 2011 and 2013 to 2019. ESA's October to December
+2019 files had been reprocessed after a processing error and moved to a
+`new-corrected` folder on the CEDA archive (ESA's note
+`Error_in_November_2019_files.txt` in the 2019 folder); `firecci.py` now
+reads them there, so all 240 months are used.
+
+| Area | C6 | Verdict | Aqua alone | Before |
+|---|---|---|---|---|
+| Córdoba (gated) | -0.440 | fail | -0.427 | -0.440 |
+| Punjab and Haryana | -0.149 | pass | -0.125 | -0.104 (before the hard-floor correction) |
+| Chilecito | +0.430 | fail | +0.157 | +0.430 |
+| Karnataka | +0.276 | fail | +0.340 | +0.276 |
+
+The Córdoba verdict is unchanged: fail, reported as failed.
+
+### 15 November 2026: C6m recomputed; PELT not run (drafted by the AI assistant, at Mahabu's request)
+
+No threshold and no definition is changed.
+
+- C6m (added after results, not pre-registered) recomputed on the corrected
+  record: Punjab and Haryana -0.081 (was -0.036), pass. Other areas unchanged.
+- **The PELT second opinion listed under C1b was never run.** This file says
+  it would be reported, not gated. No penalty was fixed in advance, and
+  picking one after the results are known would be a post-hoc choice, so it
+  is reported as not run rather than added now. C1b's verdict rests on the
+  Pettitt test alone, as the table says.
+
+### 15 November 2026: what C3's failure was, and one constant per calendar month (drafted by the AI assistant; decision 57, chosen by Mahabu)
+
+*Time corrected on 15 November. The heading first said "about 02:00 IST", an estimate; the note was written at 01:05 IST (the file's time, read with `ls -l` before this correction).*
+
+No threshold and no definition above is changed. The method changed, and
+every check was run again with the same code and limits.
+
+**What was found.** C3's failure was not noise and not a badly chosen limit.
+Split by calendar month, ln(H / R) is the same in the fitting years and in
+2018 to 2019: with the hard floor in Punjab and Haryana, May +0.56 and +0.43,
+October -0.22 and -0.24, January -0.48 and -0.49; with the detection curve in
+Córdoba, January +0.16 and +0.15, July -0.19 and -0.19. One year-round
+constant leaves a seasonal bias. Counting noise alone would give C3 about
+0.07 in Córdoba and 0.03 in Punjab and Haryana (4,000 Poisson draws on the
+held-out months). **The sentence in the first note of 14 November, that no
+model could be expected to pass C3, is withdrawn.** C3r, a two-year total,
+cannot see a seasonal bias; it stays reported beside C3 and decides nothing.
+
+**What changed.** Each model's daytime constant is fitted per calendar month
+on the same fitting years (`harmonize.seasonal_constants`; decision 57). The
+settings and three predictions were written in the same step as the one run, seconds before its first result (files saved at 00:50:03 and 00:50:09 IST);
+see `docs/research/20261115-checks-audit-seasonal-bias.md`. Nothing was tuned
+afterwards.
+
+**Results, shipped models** (year-round constant in brackets):
+
+| Check | Córdoba, hard floor | Punjab and Haryana, hard floor |
+|---|---|---|
+| C1 | +0.077 pass (curve, year-round: +0.049) | -0.020 pass (-0.016) |
+| C1b | pass by the rule; strongest change point October 2013, p below 0.001, outside the window | pass; November 2014, p = 0.43 |
+| C2 (2016) | -0.094 pass | -0.059 pass |
+| C3 | **0.117 pass** (curve, year-round: 0.207 fail; hard floor, year-round: 0.292 fail) | **0.148 pass** (0.169 fail) |
+| C3r | -0.068 pass | -0.081 pass |
+| C4 | slope 0.938, correlation 0.977, pass | slope 1.026, correlation 0.989, pass |
+| C1x (added after results) | +0.072 pass | +0.024 pass |
+| C3x (added now: C3's statistic and limit on 2020 to 2021) | 0.124 pass | **0.169 fail** |
+
+**The shipping rule, as first written, now decides without C3r.** Córdoba:
+the detection curve passes C3 (0.072) but fails C2 (-0.114 against 0.10), so
+the rule moves to the hard floor, which passes C0 to C3. Punjab and Haryana:
+the curve fails C3 (0.208) and C8; the hard floor passes C0 to C3. Chilecito
+borrows Córdoba's model. Karnataka: no model passes C3; the ratio fallback
+ships.
+
+**What did not hold.** Of the three predictions: C3
+passes in both calibrated areas (held; Punjab and Haryana only just). The
+same statistic on 2020 to 2021 is within the limit in both (held in Córdoba,
+**failed in Punjab and Haryana**, 0.169). The other checks keep their pass
+(held for the hard floor; **failed for Córdoba's curve**, C2). In Córdoba the
+hard floor is worse than the curve year by year: leaving one year out at a
+time, 3 of 10 years are within 0.10 of Aqua (largest miss 0.233, in 2013),
+against 9 of 10 for the curve. The rule chooses on the registered checks, so
+the hard floor ships; yearly totals and trends in Córdoba after 2012 carry
+this error, and `submission/results.md` and `limits.md` say so. The passes
+are thin and not robust: Córdoba C2 is -0.094 against 0.10; Punjab and
+Haryana C3 is 0.148 against 0.15 on 15 of 24 months; under five other
+settings C3 fails in three (Córdoba) and in all five (Punjab and Haryana). A known weakness of the
+fixed settings: pooling three months is too coarse for Punjab and Haryana's
+April, which takes mostly May's constant.
+
+**Honesty note.** The seasonal pattern was seen in the 2018 to 2019 results
+before the model was changed, so C3's pass is no longer a clean held-out
+result. C3x on 2020 to 2021 is cleaner, and it is why it was added: the
+monthly values of those years had not been looked at. Their yearly totals
+had been, in the leave-one-year-out table of 14 November.
+
+### 15 November 2026: the shipping rule is set aside in Córdoba (drafted by the AI assistant; decision 58, chosen by Mahabu)
+
+No threshold and no definition above is changed, and no verdict is changed.
+**The shipping rule above is not followed in Córdoba.** This note records
+that, as the first paragraph of this file asks for a badly chosen threshold;
+here it is the rule, not a threshold, that the team departs from.
+
+**By the rule** the hard floor ships in Córdoba, because the detection curve
+fails a check the rule names: C2, the 2016 placebo, -0.114 against 0.10. It
+also fails C1x (0.100 against 0.10), which was added after results.
+
+**What ships instead:** the detection curve with one constant per calendar
+month, in Córdoba and in Chilecito, which borrows Córdoba's model.
+
+**Both models in Córdoba, same checks, same limits:**
+
+| Check | Detection curve (ships) | Hard floor (the rule's choice) |
+|---|---|---|
+| C1 | +0.066 pass | +0.077 pass |
+| C1b | pass by its window; change point October 2013, p = 0.014 | pass by its window; October 2013, p below 0.001 |
+| C2 (2016) | **-0.114 fail** | -0.094 pass |
+| C3 | 0.072 pass | 0.117 pass |
+| C3r | -0.062 pass | -0.068 pass |
+| C3x (added after results) | 0.125 pass | 0.124 pass |
+| C1x (added after results) | **+0.100 fail** | +0.072 pass |
+| C4 | slope 0.951, correlation 0.988, pass | slope 0.938, correlation 0.977, pass |
+| C8 | pass (38 percent) | not applicable |
+| Leaving one year out, 2012 to 2021 | 9 of 10 years within 0.10, largest miss 0.193 | 3 of 10, largest miss 0.233 |
+
+**What this costs.** A pre-registered rule exists so that the choice is not
+made after seeing which model one prefers. Here it was: the curve was chosen
+by Mahabu after both sets of results were on the table. The record that ships
+in Córdoba therefore fails a gating check of its own pre-registration, and
+the app shows that failure. Punjab and Haryana (hard floor) and Karnataka
+(ratio) still follow the rule.
