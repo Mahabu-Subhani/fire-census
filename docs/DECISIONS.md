@@ -189,6 +189,12 @@ early warning and emergency response. Points that change our plan:
 |---|---|---|---|
 | 58 | Which model ships in Córdoba, and so in Chilecito | **The detection curve, with one constant per calendar month.** This **sets aside the shipping rule of the pre-registration in Córdoba**: the curve fails the 2016 placebo C2 (-0.114 against 0.10) and the out-of-sample step C1x (0.100 against 0.10), so by the rule the hard floor would ship there, and it did from decision 57 until this one. What the two models give in Córdoba (curve, then hard floor): C1 0.066, 0.077; C2 -0.114 fail, -0.094; C1x 0.100 fail, 0.072; C3 0.072, 0.117; C3x 0.125, 0.124; C4 slope 0.951, 0.938; leaving one year out, within 0.10 of Aqua in 9 of 10 years (largest miss 0.193), 3 of 10 (0.233); yearly error following the mix of weak and strong fires: no (0.32, p = 0.37), yes (0.76, p = 0.011); C3 under five other settings: passes in all five, fails in three. Chilecito borrows Córdoba's model: there C2 turns to a pass (-0.065), C6 to a fail (+0.394), C6m to a pass (-0.226); C1 and C4 still fail. Punjab and Haryana (hard floor) and Karnataka (ratio) are unchanged and still follow the rule. No threshold or definition changed; both models' verdicts stay in `meta.json` (`all_models`) and the ladder. Every verdict that flips was shown to Mahabu before any file was written | **Mahabu chose this** ("ship the detection curve", confirmed after seeing the flips, 15 Nov). Reason in Mahabu's own words: [ ]. The AI assistant laid out both and recommended keeping the rule; Mahabu decided otherwise. This replaces the Córdoba and Chilecito part of decision 57; the constants per calendar month of decision 57 stay |
 
+## Demo opener (added 15 November)
+
+| # | Decision | Answer | Who and why |
+|---|---|---|---|
+| 59 | An animated opening for the 30-second demo | The first 10 seconds of the demo video are a 1920 x 1080 animation, played under the first three narration lines of `submission/demo.md` (names and team; the challenge; the name and tagline): the title, "same fire, two satellite cameras" (1 hotspot against 12), and Punjab and Haryana's yearly record jumping at 2012 and flattening when harmonized (real yearly totals from `cube.json` at commit 826134f). The screen recording of the live app follows from 0:10 as scripted. A visible "AI-generated animation" watermark is on every frame, as the Submission Guide requires, and the Use of AI text must say so. The video file and its Remotion source are kept outside the repository (build output); how to use it is in `submission/inbox/B-demo-opener.md` | 8crsk (team lead), 15 Nov, after Charulekha agreed. Built by the AI assistant on 8crsk's instruction. Reason in Charulekha's own words: **to be added by Charulekha** |
+
 ## Change log
 
 | Date | Who | Change | Reason |
@@ -227,3 +233,4 @@ is the time to trust (`git log -S`, IST):
 committed at 00:22 and "App vision (added 14 November, after the start)" at
 11:10; both match.
 | 15 Nov 2026 | Mahabu | Decision 58: the detection curve ships in Córdoba and Chilecito, setting the shipping rule aside there | See row 58 |
+| 15 Nov 2026 | 8crsk | Decision 59: animated 10-second opener for the demo video, watermarked | See row 59 |
