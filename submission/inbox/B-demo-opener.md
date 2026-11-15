@@ -34,5 +34,5 @@ track to fit). The whole video must stay at **30 seconds or less**.
 
 ## If something must change
 
-The source is a small Remotion project (React code). Ask 8crsk or his assistant
+The source is a small Remotion project (React code). Ask 8crsk or their assistant
 to change wording, timing or data and re-render; a render takes about a minute.
