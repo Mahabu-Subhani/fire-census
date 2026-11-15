@@ -37,39 +37,53 @@ regions, not worldwide.
 
 1. **Count each place once.** One fire fills several VIIRS pixels, so
    detections are counted per 1 km grid square per satellite pass.
-2. **Weight by what MODIS could see.** Where Aqua MODIS and VIIRS passed on the
+2. **Count what MODIS could see.** Where Aqua MODIS and VIIRS passed on the
    same day, we measured how often MODIS also reported a fire VIIRS saw, at
-   each fire strength. Each VIIRS detection is then counted by its chance of
-   being seen by MODIS.
+   each fire strength. In Córdoba each VIIRS fire cell is counted by that
+   chance (the detection curve). In Punjab and Haryana, where the curve is
+   too uncertain, the record counts the fire cells at or above the curve's
+   midpoint (the hard floor). The curve also weights the small-fire layer.
+3. **One conversion constant per calendar month.** How much MODIS misses
+   changes with the season, so the count is scaled by a constant fitted for
+   each calendar month. Our own held-out check found this (see below).
 
 | Step at 2012 (1.0 = no jump) | Córdoba | Punjab and Haryana |
 |---|---|---|
 | Raw record | about 5.2× | about 5.3× |
-| After harmonization | 1.05× | 0.98× |
+| After harmonization | 1.07× | 0.98× |
 
 ## How we tested it, including what failed
 
 Ten checks and their limits were written down before the data was analysed
 ([docs/PREREGISTRATION.md](docs/PREREGISTRATION.md)). All results are shown in the app.
 
-- **Passed in Córdoba:** no step at 2012, NOAA-20 (never used for fitting)
-  reproduces the record (slope 0.951, correlation 0.987), the curve is stable
-  when resampled.
-- **Caveat on the 2012 check:** the fitted constant overlaps the test window.
-  Refitted without those years (check C1x, added afterwards and labelled so:
-  fitted on 2015 to 2021, tested on 2012 to 2015) the step is 0.087 against a
-  limit of 0.10, a pass, while a plain conversion ratio fails the same test
-  (0.143). On a shorter fit, 2016 to 2017 only, the curve is just over (0.106).
-- **Failed:** the month-by-month held-out check (0.207 against 0.15). A plain
-  conversion ratio passes this one (0.120), so under the rule as first written
-  the ratio would ship. We added a two-year-total check afterwards, ship the
-  curve under it, and report both verdicts.
-- **Failed:** the comparison with ESA burned area in Córdoba. Aqua alone fails
-  it the same way.
-- **Weaker regions:** Punjab's curve was too unstable to ship, so a simpler
-  threshold is used there; it fails the same month-by-month check (0.169) and
-  passes the two-year one. Chilecito and Karnataka fail several checks and are
-  labelled in the app.
+- **Passed in Córdoba and in Punjab and Haryana:** no step at 2012, and
+  NOAA-20 (never used for fitting) reproduces the record (in Córdoba,
+  slope 0.951, correlation 0.988).
+- **The month-by-month held-out check failed first, and it was right.** With
+  one year-round constant it failed in both areas (0.207 and 0.169 against
+  0.15). The error followed the season: in Punjab and Haryana, May read about
+  75 percent too high after 2012 and October about 20 percent too low, in the
+  fitting years and the held-out years alike. With one constant per calendar
+  month the check passes: 0.072 in Córdoba, 0.148 in Punjab and Haryana.
+- **That pass is not a clean one, and we say so.** The method was changed
+  after the failure was seen. On two further years whose monthly values had
+  not been looked at (2020 to 2021, check C3x, added afterwards) Córdoba
+  passes (0.125) and **Punjab and Haryana fails** (0.169); there the first
+  check is at the limit (0.148 against 0.15) and fails under five other
+  reasonable settings. In Córdoba it passes under all five.
+- **Failed in Córdoba, and we ship the curve there anyway:** the check for a
+  false step in 2016, when no sensor changed (-0.114 against 0.10), and the
+  2012 step refitted without those years (check C1x, added afterwards: 0.100
+  against 0.10). Our own pre-registered rule would ship the simpler hard floor
+  there, which passes both. We chose the curve after seeing both results
+  (decision 58). It is closer to Aqua month by month and year by year, but the
+  rule was set aside to ship it, and we say so.
+- **Failed:** the comparison with burned area in Córdoba (ESA and NASA
+  products). Aqua alone fails it the same way, so it is not the sensor change.
+- **Weaker regions:** Chilecito borrows Córdoba's calibration and Karnataka
+  ships the fallback ratio; both fail several checks and are labelled in the
+  app.
 
 Full limits: [submission/limits.md](submission/limits.md).
 

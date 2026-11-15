@@ -62,6 +62,12 @@ function floorOf(meta: Meta): { day: number | null; night: number | null } {
   return { day: f?.day ?? null, night: f?.night ?? null };
 }
 
+/** Whether the record uses one conversion constant per calendar month (meta.constants_by_month, twelve daytime values). */
+export function hasMonthlyConstants(meta: Meta): boolean {
+  const m = (meta.constants_by_month as { day?: unknown } | undefined)?.day;
+  return Array.isArray(m) && m.length === 12;
+}
+
 /**
  * The always-visible plain-language summary, worded for the level that
  * shipped (Person A's text in submission/method_panel.md, adapted per level).
@@ -73,14 +79,18 @@ export function shortVersion(meta: Meta): string {
   const closing = " Weaker VIIRS-only fires are reported separately in the small-fire layer.";
   const floor = floorOf(meta);
   const constants = meta.constants as { day?: number; night?: number } | undefined;
+  // Since data version of 15 Nov the conversion constant is fitted per calendar month (decision 57).
+  const byMonth = hasMonthlyConstants(meta);
+  const seasonal = byMonth ? " The count is scaled by a constant fitted for each calendar month, because the two sensors' relation follows the season." : "";
   switch (meta.level_shipped) {
     case "S0":
-      return `${opening}, using a MODIS detection-probability curve by fire strength.${closing}`;
+      return `${opening}, using a MODIS detection-probability curve by fire strength.${seasonal}${closing}`;
     case "L2":
       return floor.day !== null && floor.night !== null
-        ? `${opening}: from 2012, only VIIRS fire cells MODIS could have detected are counted (above ${floor.day} MW by day and ${floor.night} MW by night).${closing}`
-        : `${opening}: from 2012, only VIIRS fire cells MODIS could have detected are counted.${closing}`;
+        ? `${opening}: from 2012, only VIIRS fire cells MODIS could have detected are counted (above ${floor.day} MW by day and ${floor.night} MW by night).${seasonal}${closing}`
+        : `${opening}: from 2012, only VIIRS fire cells MODIS could have detected are counted.${seasonal}${closing}`;
     case "L1r":
+      if (byMonth) return `${opening}, scaling VIIRS fire cells by a conversion ratio from the overlap period, fitted for each calendar month.`;
       return constants?.day !== undefined && constants?.night !== undefined
         ? `${opening}, scaling VIIRS fire cells by a constant ratio from the overlap period (${constants.day} by day, ${constants.night} by night).`
         : `${opening}, scaling VIIRS fire cells by a constant ratio from the overlap period.`;

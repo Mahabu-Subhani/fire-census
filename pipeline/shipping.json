@@ -1,26 +1,25 @@
 {
-  "note": "Which model fills `harm` for each area. Set by the shipping rule in docs/PREREGISTRATION.md, using the revised held-out check C3r adopted by Mahabu on 14 Nov 2026 (docs/DECISIONS.md, decision 30). Both the original and the revised verdicts are published in meta.json.",
+  "note": "Which model fills `harm` for each area. Punjab and Haryana and Karnataka: set by the shipping rule in docs/PREREGISTRATION.md as first written (the curve if it passes C0, C1, C1b, C2, C3 and C8; otherwise the hard floor if it passes C0 to C3; otherwise the ratio), applied to the models with one constant per calendar month (decision 57). Cordoba, and Chilecito which borrows its model: the detection curve, by decision 58 (Mahabu, 15 Nov 2026), which sets the rule aside there; by the rule the hard floor would ship. Both models' verdicts are published in meta.json (`all_models`).",
   "areas": {
     "cordoba": {
       "model": "S0",
       "variant": "A",
-      "reason": "Detection curve. Passes C0, C1, C1b, C2, C3r, C4 and C8. Fails the original held-out check C3 (0.207 against 0.15); the team adopted the revised check C3r, which it passes (0.072 against 0.10). Both verdicts are shown."
+      "reason": "Detection curve, with one constant per calendar month. Shipped by decision 58, which sets aside the shipping rule in this area: the curve fails the 2016 placebo C2 (-0.114 against 0.10) and the out-of-sample step C1x (0.100 against 0.10), so the rule as written would ship the hard floor. The curve passes C0, C1 (0.066), C1b, C3 (0.072 against 0.15), C3x (0.125), C3r, C4 and C8; leaving one year out it is within 0.10 of Aqua in 9 of 10 years, against 3 of 10 for the hard floor, which passes C2 (-0.094) and C1x (0.072)."
     },
     "punjab-haryana": {
       "model": "L2",
       "variant": "A",
-      "reason": "Hard floor. Passes C0, C1, C1b, C2, C3r and C4. Fails the original held-out check C3 (0.169 against 0.15), as in Cordoba; it ships under the revised check C3r, which it passes (0.042 against 0.10). Both verdicts are shown. The detection curve fails C8 here (its midpoint is too uncertain), which is why it does not ship. Until 14 Nov the floor's constant was fitted on whole strength bins, which made the record 4.6 percent too high and C3 read 0.144; fixed.",
-      "carried_note": "Computed before the 14 Nov correction of the hard-floor constant. The correction lowers the record after 2012 by 4.6 percent, which moves this value by about -0.05; still inside the limit. Not yet recomputed with the burned-area data."
+      "reason": "Hard floor, with one constant per calendar month. Passes every check the shipping rule names, as first written: C0, C1 (-0.020), C1b, C2 (-0.059) and C3 (0.148 against 0.15, narrowly); also C3r and C4. Fails C3x, added after results: the same statistic on 2020 to 2021 is 0.169. The detection curve fails C3 (0.208) and C8 (its midpoint is too uncertain), which is why it does not ship. Until 15 Nov the hard floor with one year-round constant shipped; it failed C3 (0.169) because its error followed the season."
     },
     "chilecito": {
       "model": "S0",
       "variant": "A",
-      "reason": "Case-study area with too few fires to calibrate. Uses Cordoba's detection curve and constants, and Cordoba's model. Its own checks are shown and several fail because so few fires occur there."
+      "reason": "Case-study area with too few fires to calibrate. Uses Cordoba's curve and monthly constants, and Cordoba's model (the detection curve, decision 58). Its own checks are shown and several fail because so few fires occur there."
     },
     "karnataka-south": {
       "model": "L1r",
       "variant": "A",
-      "reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 20 to 32 percent more than any harmonized version), so the constant-ratio fallback ships. The detection curve passed C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.112). Region added after the start (decision 36); not pre-registered."
+      "reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 16 to 21 percent more than any harmonized version), so the conversion-ratio fallback ships, with one constant per calendar month. The detection curve passes C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.119), C3 (0.288) and C3r (-0.196). Region added after the start (decision 36); not pre-registered."
     }
   }
 }

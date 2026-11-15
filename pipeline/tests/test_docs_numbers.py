@@ -47,7 +47,7 @@ def table_row(text: str, starts_with: str) -> list[str]:
     raise AssertionError(f"no table row starting with {starts_with!r}")
 
 
-@pytest.mark.parametrize("check_id", ["C0", "C1", "C1x", "C2", "C3", "C3r", "C6", "C6m"])
+@pytest.mark.parametrize("check_id", ["C0", "C1", "C1x", "C2", "C3", "C3r", "C3x", "C6", "C6m"])
 @pytest.mark.parametrize("col, area", list(enumerate(AREAS)))
 def test_results_table_matches_meta(check_id, col, area):
     cell = table_row(RESULTS, check_id)[2 + col]
@@ -102,5 +102,6 @@ def test_readme_quotes_the_shipped_out_of_sample_and_held_out_values():
 @pytest.mark.parametrize("area", ["cordoba", "punjab-haryana", "chilecito", "karnataka-south"])
 def test_unit_note_names_the_method_that_ships(area):
     meta = json.loads((APP_DATA / area / "meta.json").read_text(encoding="utf-8"))
-    how = {"S0": "detection curve", "L2": "hard floor", "L1r": "constant conversion ratio"}
+    how = {"S0": "detection curve", "L2": "hard floor", "L1r": "conversion ratio"}
     assert how[meta["level_shipped"]] in meta["unit_note"]
+    assert "each calendar month" in meta["unit_note"]          # decision 57

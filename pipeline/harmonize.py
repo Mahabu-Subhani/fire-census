@@ -15,6 +15,13 @@ Levels built here (the ladder):
   L2   hard floor: VIIRS cells at or above the curve's midpoint, times a constant
   S0   detection curve: each VIIRS cell weighted by its detection probability
 
+Constants. Since 15 Nov (decision 57) each of L1r, L2 and S0 uses one constant per
+calendar month for daytime cells, because the MODIS-to-VIIRS relation follows the
+season: with one year-round constant the error by calendar month was the same in
+the fitting years and the held-out years (docs/research/20261115-checks-audit-
+seasonal-bias.md). The year-round versions are kept beside them as L1ry, L2y and
+S0y, so the effect of the change stays measured. Night cells keep one constant.
+
 Run: python pipeline/harmonize.py     Output: WORK/<area>_{cells,weights,series}.parquet, curves.json
 """
 
@@ -40,6 +47,8 @@ CONTROL_SHIFT = 10     # cells; a displaced search measures chance coincidences
 PLATEAU_Q = float(os.environ.get("FC_PLATEAU_Q", 0.95))   # plateau = curve value at this quantile of fire strength
 N_BOOT = 500
 TRANSFER = {"chilecito": "cordoba"}   # too few fires for its own curve: use the donor's
+SEASON_N0 = 50.0       # Aqua cells of prior weight: a season with few fires falls back to the year-round constant
+SEASONAL = (("S0", "k_curve"), ("L2", "k_floor"), ("L1r", "k_ratio"))   # model -> name of its year-round constant
 RNG = np.random.default_rng(20261114)
 
 
@@ -115,6 +124,27 @@ def fit_curve(n: np.ndarray, h: np.ndarray, c: np.ndarray):
     return p_raw, p_norm, plateau, f50
 
 
+def calendar_month(months) -> np.ndarray:
+    """Calendar month 1 to 12 of each "YYYY-MM"."""
+    return np.array([int(m[5:7]) for m in months], dtype=int)
+
+
+def seasonal_constants(aqua: np.ndarray, cells: np.ndarray, cal_month: np.ndarray, k_annual: float) -> np.ndarray:
+    """One constant per calendar month (index 0 = January).
+
+    aqua, cells: Aqua fire cells and the model's weighted VIIRS cells in each fitting month;
+    cal_month: that month's calendar month. Each constant is the ratio of the two sums over
+    the calendar month and its two neighbours (December and January are neighbours), pulled
+    towards the year-round constant by SEASON_N0 Aqua cells so that a season with few fires
+    keeps the year-round value. Settings fixed before the first run and never tuned.
+    """
+    a = np.bincount(cal_month, weights=aqua, minlength=13)[1:]
+    v = np.bincount(cal_month, weights=cells, minlength=13)[1:]
+    aw = np.roll(a, 1) + a + np.roll(a, -1)
+    vw = np.roll(v, 1) + v + np.roll(v, -1)
+    return (aw + SEASON_N0) / (vw + SEASON_N0 / max(k_annual, 1e-9))
+
+
 def calibrate(match: pd.DataFrame, aqua_month: pd.Series, variant: str, dn: str) -> dict:
     """Fit curve and constants for one calibration variant and one day/night class."""
     lo, hi = CAL[variant]
@@ -137,8 +167,15 @@ def calibrate(match: pd.DataFrame, aqua_month: pd.Series, variant: str, dn: str)
         "k_floor": float(aq.sum() / max(n_floor.sum(), 1e-9)),
         "k_ratio": float(aq.sum() / max(n.sum(), 1e-9)),
     }
+    # One constant per calendar month for daytime cells (decision 57); night keeps the year-round one.
+    calm = calendar_month(months)
+    per_model = {"k_curve": n @ p_norm, "k_floor": n_floor, "k_ratio": n.sum(axis=1)}
+    for kname, cells_m in per_model.items():
+        out[kname + "_m"] = (seasonal_constants(aq, cells_m, calm, out[kname]) if dn == "D"
+                             else np.full(12, out[kname])).tolist()
     # Block bootstrap by month: resample whole months with replacement.
     f50s, ks, curves, ks_floor, ks_ratio = [], [], [], [], []
+    boot_m = {kname: [] for kname in per_model}
     for _ in range(N_BOOT):
         idx = RNG.integers(0, len(months), len(months))
         _, pn, _, f = fit_curve(n[idx], h[idx], c[idx])
@@ -147,6 +184,10 @@ def calibrate(match: pd.DataFrame, aqua_month: pd.Series, variant: str, dn: str)
         ks_floor.append(aq[idx].sum() / max(n_floor[idx].sum(), 1e-9))     # floor held at the fitted f50
         ks_ratio.append(aq[idx].sum() / max(n[idx].sum(), 1e-9))
         curves.append(pn)
+        if dn == "D":
+            for kname, cells_b, k_b in (("k_curve", n[idx] @ pn, ks[-1]), ("k_floor", n_floor[idx], ks_floor[-1]),
+                                        ("k_ratio", n[idx].sum(axis=1), ks_ratio[-1])):
+                boot_m[kname].append(seasonal_constants(aq[idx], cells_b, calm[idx], k_b))
     curves = np.array(curves)
     out["f50_lo"], out["f50_hi"] = (float(x) for x in np.nanpercentile(f50s, [5, 95]))
     out["p_lo"] = np.percentile(curves, 5, axis=0).tolist()
@@ -155,6 +196,11 @@ def calibrate(match: pd.DataFrame, aqua_month: pd.Series, variant: str, dn: str)
     out["rel_sd_k"] = float(np.std(ks) / np.mean(ks))                       # detection curve
     out["rel_sd_k_floor"] = float(np.std(ks_floor) / np.mean(ks_floor))
     out["rel_sd_k_ratio"] = float(np.std(ks_ratio) / np.mean(ks_ratio))
+    # The same spread for each calendar month's constant (larger where a season has few fires).
+    for kname, rel in (("k_curve", "rel_sd_k"), ("k_floor", "rel_sd_k_floor"), ("k_ratio", "rel_sd_k_ratio")):
+        draws = np.array(boot_m[kname]) if dn == "D" else None
+        out[rel + "_m"] = ((draws.std(axis=0) / draws.mean(axis=0)).tolist() if draws is not None
+                           else [out[rel]] * 12)
     # Near-simultaneous subset (Aqua overpass within 10 minutes), as a robustness figure.
     sno = sub[sub["dt"] <= 10]
     if len(sno) >= 500:
@@ -188,14 +234,17 @@ def harmonize_area(con: duckdb.DuckDBPyConnection, area: str, curves_all: dict) 
     v = cells[cells["sensor"] == "VIIRS"].copy()
     b = bin_index(v["frp_sum"].to_numpy())
     is_day = (v["dn"] == "D").to_numpy()
+    mon = v["ym"].str[5:7].astype(int).to_numpy() - 1
     for variant in CAL:
         fd, fn = fits[f"{variant}_D"], fits[f"{variant}_N"]
         pn = np.where(is_day, np.array(fd["p_norm"])[b], np.array(fn["p_norm"])[b])
         f50 = np.where(is_day, fd["f50"], fn["f50"])
         v[f"p_{variant}"] = pn
-        v[f"S0_{variant}"] = pn * np.where(is_day, fd["k_curve"], fn["k_curve"])
-        v[f"L2_{variant}"] = (v["frp_sum"].to_numpy() >= f50) * np.where(is_day, fd["k_floor"], fn["k_floor"])
-        v[f"L1r_{variant}"] = np.where(is_day, fd["k_ratio"], fn["k_ratio"])
+        base = {"S0": pn, "L2": (v["frp_sum"].to_numpy() >= f50).astype(float), "L1r": np.ones(len(v))}
+        for model, kname in SEASONAL:
+            k_month = np.array(fd[kname + "_m"])[mon]                      # daytime constant of the cell's month
+            v[f"{model}_{variant}"] = base[model] * np.where(is_day, k_month, fn[kname])
+            v[f"{model}y_{variant}"] = base[model] * np.where(is_day, fd[kname], fn[kname])   # year-round constant
     v.to_parquet(WORK / f"{area}_weights.parquet", index=False)
 
     # Monthly series.
@@ -207,7 +256,8 @@ def harmonize_area(con: duckdb.DuckDBPyConnection, area: str, curves_all: dict) 
     src = (WORK / f"{area}.parquet").as_posix()
     ser["L0"] = con.execute(
         f"select strftime(acq_date, '%Y-%m') ym, count(*) n from '{src}' group by 1").df().set_index("ym")["n"]
-    cols = ["cells"] + [f"{m}_{x}" for x in CAL for m in ("S0", "L2", "L1r")] + [f"small_{x}" for x in CAL]
+    cols = (["cells"] + [f"{m}{y}_{x}" for x in CAL for m in ("S0", "L2", "L1r") for y in ("", "y")]
+            + [f"small_{x}" for x in CAL])
     v["cells"] = 1.0
     for variant in CAL:
         v[f"small_{variant}"] = 1.0 - v[f"p_{variant}"]

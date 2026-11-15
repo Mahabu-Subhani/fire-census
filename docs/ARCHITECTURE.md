@@ -207,6 +207,16 @@ FIRMS detections and is not in the harmonized unit. Charts take both labels
 from here and never type them by hand. `unit_raw` proposed 14 November by
 Mahabu (A); awaiting 8crsk (B).
 
+Fields added 15 November by Mahabu (A) with decision 57, all optional for the
+app, **proposed, awaiting 8crsk (B)**; no existing field changed shape:
+`constants_by_month.day` (twelve daytime conversion constants, January first;
+`constants.day` is the year-round value they are pulled towards and
+`constants.night` the night constant), `year_round_constant` (the checks C1 to
+C4 of each model with one year-round constant, as shipped until 15 November)
+and `error_by_calendar_month` (ln of record over Aqua for each calendar month,
+with and without the monthly constants). `checks` gained the row `C3x`. The
+`ladder` now has two rows per method, one for each kind of constant.
+
 `data_through` is the last date with data, `YYYY-MM-DD`. `nrt_from` is the
 first month (`YYYY-MM`) built from near-real-time rows, which may still change.
 The app shows both in its freshness line. Fields added 14 November with the

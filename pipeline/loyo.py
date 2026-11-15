@@ -12,6 +12,8 @@ on 2012 to 2015, so it is partly in-sample. Here every number is out of sample:
   2. The 2012 seam, out of window. Fitted on February 2015 to December 2021
      only, tested on February 2012 to January 2015 (the after-window of C1).
      Before 2012 the record is Aqua itself, so this log ratio is C1's statistic.
+  Since 15 Nov each model is fitted as it ships: one constant per calendar month
+  for daytime cells, from the train months only (decision 57).
   3. Month scatter. The root-mean-square of the out-of-sample monthly
      ln(H / R), over months with at least 30 Aqua fire cells. The app uses it
      for the range on "Nth highest of N".
@@ -30,13 +32,13 @@ import numpy as np
 import pandas as pd
 
 from config import APP_DATA, AREAS, WORK
-from harmonize import TRANSFER, fit_curve, match_table, month_bin_counts
+from harmonize import TRANSFER, calendar_month, fit_curve, match_table, month_bin_counts, seasonal_constants
 
 POOL = ("2012-02", "2021-12")
 SEAM_TEST = ("2012-02", "2015-01")
 MIN_CELLS = 30
 LIMIT = 0.10
-MODELS = {"S0": "detection curve", "L2": "hard floor", "L1r": "constant ratio"}
+MODELS = {"S0": "detection curve", "L2": "hard floor", "L1r": "conversion ratio"}
 CHECK = ("C1x", "No seam at 2012, out of sample (added after results)", "absolute log ratio at most 0.10")
 
 
@@ -47,7 +49,7 @@ def area_counts(con: duckdb.DuckDBPyConnection, area: str) -> dict:
     match = match_table(con)
     aqua = con.execute("select ym, dn, count(*) n from cells where satellite = 'Aqua' group by 1, 2").df()
     months = sorted(m for m in set(match["ym"]) | set(aqua["ym"]) if POOL[0] <= m <= POOL[1])
-    out = {"months": np.array(months)}
+    out = {"months": np.array(months), "cal_month": calendar_month(months)}
     for dn in ("D", "N"):
         sub = match[(match["dn"] == dn) & match["ym"].isin(months)]
         n, h, c = month_bin_counts(sub, months)
@@ -72,9 +74,14 @@ def predict(data: dict, train: np.ndarray, test: np.ndarray) -> dict:
         # exactly as harmonize.py applies it (not by whole strength bins).
         above = np.bincount(month_of[frp >= f50], minlength=len(aq)).astype(float)
         per_month = {"S0": n @ p, "L2": above, "L1r": n.sum(axis=1)}
+        calm = data["cal_month"]
         for m, cells in per_month.items():
             k = aq[train].sum() / max(cells[train].sum(), 1e-9)
-            h[m] += k * cells[test]
+            if dn == "D":      # one constant per calendar month, fitted on the train months only (decision 57)
+                k_m = seasonal_constants(aq[train], cells[train], calm[train], k)
+                h[m] += k_m[calm[test] - 1] * cells[test]
+            else:
+                h[m] += k * cells[test]
     return {"h": h, "r": r}
 
 
@@ -124,14 +131,22 @@ def check_row(area: str, model: str, loyo: dict):
     got = loyo.get(donor, {}).get(model)
     if not got:
         return None
-    borrowed = f" Borrowed from {donor}; not tested in this area." if donor != area else ""
+    value = None if got["seam_2012"] is None else f"{got['seam_2012']:+.3f}"
+    # A borrowing area was not tested: its row must not show the donor's value as if it were its own
+    # (until 15 Nov Chilecito showed Córdoba's +0.087 beside "not run").
+    borrowed = donor != area
+    donor_name = AREAS[donor][0].rsplit(",", 1)[0]
+    loyo_text = (f"leaving one year out at a time (2012 to 2021): {got['n_within_limit']} of {got['n_years']} "
+                 f"years within 0.10, mean {got['mean']:+.3f}, largest {got['max_abs']:.3f}")
+    note = ("Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. " +
+            (f"Not tested in this area, which has too few fires to fit its own model; it uses the model of "
+             f"{donor_name}, whose own result is {value} ({loyo_text})." if borrowed else
+             loyo_text[0].upper() + loyo_text[1:] + "."))
     return {
         "id": CHECK[0], "name": CHECK[1], "threshold": CHECK[2],
-        "value": None if got["seam_2012"] is None else f"{got['seam_2012']:+.3f}",
+        "value": None if borrowed else value,
         "verdict": "not run" if borrowed else got["seam_verdict"],
-        "note": (f"Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. "
-                 f"Leaving one year out at a time (2012 to 2021): {got['n_within_limit']} of {got['n_years']} "
-                 f"years within 0.10, mean {got['mean']:+.3f}, largest {got['max_abs']:.3f}.{borrowed}"),
+        "note": note,
     }
 
 
@@ -150,7 +165,9 @@ def patch_meta() -> None:
         at = next((i + 1 for i, c in enumerate(rows) if c["id"] == "C1b"), len(rows))
         rows.insert(at, row)
         meta["checks"] = rows
-        meta["month_log_sd"] = loyo[TRANSFER.get(area, area)][model]["month_log_sd"]
+        # A borrowing area has too few months to measure its own scatter, and the donor's would make its
+        # rank range look tighter than it is (Chilecito showed Córdoba's 0.244 until 15 Nov): no range.
+        meta["month_log_sd"] = None if area in TRANSFER else loyo[area][model]["month_log_sd"]
         path.write_text(json.dumps(meta, indent=2), encoding="utf-8")   # same format as export.py
         print(f"{area}: {model} C1x {row['value']} {row['verdict']}; month_log_sd {meta['month_log_sd']}")
 

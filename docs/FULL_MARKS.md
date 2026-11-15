@@ -2,6 +2,16 @@
 
 # What a 10 needs on each criterion, and where we stand
 
+> **Read this first (added 15 November, after decisions 57 and 58).** Written
+> on 14 November and not redone. No longer true below: the Chilecito fire is
+> now 10.2 times a normal July (not 8.8), still the 2nd highest of 25; the
+> detection curve, with one constant per calendar month, weights the count in
+> Córdoba and Chilecito (decision 58, which sets the pre-registered shipping
+> rule aside there because the curve fails the 2016 placebo C2), and the hard
+> floor ships in Punjab and Haryana; and "the two failed checks and C3r" is
+> replaced by what section 6 of `docs/EXPLAINED.md` now says about C2, C3 and
+> C3x.
+
 Local judging gives 10 points each for Impact, Creativity, Validity,
 Relevance and Presentation. No project is guaranteed 50; this is the list of
 everything within our control that a judge's 10 would require, with its state.

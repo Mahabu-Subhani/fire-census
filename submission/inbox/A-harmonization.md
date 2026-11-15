@@ -2,6 +2,12 @@
 
 # For Charulekha: one-line versions for the project page
 
+> **Superseded on 15 November by decision 57.** Every number in the list of
+> corrections below was right for the record as it stood late on 14 November.
+> The record was rebuilt on 15 November with one constant per calendar month,
+> so use `submission/results.md`, `submission/limits.md` and
+> `submission/inbox/A-judge-fixes.md` instead. Kept for the history.
+
 Full drafts: `submission/method.md`, `results.md`, `limits.md`, `nasa_data.md`.
 Figures: `submission/figures/`.
 
@@ -46,8 +52,7 @@ the changes below are proposals, with the exact new numbers.
    > held-out check as Córdoba's curve (C3: 0.169 against 0.15) and passes the
    > rest that apply to it: the 2012 step (-0.016), the two-year held-out
    > total (C3r, -0.042), NOAA-20 agreement (slope 1.025, correlation 0.993)
-   > and both burned-area checks (ESA -0.104, NASA -0.036, both computed before
-   > the correction below and about 0.05 lower after it). The record also
+   > and both burned-area checks (ESA -0.149, NASA -0.081). The record also
    > reproduces a documented change: a 2019 study reported that Punjab's peak
    > burning day moved later after 2009 groundwater laws delayed rice
    > planting, and across both sensors our median burning day moves 8.2 days
@@ -74,7 +79,7 @@ the changes below are proposals, with the exact new numbers.
 
 4. **"Why it matters", orbit drift:** "Since 2022 Aqua reports 6.2 percent more
    fire there than the harmonized record (2.2 percent less before)" becomes
-   "10.5 percent more (2.3 percent more before)".
+   "about 11 percent more (2.3 percent more before)". (0.105 is a log ratio: about 11.1 percent; corrected 15 Nov.)
 
 5. **"Who uses it" table, pollution-control boards:** "fell from 14,142 fire
    cells in 2020 to 737 in 2025" becomes "from 13,521 in 2020 to 706 in 2025".

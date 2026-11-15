@@ -35,3 +35,22 @@ describe.each(regions.map((r) => [r.id, r]))("EvidencePanel with real data: %s",
     expect(renderToString(<ChecksBadge />)).toContain("Checks:");
   });
 });
+
+describe("addedAfterNote", async () => {
+  const { addedAfterNote } = await import("./EvidencePanel");
+  it("calls only C3r a revision; C1x and C6m are additions that replace nothing", () => {
+    expect(addedAfterNote("C3r")).toContain("revised version of C3");
+    expect(addedAfterNote("C1x")).toContain("does not replace C1");
+    expect(addedAfterNote("C6m")).toContain("does not replace C6");
+    expect(addedAfterNote("C3x")).toContain("does not replace C3");
+    for (const id of ["C1x", "C3x", "C6m", "X9"]) expect(addedAfterNote(id)).not.toMatch(/revised/i);
+  });
+  it("no rendered check says 'Revised limit' any more", () => {
+    for (const r of regions) {
+      current.region = r;
+      current.meta = read(`${r.id}/meta.json`) as Meta;
+      current.drift = read(`${r.id}/drift.json`) as DriftFile;
+      expect(renderToString(<EvidencePanel />)).not.toContain("Revised limit");
+    }
+  });
+});

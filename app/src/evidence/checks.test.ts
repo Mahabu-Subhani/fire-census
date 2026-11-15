@@ -44,6 +44,17 @@ describe("shortVersion", () => {
   it("states the ratio for the constant-ratio fallback", () => {
     expect(shortVersion({ ...base, level_shipped: "L1r", constants: { day: 0.3888, night: 0.1599 } } as Meta)).toContain("0.3888 by day");
   });
+  it("says the constant is fitted per calendar month when the data has twelve of them (decision 57)", () => {
+    const monthly = { constants_by_month: { day: Array.from({ length: 12 }, () => 0.4) } };
+    const floor = shortVersion({ ...base, ...monthly, level_shipped: "L2", floor_mw: { day: 4.78, night: 4.17 } } as Meta);
+    expect(floor).toContain("above 4.78 MW by day");
+    expect(floor).toContain("constant fitted for each calendar month");
+    const ratio = shortVersion({ ...base, ...monthly, level_shipped: "L1r", constants: { day: 0.17, night: 0.02 } } as Meta);
+    expect(ratio).toContain("fitted for each calendar month");
+    expect(ratio).not.toContain("constant ratio");
+    // Older data without the field keeps the old wording.
+    expect(shortVersion({ ...base, level_shipped: "L2" } as Meta)).not.toContain("calendar month");
+  });
 });
 
 describe("calibrationText", () => {

@@ -7,7 +7,7 @@ fires alongside the older MODIS. Add their counts together and fire activity
 appears to jump about fivefold in 2012, in Punjab and in Córdoba alike. The
 jump is the camera, not the fire.
 
-**Two reasons the sensors disagree, and one fix for each.**
+**Three reasons the sensors disagree, and one fix for each.**
 
 1. *The sharper camera counts one fire many times.* A fire that fills one
    MODIS pixel fills several VIIRS pixels. We lay a 1 km grid over the map and
@@ -16,11 +16,21 @@ jump is the camera, not the fire.
    satellites flew over the same place on the same day, we measured how often
    MODIS also reported a fire that VIIRS saw, at every fire strength. That gives
    MODIS's detection curve: weak fires are usually missed, strong ones almost
-   always caught. Each fire VIIRS sees today is counted by its chance of being
-   seen by MODIS, so 2025 is measured on the same scale as 2005.
+   always caught. In Córdoba each fire VIIRS sees is counted by its chance of
+   being seen by MODIS, read from that curve. In Punjab and Haryana the curve
+   is weak, so the record there counts the fires VIIRS sees at or above the
+   curve's midpoint (the hard floor); that midpoint is a cut-off we use, not
+   a measured detection limit. Either way 2025 is measured on the same scale
+   as 2005.
+3. *How much the older camera misses changes with the season.* In hot months
+   and with different crops, MODIS misses a different share. So the count is
+   scaled by a constant fitted for each calendar month, not one for the whole
+   year. Our own held-out check found this: with one constant, Punjab and
+   Haryana's May read about half too high and its October a fifth too low.
 
 **What is kept.** The weak fires only VIIRS can see are not thrown away. They
-form a separate small-fire layer, mostly crop burning.
+form a separate small-fire layer, mostly crop burning: each fire VIIRS sees
+adds its chance of being missed by MODIS, read from the curve.
 
 **How we know it works.** Ten checks were written down before the data was
 opened, and every result is shown, including the ones that failed.

@@ -1,9 +1,9 @@
 {
   "level_shipped": "L1r",
-  "level_name": "Constant ratio (fallback)",
-  "shipping_reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 20 to 32 percent more than any harmonized version), so the constant-ratio fallback ships. The detection curve passed C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.112). Region added after the start (decision 36); not pre-registered.",
+  "level_name": "Conversion ratio (fallback)",
+  "shipping_reason": "Shipping rule: no model passes the held-out checks here (C3 and C3r: in 2018-2019 Aqua saw 16 to 21 percent more than any harmonized version), so the conversion-ratio fallback ships, with one constant per calendar month. The detection curve passes C0, C1, C1b, C2, C4 and C8; the fallback fails C2 (-0.119), C3 (0.288) and C3r (-0.196). Region added after the start (decision 36); not pre-registered.",
   "unit": "Aqua-equivalent fire cells",
-  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with one constant conversion ratio.",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with a conversion ratio, scaled by a constant fitted for each calendar month because the two sensors' relation follows the season.",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
@@ -22,6 +22,22 @@
     "day": 0.1705,
     "night": 0.0161
   },
+  "constants_by_month": {
+    "day": [
+      0.1787,
+      0.1942,
+      0.1935,
+      0.1741,
+      0.1038,
+      0.1051,
+      0.1354,
+      0.1237,
+      0.1148,
+      0.1222,
+      0.125,
+      0.1219
+    ]
+  },
   "ladder": [
     {
       "level": "L0 raw detections",
@@ -34,22 +50,40 @@
       "held_out": 1.756
     },
     {
-      "level": "L1r constant ratio",
+      "level": "L1r conversion ratio, one year-round constant",
       "step_2012": -0.033,
       "placebo_2016": "-0.112",
       "held_out": 0.373
     },
     {
-      "level": "L2 hard floor",
+      "level": "L1r conversion ratio, a constant per calendar month",
+      "step_2012": 0.031,
+      "placebo_2016": "-0.119",
+      "held_out": 0.288
+    },
+    {
+      "level": "L2 hard floor, one year-round constant",
       "step_2012": -0.102,
       "placebo_2016": "+0.081",
       "held_out": 0.174
     },
     {
-      "level": "S0 detection curve",
+      "level": "L2 hard floor, a constant per calendar month",
+      "step_2012": -0.116,
+      "placebo_2016": "+0.087",
+      "held_out": 0.236
+    },
+    {
+      "level": "S0 detection curve, one year-round constant",
       "step_2012": -0.05,
       "placebo_2016": "-0.033",
       "held_out": 0.183
+    },
+    {
+      "level": "S0 detection curve, a constant per calendar month",
+      "step_2012": -0.015,
+      "placebo_2016": "-0.038",
+      "held_out": 0.197
     }
   ],
   "checks": [
@@ -64,7 +98,7 @@
     {
       "id": "C1",
       "name": "No seam at 2012",
-      "value": -0.033,
+      "value": 0.031,
       "threshold": "absolute value at most 0.10",
       "verdict": "pass",
       "note": ""
@@ -72,7 +106,7 @@
     {
       "id": "C1b",
       "name": "No change point at 2012 (Pettitt)",
-      "value": "p=0.226 at 2016-04",
+      "value": "p=0.200 at 2016-04",
       "threshold": "no change point with p < 0.05 between Jul 2011 and Dec 2012",
       "verdict": "pass",
       "note": "38 months with at least 30 Aqua fire cells"
@@ -81,22 +115,22 @@
       "id": "C1x",
       "name": "No seam at 2012, out of sample (added after results)",
       "threshold": "absolute log ratio at most 0.10",
-      "value": "-0.007",
+      "value": "+0.030",
       "verdict": "pass",
-      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Leaving one year out at a time (2012 to 2021): 3 of 10 years within 0.10, mean +0.045, largest 0.404."
+      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Leaving one year out at a time (2012 to 2021): 2 of 10 years within 0.10, mean +0.083, largest 0.434."
     },
     {
       "id": "C2",
       "name": "No seam at placebo dates (2016, 2008)",
-      "value": "2016: -0.112; 2008: +0.000",
+      "value": "2016: -0.119; 2008: +0.000",
       "threshold": "absolute value at most 0.10 at both",
       "verdict": "fail",
-      "note": "2008 is zero by construction: H equals the Aqua reference before 2012"
+      "note": "Only the 2016 placebo tests anything: 2008 is zero by construction, because before 2012 the harmonized record is the Aqua reference itself."
     },
     {
       "id": "C3",
       "name": "Held-out years 2018 to 2019",
-      "value": 0.373,
+      "value": 0.288,
       "threshold": "median absolute log ratio at most 0.15",
       "verdict": "fail",
       "note": "7 of 24 months have at least 30 Aqua fire cells"
@@ -104,15 +138,23 @@
     {
       "id": "C3r",
       "name": "Held-out years, two-year total (revised after results)",
-      "value": -0.3,
+      "value": -0.196,
       "threshold": "absolute log ratio at most 0.10",
       "verdict": "fail",
       "note": "revised held-out check, added after results (PREREGISTRATION.md note of 14 Nov); reported beside C3, never instead of it; 7 months"
     },
     {
+      "id": "C3x",
+      "name": "Held-out years 2020 to 2021 (added after results)",
+      "value": null,
+      "threshold": "median absolute log ratio at most 0.15",
+      "verdict": "not run",
+      "note": "added after results; only 5 months with at least 30 Aqua fire cells"
+    },
+    {
       "id": "C4",
       "name": "NOAA-20 alone reproduces the record",
-      "value": "slope 1.016, correlation 0.975",
+      "value": "slope 1.015, correlation 0.976",
       "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
       "verdict": "pass",
       "note": "103 months"
@@ -128,18 +170,18 @@
     {
       "id": "C6",
       "name": "Burned-area relationship is stable",
-      "value": 0.276,
+      "value": 0.347,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "fail",
-      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.34 on the same statistic and the raw record 2.537: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by -0.065. ESA months missing: 2019-10, 2019-11, 2019-12"
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.34 on the same statistic and the raw record 2.537: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.006. ESA months missing: none"
     },
     {
       "id": "C6m",
       "name": "Same, against NASA MCD64A1 burned area (added after results)",
-      "value": 0.374,
+      "value": 0.438,
       "threshold": "absolute log ratio at most 0.25",
       "verdict": "fail",
-      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: 0.764. Aqua alone, with no sensor change: 0.329. Raw record: 2.607"
+      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: 0.835. Aqua alone, with no sensor change: 0.329. Raw record: 2.607"
     },
     {
       "id": "C7",
@@ -165,6 +207,7 @@
       "C1b": "pass",
       "C2": "pass",
       "C3": "fail",
+      "C3x": "not run",
       "C3r": "fail",
       "C4": "pass",
       "C8": "pass"
@@ -175,6 +218,7 @@
       "C1b": "pass",
       "C2": "pass",
       "C3": "fail",
+      "C3x": "not run",
       "C3r": "fail",
       "C4": "fail"
     },
@@ -184,8 +228,163 @@
       "C1b": "pass",
       "C2": "fail",
       "C3": "fail",
+      "C3x": "not run",
       "C3r": "fail",
       "C4": "pass"
+    }
+  },
+  "year_round_constant": {
+    "S0": {
+      "C1": {
+        "value": -0.05,
+        "verdict": "pass"
+      },
+      "C1b": {
+        "value": "p=0.015 at 2017-02",
+        "verdict": "pass"
+      },
+      "C2": {
+        "value": "2016: -0.033; 2008: +0.000",
+        "verdict": "pass"
+      },
+      "C3": {
+        "value": 0.183,
+        "verdict": "fail"
+      },
+      "C3x": {
+        "value": null,
+        "verdict": "not run"
+      },
+      "C3r": {
+        "value": -0.227,
+        "verdict": "fail"
+      },
+      "C4": {
+        "value": "slope 1.028, correlation 0.970",
+        "verdict": "pass"
+      }
+    },
+    "L2": {
+      "C1": {
+        "value": -0.102,
+        "verdict": "fail"
+      },
+      "C1b": {
+        "value": "p=0.155 at 2017-03",
+        "verdict": "pass"
+      },
+      "C2": {
+        "value": "2016: +0.081; 2008: +0.000",
+        "verdict": "pass"
+      },
+      "C3": {
+        "value": 0.174,
+        "verdict": "fail"
+      },
+      "C3x": {
+        "value": null,
+        "verdict": "not run"
+      },
+      "C3r": {
+        "value": -0.23,
+        "verdict": "fail"
+      },
+      "C4": {
+        "value": "slope 1.000, correlation 0.816",
+        "verdict": "fail"
+      }
+    },
+    "L1r": {
+      "C1": {
+        "value": -0.033,
+        "verdict": "pass"
+      },
+      "C1b": {
+        "value": "p=0.226 at 2016-04",
+        "verdict": "pass"
+      },
+      "C2": {
+        "value": "2016: -0.112; 2008: +0.000",
+        "verdict": "fail"
+      },
+      "C3": {
+        "value": 0.373,
+        "verdict": "fail"
+      },
+      "C3x": {
+        "value": null,
+        "verdict": "not run"
+      },
+      "C3r": {
+        "value": -0.3,
+        "verdict": "fail"
+      },
+      "C4": {
+        "value": "slope 1.016, correlation 0.975",
+        "verdict": "pass"
+      }
+    }
+  },
+  "error_by_calendar_month": {
+    "year_round": {
+      "fitting_years": {
+        "1": 0.46,
+        "2": -0.18,
+        "3": -0.22,
+        "4": 0.54,
+        "5": 1.6,
+        "6": 1.82,
+        "7": 1.54,
+        "8": 0.85,
+        "9": 2.4,
+        "10": 1.01,
+        "11": 0.36,
+        "12": 0.54
+      },
+      "held_out_2018_2019": {
+        "1": 0.06,
+        "2": -0.29,
+        "3": -0.47,
+        "4": -0.06,
+        "5": -0.61,
+        "6": -0.88,
+        "7": null,
+        "8": null,
+        "9": 0.75,
+        "10": 0.02,
+        "11": 0.31,
+        "12": 0.81
+      }
+    },
+    "per_calendar_month": {
+      "fitting_years": {
+        "1": 0.51,
+        "2": -0.06,
+        "3": -0.09,
+        "4": 0.57,
+        "5": 1.12,
+        "6": 1.37,
+        "7": 1.34,
+        "8": 0.55,
+        "9": 2.02,
+        "10": 0.69,
+        "11": 0.06,
+        "12": 0.21
+      },
+      "held_out_2018_2019": {
+        "1": 0.11,
+        "2": -0.16,
+        "3": -0.35,
+        "4": -0.04,
+        "5": -1.07,
+        "6": -1.32,
+        "7": null,
+        "8": null,
+        "9": 0.37,
+        "10": -0.31,
+        "11": 0.0,
+        "12": 0.48
+      }
     }
   },
   "curve": {
@@ -757,13 +956,13 @@
     }
   },
   "data_version": "0.2.0",
-  "code_commit": "8b0ea58",
-  "generated_at": "2026-11-14T18:14:07Z",
+  "code_commit": "8268032",
+  "generated_at": "2026-11-14T19:37:39Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [
     "MODIS Collection 6.1 (Terra, Aqua), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days",
     "VIIRS 375 m Collection 2 (S-NPP, NOAA-20, NOAA-21), NASA FIRMS archive; near-real-time from the FIRMS area API for the latest days"
   ],
-  "month_log_sd": 0.354
+  "month_log_sd": 0.351
 }
