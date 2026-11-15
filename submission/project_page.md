@@ -358,10 +358,7 @@ any data was opened. Five decisions (30, 31, 36, 37 and 54 in
 `docs/DECISIONS.md`) were made by the AI on a team member's instruction and are
 recorded that way.
 
-**One AI-generated clip.** The first 10 seconds of the demo video are an
-animation made with the AI assistant (Remotion code it wrote), marked
-"AI-generated animation" on every frame (decision 59). No other image, video
-or audio in the submission is AI-generated.
+**No AI-generated images, video or audio** are in the submission.
 
 ## NASA data used
 
