@@ -70,7 +70,7 @@ Below that answer:
 - **Is it getting worse here?** Yearly totals with a trend line and a
   statistical test, or "no clear trend". For Córdoba province the app finds
   activity fell by about half per decade from 2003 to 2025 (Mann-Kendall
-  p = 0.007); for Punjab and Haryana it finds no clear trend in yearly totals.
+  p = 0.004); for Punjab and Haryana it finds no clear trend in yearly totals.
 - **The monthly series,** with a switch between the raw record and the
   harmonized one. One click shows the 2012 jump appear and disappear.
 - **Small fires kept, not thrown away.** The weak fires only VIIRS can see form
@@ -93,18 +93,21 @@ Two things make MODIS and VIIRS disagree, and we fix each one separately.
    and VIIRS flew over the same place on the same day, we measured how often
    MODIS also reported a fire that VIIRS saw, at every fire strength (fire
    radiative power). That gives MODIS's detection curve: weak fires are usually
-   missed, strong ones almost always caught. From 2012 the record counts the
-   fires VIIRS sees at or above the midpoint of that curve (the "hard floor"),
-   scaled by a constant fitted for each calendar month, because how much MODIS
-   misses changes with the season. The record keeps one unit,
-   "Aqua-equivalent fire cells", from 2002 to now. The curve does not weight
-   that count; it weights the small-fire layer.
+   missed, strong ones almost always caught. From 2012 the record counts each
+   VIIRS fire by its chance of being seen by MODIS, read off that curve, in
+   Córdoba (the "detection curve"). In Punjab and Haryana, where the curve is
+   weak, it counts only the fires at or above the curve's midpoint (the "hard
+   floor"). Both are scaled by a constant fitted for each calendar month,
+   because how much MODIS misses changes with the season. The record keeps one
+   unit, "Aqua-equivalent fire cells", from 2002 to now. The part of VIIRS
+   that MODIS would miss becomes the small-fire layer.
 
 We built the correction as a ladder, measuring what each step removes. The raw
 record steps up at 2012 by 1.648 in Córdoba and 1.674 in Punjab and Haryana
 (natural logarithms, about 5.2 and 5.3 times). Counting each square once
-leaves 1.305 and 1.528. The hard floor with a constant per calendar month,
-which ships in both, leaves 0.077 and -0.020. A plain conversion ratio removes
+leaves 1.305 and 1.528. With a constant per calendar month, the detection
+curve in Córdoba leaves 0.066 and the hard floor in Punjab and Haryana leaves
+-0.020. A plain conversion ratio removes
 the step too (0.054 and -0.028); what separates the methods is the
 month-by-month check on held-out years, below.
 
@@ -114,19 +117,27 @@ Ten checks and their limits were written down before the data was opened
 (`docs/PREREGISTRATION.md` in the repository). Every result is shown in the
 app, including the failures. In Córdoba:
 
+- **We ship a model our own rule would not ship.** The pre-registered rule
+  ships the detection curve only if it passes the 2016 check for a false step
+  (C2), when no sensor changed. In Córdoba it does not: -0.114 against 0.10.
+  By the rule the hard floor would ship, and it passes (-0.094). We chose the
+  curve after seeing both results (decision 58), because it is closer to Aqua
+  month by month (C3 0.072 against 0.117) and year by year (leaving one year
+  out, within 0.10 of Aqua in 9 of 10 years against 3 of 10). The rule was
+  set aside to do this, the app shows the failure, and Punjab and Haryana and
+  Karnataka still follow the rule.
 - The raw record really jumps at 2012 (C0), and the harmonized one does not:
-  step 0.077 against a limit of 0.10 (C1). There is no false step in 2016,
-  when no sensor changed (C2: -0.094 against 0.10, a thin margin). A
-  change-point test finds no break between July 2011 and December 2012 (C1b);
-  it does find a significant one at October 2013, outside that window.
-  Honest caveat: the model's constants are fitted on 2012 to 2017, which
-  overlaps this check. So we repeated it out of sample (C1x, added after
-  results and labelled so): fitted on 2015 to 2021 only, the step is 0.072, a
-  pass. On a shorter fit, 2016 to 2017 only, it is 0.181, over the limit.
-- NOAA-20, never used for fitting, reproduces the record: slope 0.938,
-  correlation 0.977 (C4). This matters because S-NPP stopped delivering data on
+  step 0.066 against a limit of 0.10 (C1). A change-point test finds no break
+  between July 2011 and December 2012 (C1b); it does find a significant one at
+  October 2013, outside that window. Caveat: the model's constants are fitted
+  on 2012 to 2017, which overlaps this check. So we repeated it out of sample
+  (C1x, added after results and labelled so): fitted on 2015 to 2021 only, the
+  step is 0.100, over the limit by less than 0.001 (the hard floor gives
+  0.072). On a shorter fit, 2016 to 2017 only, it is 0.148.
+- NOAA-20, never used for fitting, reproduces the record: slope 0.951,
+  correlation 0.988 (C4). This matters because S-NPP stopped delivering data on
   2 November 2026.
-- The floor's cut-off agrees with physics it never saw (C5). A 2026 model of
+- The curve's midpoint agrees with physics it never saw (C5). A 2026 model of
   MODIS's detection limit (Sofiev and Kouznetsov, GMD) gives 10.4 MW in
   daytime for the average Aqua pixel over Córdoba; the midpoint of our curve,
   built only from whether two satellites agreed, is 9.9 MW.
@@ -138,24 +149,19 @@ app, including the failures. In Córdoba:
   wrong. The error followed the season, the same in the fitting years and the
   held-out years: in Punjab and Haryana, May read about 75 percent too high
   after 2012 and October about 20 percent too low. With one constant per
-  calendar month C3 passes in Córdoba (0.117).
+  calendar month C3 passes in Córdoba (0.072).
 - **That pass is not a clean one.** The method was changed after the failure
   was seen. On two later years whose monthly values had not been looked at
-  (2020 to 2021, check C3x, added after results) Córdoba passes (0.124). Under
-  five other reasonable settings C3 fails in three of five in Córdoba.
-- **What got weaker.** Under our rule the hard floor ships in Córdoba, not the
-  detection curve, because the curve fails the 2016 check (C2, -0.114). But
-  leaving one year out at a time, the hard floor is within 0.10 of Aqua in
-  only 3 of 10 years (largest miss 0.233, in 2013), against 9 of 10 for the
-  curve. Yearly totals in Córdoba after 2012, and any yearly trend that
-  includes them, carry this error.
+  (2020 to 2021, check C3x, added after results) Córdoba passes (0.125). Under
+  five other reasonable settings C3 and C3x pass in all five in Córdoba, and
+  C2 fails in all five (-0.114 to -0.117).
 - **A second check failed, and it taught us something.** We compared with
   ESA's Fire_cci burned area, a record built from MODIS reflectance and
   guided by MODIS active fires, so it has no 2012 seam and owes nothing to
-  VIIRS (C6). Fire activity per km² burned is 33 percent lower after 2012 than
-  before (-0.403 against a limit of 0.25). But Aqua alone, which never changed
+  VIIRS (C6). Fire activity per km² burned is 36 percent lower after 2012 than
+  before (-0.446 against a limit of 0.25). But Aqua alone, which never changed
   sensor, gives -0.427 on the same test, and the raw record +1.289. NASA's own
-  burned-area product (MCD64A1) gives the same answer: -0.404 for our record,
+  burned-area product (MCD64A1) gives the same answer: -0.381 for our record,
   -0.430 for Aqua alone. So burned area per detected fire in Córdoba really
   changed, and two burned-area records from two agencies agree on it (both
   are MODIS-based, so they are independent of VIIRS, not of MODIS); our record
@@ -163,7 +169,7 @@ app, including the failures. In Córdoba:
   of about 3.6.
 
 In Punjab and Haryana (exactly the two states and Chandigarh, 94,490 km²) the
-hard floor ships too, and it is **at the limit**: the month-by-month check C3
+hard floor ships, by the rule, and it is **at the limit**: the month-by-month check C3
 is 0.148 against 0.15, on 15 of 24 months, and the same check on 2020 to 2021
 (C3x) is 0.169, a fail. Under five other settings C3 fails every time. The
 curve there is weak and too uncertain to use (C8: 62 percent against a limit
@@ -190,11 +196,11 @@ method can be rerun from the repository alone, with no NASA account
 matched the published one.
 
 The Chilecito area, the fire the challenge author shows, borrows Córdoba's
-calibration because it has too few fires of its own. There it fails the 2012
-step check (C1), the 2016 check (C2) and the NOAA-20 check (C4), and the app
-says so. Its July 2026 fire stands out: 13.5 times the median July, the 2nd
-highest of 25 Julys, and the 9th largest of 277 fire episodes there since
-2002.
+calibration and model because it has too few fires of its own. There it
+fails the 2012 step check (C1), the NOAA-20 check (C4) and the ESA
+burned-area check (C6), and the app says so. Its July 2026 fire stands out:
+10.2 times the median July, the 2nd highest of 25 Julys, and the 9th largest
+of 230 fire episodes there since 2002.
 
 A fourth area, the forests of Bandipur, Nagarhole and BR Hills in Karnataka,
 was added late as a case study and was not pre-registered. No method passes
@@ -224,7 +230,7 @@ uses VIIRS from 2012, calibrated before the drift began.
 
 | User | Question they bring | What Fire Census answers |
 |---|---|---|
-| Emergency and early-warning teams (the challenge author's team at CONAE) | Is what is burning now unusual here? | The current month ranked against every earlier year on the same days; Chilecito's July 2026 fire shows as 13.5 times a normal July, the 2nd highest of 25 |
+| Emergency and early-warning teams (the challenge author's team at CONAE) | Is what is burning now unusual here? | The current month ranked against every earlier year on the same days; Chilecito's July 2026 fire shows as 10.2 times a normal July, the 2nd highest of 25 |
 | Fire services and forest departments | When should crews be ready? | The usual critical months and how the season has moved: Punjab and Haryana's rice-residue season now peaks about two weeks later than in the early 2000s |
 | Pollution-control boards (north India) | Is crop burning really falling, and when does it peak? | Detected burning in Punjab and Haryana's season fell from 14,584 fire cells in 2020 to 762 in 2025. This is what an early-afternoon satellite pass sees: if burning has moved to the evening, as has been reported, part of the fall is burning the satellites no longer catch; the peak keeps moving later into November |
 | Land managers | Which places and years burned most? | Any district by name, drawn area or coordinates, with totals per 1,000 km² |
@@ -251,17 +257,18 @@ only NASA FIRMS data, an outline, and its own checks written down first.
   so that years can be compared, not to measure burned area.
 - It is calibrated in two places: the Córdoba area (a box covering Córdoba
   province and parts of its neighbours) and Punjab and Haryana (the exact
-  states). Chilecito borrows Córdoba's calibration. Punjab's detection curve is
+  states). In Córdoba the model that ships fails the pre-registered 2016
+  check (C2), and we chose it anyway (see above). Chilecito borrows Córdoba's
+  calibration. Punjab's detection curve is
   weak because crop-residue fires are small and brief, so its cut-off is a
   working choice and its month-by-month result is at the limit. A fourth area,
   south Karnataka's forests, is a case study whose held-out checks fail.
 - A single month can differ from what MODIS would have reported: in a typical
-  held-out month by about 12 percent in Córdoba and 16 percent in Punjab and
-  Haryana, in some months much more (one standard deviation is about 28
-  percent in Córdoba and 43 percent in Punjab and Haryana). In Córdoba the
-  yearly totals after 2012 are within 10 percent of Aqua in only 3 of 10 years
-  when one year is left out. The app widens every rank by this error. Years, and the same month
-  across years, are more reliable.
+  held-out month by about 7 percent in Córdoba and 16 percent in Punjab and
+  Haryana, in some months much more (one standard deviation is about 20
+  percent in Córdoba and 43 percent in Punjab and Haryana). The app widens
+  every rank by this error. Years, and the same month across years, are more
+  reliable.
 - The last months are near-real-time data (from August 2026) and may change.
 - The outlook is history, not a forecast. We did not build a forecasting model.
 - It does not update itself. `pipeline/refresh.py` brings it up to date in
@@ -326,7 +333,10 @@ so in its header, and `docs/AI_USE.md` logs each contribution.
   from the candidates the AI proposed (decisions 4 and 5). Mahabu fixed the ten
   checks and their limits before the data was opened and adopted the revised
   check C3r after the results, keeping the original verdict on the page
-  (decision 30).
+  (decision 30). On 15 November Mahabu adopted one constant per calendar
+  month, as the AI recommended (decision 57), and then chose to ship the
+  detection curve in Córdoba, setting the pre-registered rule aside there,
+  against the AI's recommendation to keep the rule (decision 58).
 - Obtained the data: Mahabu requested the eight FIRMS archives from NASA and
   set up the data access.
 - Steered the work on the evidence: Mahabu saw that the Punjab area did not
@@ -417,7 +427,7 @@ from ESA, a 2026 Space Apps partner agency:
 |---|---|
 | Demo video link (public, opens in a private window) | Charulekha |
 | Repository public? Check in a private window | 8crsk |
-| Chilecito July 2026: 13.5 times, 2nd of 25 (re-read after the rebuild of 15 Nov) | Mahabu, done |
+| Chilecito July 2026: 10.2 times, 2nd of 25 (re-read after decision 58, 15 Nov) | Mahabu, done |
 | Full citations for Sofiev and Kouznetsov (2026) and the 2019 Punjab study (added) | Mahabu, done |
 | FIRMS acknowledgement wording (updated from the Earthdata FIRMS page) | Mahabu, done |
 | Tools list confirmed against `docs/REFERENCES.md` and the app's code (15 Nov: OpenFreeMap and cividis are no longer used and were removed) | Done by the AI assistant for Mahabu; 8crsk to glance |
