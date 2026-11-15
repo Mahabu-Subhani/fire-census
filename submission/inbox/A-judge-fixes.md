@@ -10,13 +10,19 @@ pushed. Two things happened:
    each one. Since then nothing more is edited in `app/src/`, `demo.md`,
    `labels.md` or `submit_checklist.md`.
 2. **The record was rebuilt** (decision 57): the conversion constant is now
-   fitted per calendar month, and under the rule in the pre-registration the
-   **hard floor** ships in Córdoba, Chilecito and Punjab and Haryana. **The
-   detection curve does not weight the harmonized count in any area.** (This
-   note first said "ships in no area", which was too strong: the curve still
-   sets the cut-off and weights the small-fire layer. See `A-creativity.md`.) Every harmonized value from February
-   2012 changed in all four areas. Sections 2 to 4 list what that makes wrong
-   in your files. Numbers: `submission/results.md` and `limits.md`.
+   fitted per calendar month. Every harmonized value from February 2012
+   changed in all four areas.
+3. **Then Mahabu chose the detection curve for Córdoba** (decision 58), and
+   so for Chilecito, which borrows Córdoba's model. This **sets our
+   pre-registered shipping rule aside there**: the curve fails the 2016
+   placebo (C2, -0.114 against 0.10), and by the rule the hard floor would
+   ship. Córdoba's and Chilecito's data were rebuilt once more. The hard floor
+   ships in Punjab and Haryana and the ratio in Karnataka, by the rule; their
+   files did not change again.
+
+**This replaces what this note said earlier in the day** (that the hard floor
+ships in Córdoba and the curve nowhere). Sections 2 to 4 list what is wrong in
+your files now. Numbers: `submission/results.md` and `limits.md`.
 
 ## 1. Files changed in your areas on this branch
 
@@ -46,36 +52,33 @@ New optional fields in `meta.json` (`constants_by_month`, `year_round_constant`,
 method: **proposed, awaiting 8crsk**, in `docs/ARCHITECTURE.md`. The app's 260
 tests pass on the new files.
 
-## 2. Charulekha: `submission/project_page.md`, what was replaced after the rebuild
+## 2. Charulekha: `submission/project_page.md`, as it stands after decision 58
 
-- Summary: "using a measured curve of what MODIS can see" is gone (the curve
-  ships nowhere); it now says the record counts fires above a measured
-  strength cut-off, scaled by a constant per calendar month.
-- "What it does": Punjab and Haryana, 1 to 13 November, is now **23rd of 25**
-  (was 24th), still 0.09 times the median, range 22nd to 25th. Córdoba's
-  falling trend is now p = 0.007 (was 0.004), still about half per decade.
-- "How it works" and "How we know it works": rewritten where false. Córdoba's
-  numbers are the hard floor's. C3 passes in Córdoba (0.117) but not cleanly;
-  Punjab and Haryana is **at the limit** (0.148 against 0.15, and 0.169, a
-  fail, on 2020 to 2021). What got weaker in Córdoba is stated: within 0.10 of
-  Aqua in 3 of 10 years leaving one out.
-- Chilecito: 13.5 times a normal July (was 8.8), 2nd of 25, 9th of 277
-  episodes; it now fails C1, C2 and C4.
-- Punjab's season: 14,584 fire cells in 2020 to 762 in 2025 (was 13,521 to
-  706). Aqua since 2022: 29 percent more than the record (48 percent in
-  October and November).
-- Not changed, for you to decide: the Use of AI text does not yet say that an
-  AI audit found the seasonal error and that Mahabu then chose decision 57.
-  Suggested sentence: "On 15 November an AI audit of our checks found that the
-  harmonization error followed the season; Mahabu chose to refit the constant
-  per calendar month (decision 57)."
-- Re-read the two live numbers again on the day, from the deployed app.
+Edited on Mahabu's instruction, only where a number or statement had become
+false. What it now says:
+
+- Summary: the record uses a measured curve of how often MODIS sees a fire of
+  each strength, and a constant per calendar month.
+- "What it does": Punjab and Haryana, 1 to 13 November, is **23rd of 25**,
+  0.09 times the median, range 22nd to 25th. Córdoba's falling trend is
+  p = 0.004, about half per decade.
+- "How it works": the detection curve weights every fire in Córdoba; the hard
+  floor is used in Punjab and Haryana, where the curve is weak.
+- "How we know it works", Córdoba: C1 0.066; C3 0.072 and C3x 0.125, both
+  passes; **C2 fails (-0.114) and C1x fails (0.100), and the page says our own
+  rule would ship the hard floor there**. Punjab and Haryana is **at the
+  limit** (C3 0.148 against 0.15; C3x 0.169, a fail).
+- Chilecito: 10.2 times a normal July (was 8.8 on 14 November), 2nd of 25,
+  9th of 230 episodes; it fails C1, C4 and C6.
+- Punjab's season: 14,584 fire cells in 2020 to 762 in 2025. Aqua since 2022:
+  29 percent more than the record (48 percent in October and November).
+- Re-read the live numbers again on the day, from the deployed app.
 
 ## 3. Charulekha: `submission/demo.md`, lines that are now wrong
 
 | Line | Says | Now |
 |---|---|---|
-| 33 (0:16 to 0:20) | "We measured what the older sensor can see, and the jump disappears." | The shot leads with Punjab and Haryana, where the curve is weak (plateau 0.118) and the cut-off is not a measured detection limit. A true line of the same length: "We count only fires above a measured cut-off, and the jump disappears." (12 words) |
+| 33 (0:16 to 0:20) | "We measured what the older sensor can see, and the jump disappears." | True of the method. But the shot leads with Punjab and Haryana, where the curve is weak (plateau 0.118) and only its midpoint is used as a cut-off. If you want the line exact for the area on screen: "We count only fires above a measured cut-off, and the jump disappears." (12 words). If the shot is Córdoba, the line as written is exact |
 | 34 (0:20 to 0:25) | answer card "24th highest of 25 Novembers" | "23rd highest of 25 Novembers" with data to 13 November; read the live wording on the day, as the line already says |
 | 96 (local pitch) | "the detection limit agreeing with physics" | True for Córdoba's cut-off only (9.9 MW against 10.4 MW). Do not say it of Punjab and Haryana |
 | 35 (0:25 to 0:28) | "Every check shown, pass or fail" | Still true. The Punjab and Haryana panel now shows C3 passed at 0.148 and C3x failed at 0.169; if asked, say "at the limit" |
@@ -89,13 +92,13 @@ Nothing else in the script quotes a number.
 | 17 | NASA data: "FIRMS MODIS C6.1 and VIIRS C2; MYD14A1" | Also MCD64A1 (check C6m) |
 | 22 | "Python libraries still missing" | They are in `docs/REFERENCES.md` since 14 November |
 | 25 | "No work before 14 Nov 10:15: Git history starts work after the start: Done" | See section 5 |
-| 30 to 32 | "our measured detection curve's [error] does not [follow the mix] (p = 0.33)" | The curve ships nowhere. The hard floor ships in Córdoba and **its error does follow the mix** (rank correlation 0.76, p = 0.011); the curve's does not (0.32, p = 0.37). A true answer: "A single ratio is wrong by season: in Punjab, May read about 75 percent too high. We count fires above a measured cut-off with a constant per calendar month, and publish every check, including the ones that fail." (38 words) |
+| 30 to 32 | "our measured detection curve's [error] does not [follow the mix] (p = 0.33)" | True again for Córdoba, where the curve ships; the value is now p = 0.37 (rank correlation 0.32). The ratio's follows the mix (-0.75, p = 0.013). Add, if there is room: a single ratio is also wrong by season (in Punjab, May read about 75 percent too high) |
 | 37 and 66 | "calibrated for three areas only" | Two calibrated areas (Córdoba, Punjab and Haryana) and two case studies (Chilecito, Karnataka) |
-| 59 to 61 | "C3 fails in both main regions; we added C3r" | With one constant per calendar month C3 passes: Córdoba 0.117, Punjab and Haryana 0.148 against 0.15. Not cleanly: the method was changed after the failure, C3x on 2020 to 2021 fails in Punjab and Haryana (0.169), and under five other settings C3 fails in three (Córdoba) and all five (Punjab and Haryana) |
-| 62 to 63 | "Punjab's detection curve failed C8, so Punjab ships the hard floor" | The hard floor ships in both calibrated areas. Punjab's curve still fails C8, so its cut-off is uncertain |
-| new | (missing) | In Córdoba the shipped record is within 0.10 of Aqua in 3 of 10 years leaving one out (largest miss 0.233, in 2013); yearly totals and trends there after 2012 carry that error |
-| 64 | "Chilecito fails C1 and C4" | It fails C1, C2 and C4 (and C6m) |
-| 65 | "C6 (burned area) was not run anywhere" | Run in all four: Córdoba fails (-0.403; NASA's product -0.404; Aqua alone fails the same way), Punjab and Haryana passes (-0.148; -0.080), Chilecito passes C6 (+0.034) and fails C6m (-0.535), Karnataka fails both (+0.347; +0.438) |
+| 59 to 61 | "C3 fails in both main regions; we added C3r" | With one constant per calendar month C3 passes: Córdoba 0.072, Punjab and Haryana 0.148 against 0.15. Not cleanly: the method was changed after the failure, and C3x on 2020 to 2021 fails in Punjab and Haryana (0.169), where C3 also fails under five other settings |
+| 62 to 63 | "Punjab's detection curve failed C8, so Punjab ships the hard floor" | Still true |
+| new | (missing) | **Córdoba ships a model our own rule would not ship.** The curve fails the 2016 placebo (C2, -0.114 against 0.10) and C1x (0.100); by the rule the hard floor would ship there. Mahabu chose the curve after seeing both results (decision 58). A judge may call it picking the winner afterwards; both models' results are in the app |
+| 64 | "Chilecito fails C1 and C4" | Still true, and it also fails C6 (+0.394) |
+| 65 | "C6 (burned area) was not run anywhere" | Run in all four: Córdoba fails (-0.446; NASA's product -0.381; Aqua alone fails the same way), Punjab and Haryana passes (-0.148; -0.080), Chilecito fails C6 (+0.394) and passes C6m (-0.226), Karnataka fails both (+0.347; +0.438) |
 | 67 | "a snapshot of 5 Nov 2026 data" | Data to 13 November 2026 |
 
 ## 5. Start-time wording: proposals, nothing edited in your files
@@ -139,8 +142,10 @@ is not on the page and should not go there until Mahabu confirms.
 - The hotspot files' `harm_reason` still says "VIIRS fire cell MODIS would
   usually see / miss". That text comes from `pipeline/hotspots.py`; changing
   it means rewriting the hotspot files, which was not done.
-- `landcover.json` and `sources.json` were made from the old hotspot classes.
-  Only Córdoba's and Chilecito's classes changed (2012 on); rerunning
-  `app/scripts/make_landcover.py` and `make_sources.py` is optional.
+- `landcover.json` and `sources.json`: Córdoba's and Chilecito's hotspot
+  classes are back to the ones committed before decision 57 (the curve's),
+  so decision 58 puts nothing new out of date. The earlier note still
+  applies: 985 rows were relabelled on 14 November after these two files
+  were made, so a rerun stays optional.
 - Numbers quoted in `B-people-and-live.md`, `C-exposure.md`, `B-judges-pitch.md`
   and decisions 48 and 52 come from `harm`: read them again from the app.

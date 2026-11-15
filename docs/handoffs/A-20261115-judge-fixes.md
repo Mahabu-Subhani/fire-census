@@ -141,6 +141,44 @@ not say; "any area" overclaimed.
   and pitch lines for Charulekha and 8crsk; none is on the page.
 - Nothing that ships changed: no model, threshold, verdict or app data file.
 
+## Added at 10:09 (by `date`): decision 58, the detection curve ships in Córdoba and Chilecito
+
+**This replaces what the sections above say about what ships in Córdoba.**
+
+- **Decision 58 (Mahabu):** the detection curve, with the monthly constants,
+  ships in Córdoba and in Chilecito, which borrows Córdoba's model. It **sets
+  the pre-registered shipping rule aside in Córdoba**: the curve fails the
+  2016 placebo (C2, -0.114 against 0.10) and C1x (0.100 against 0.10), and by
+  the rule the hard floor would ship. The assistant recommended keeping the
+  rule. The reason, in `docs/DECISIONS.md`, is left for Mahabu to write.
+  Punjab and Haryana (hard floor) and Karnataka (ratio) are unchanged.
+- **Shown before any file was written:** every verdict that flips. Córdoba:
+  C2 and C1x pass to fail. Chilecito: C2 fail to pass, C6 pass to fail, C6m
+  fail to pass.
+- **Rebuilt, Córdoba and Chilecito only:** `meta.json`, `cube.json`,
+  `season.json`, `drift.json`, `episodes.json`, 15 hotspot files each (row for
+  row the ones committed before decision 57), three figures. Only
+  `pipeline/shipping.json` changed in the pipeline. The rebuild ran in an
+  isolated copy; a temporary link to the raw data folder was made for it and
+  removed (`rmdir` of the link only; the raw files were checked afterwards).
+- **Documents:** `results.md`, `limits.md`, `method.md`, `method_panel.md`,
+  the root `README.md`, `docs/EXPLAINED.md`, the dated note in
+  `PREREGISTRATION.md`, `pipeline/NOTES_PHASE3.md`, the research notes and the
+  two inbox notes. A second session ("Values and questions overview") updated
+  `submission/project_page.md`, the note at the top of `docs/FULL_MARKS.md`
+  and regenerated `A-what-we-show.md`, with the same numbers.
+- **Córdoba now, in one line:** C1 0.066, C3 0.072, C3x 0.125 pass; C2 -0.114
+  and C1x 0.100 fail; 9 of 10 years within 0.10 of Aqua leaving one out;
+  trend -49.2 percent of a typical year per decade, p = 0.004; 1 to 13
+  November 2026 is 22nd of 25. Chilecito: July 2026 is 10.2 times the median,
+  2nd of 25.
+- **Not done:** the app wording listed for 8crsk in the inbox note;
+  `landcover.json` and `sources.json` not rerun; a comment in `validate.py`
+  and a docstring in `harmonize.py` that overstate what had not been looked
+  at (frozen files); `submission/inbox/A-presenter-script.md`, written by a
+  third session, says the project page still describes the hard floor, which
+  is no longer true. Not pushed; the live site is unchanged.
+
 ## Start-time facts
 
 From `git log` (author and committer dates agree for every commit listed) and
