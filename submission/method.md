@@ -16,12 +16,12 @@ jump is the camera, not the fire.
    satellites flew over the same place on the same day, we measured how often
    MODIS also reported a fire that VIIRS saw, at every fire strength. That gives
    MODIS's detection curve: weak fires are usually missed, strong ones almost
-   always caught. The record counts the fires VIIRS sees at or above the
-   midpoint of that curve (the hard floor), so 2025 is measured on the same
-   scale as 2005. The curve does not weight that count. It weights the
-   small-fire layer below. Where the curve is weak, as in Punjab and
-   Haryana, the midpoint is a cut-off we use, not a measured detection
-   limit.
+   always caught. In Córdoba each fire VIIRS sees is counted by its chance of
+   being seen by MODIS, read from that curve. In Punjab and Haryana the curve
+   is weak, so the record there counts the fires VIIRS sees at or above the
+   curve's midpoint (the hard floor); that midpoint is a cut-off we use, not
+   a measured detection limit. Either way 2025 is measured on the same scale
+   as 2005.
 3. *How much the older camera misses changes with the season.* In hot months
    and with different crops, MODIS misses a different share. So the count is
    scaled by a constant fitted for each calendar month, not one for the whole

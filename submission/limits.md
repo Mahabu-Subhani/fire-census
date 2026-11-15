@@ -24,36 +24,44 @@
   constant for the whole year the month-by-month check C3 failed, because the
   error followed the season. Since 15 November the constant is fitted per
   calendar month. C3 now passes, but that pass was reached after seeing the
-  held-out years, and it is not robust to settings (in Córdoba it fails under
-  three of five others). The check on two later years (C3x) is the cleaner
-  one: only their yearly totals had been looked at before.
+  held-out years. In Punjab and Haryana it does not hold under other settings
+  (it fails under each of five); in Córdoba, with the curve, it holds under
+  all five. The check on two later years (C3x) is the cleaner one: only their
+  yearly totals had been looked at before.
 - **Single calendar months still carry a known error.** After the monthly
   constants, the record against Aqua in the held-out years is within about
   20 percent in the main burning months (Punjab and Haryana: May -8 percent,
-  October -16, November -2; Córdoba: July -9, August -14, September -15). It
+  October -16, November -2; Córdoba: July -1, August -11, September -13). It
   is worse where few fires burn, and in Punjab and Haryana's April, which
   reads about 45 percent too low because it shares May's constant. Compare
   years, or the same month across years; do not read one off-season month.
-- **In Córdoba the yearly totals got weaker.** The rule ships the hard floor
-  there. Leaving one year out at a time, it is within 0.10 of Aqua in 3 of 10
-  years (largest miss 0.233, in 2013), against 9 of 10 for the detection
-  curve, which fails the 2016 placebo check and so does not ship. The hard
-  floor's error follows the mix of weak and strong fires. **Yearly totals in
-  Córdoba after 2012, and any yearly trend that includes them, carry this
-  error.** The falling trend the app reports there is still clear (p = 0.007).
-- **Thin margins.** Córdoba passes the 2016 placebo (C2) at -0.094 against
-  0.10. Punjab and Haryana passes C3 at 0.148 against 0.15. Neither would
-  survive a small change, and under other settings they do not.
+- **In Córdoba the model that ships fails a check its own rule names.** The
+  pre-registered rule ships the detection curve only if it passes the 2016
+  placebo (C2). It fails it, -0.114 against 0.10, under every setting we
+  tried, and it fails the out-of-sample 2012 step (C1x, 0.100 against 0.10).
+  By the rule the hard floor would ship there. Mahabu chose the curve after
+  seeing both sets of results (decision 58), so the choice was not made
+  blind. C2's failure means the record sits about 11 percent lower against
+  Aqua in 2016 to 2018 than in 2013 to 2015: a slow drift inside the VIIRS
+  years, not a step at 2012, and its cause is not known.
+- **Yearly totals in Córdoba.** Leaving one year out at a time, the curve is
+  within 0.10 of Aqua in 9 of 10 years; the largest miss is 0.193, in 2013.
+  The falling trend reported there (49.2 percent of a typical year per
+  decade, p = 0.004) includes that drift.
+- **Thin margins.** Córdoba fails C2 by 0.014 and C1x by less than 0.001.
+  Punjab and Haryana passes C3 at 0.148 against 0.15. None of these would
+  survive a small change in the other direction.
 - **The shaded range in the app is not a measured error.** It adds up each
   map cell's own range (counting noise and the spread of the constants), so
-  for a whole area it is wide: about -65 to +75 percent for a year in
+  for a whole area it is wide: about -63 to +71 percent for a year in
   Córdoba, -29 to +30 percent in Punjab and Haryana. That is wider, not
   narrower, than the year-by-year error measured by leaving one year out
-  (largest 0.233 and 0.135), and it was not calibrated against it. Read it as
+  (largest 0.193 and 0.135), and it was not calibrated against it. Read it as
   a rough band.
 - **The record drifts slowly against Aqua inside the VIIRS years.** The 2016
   placebo is negative in every area (3 to 13 percent between 2013 to 2015 and
-  2016 to 2018). We have not found the cause.
+  2016 to 2018), and in Córdoba it is over the limit. We have not found the
+  cause.
 - **In Punjab's rice season the record may now miss much of the burning.**
   The record after 2012 is what VIIRS sees at about 13:10. Since 2022, Aqua,
   whose pass has drifted to mid-afternoon, has reported 48 percent more than

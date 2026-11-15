@@ -8,10 +8,12 @@ How we made two satellites agree
 ## Short version (always visible)
 Newer VIIRS satellites see far more fire hotspots than the older MODIS, so a
 simple count jumps in 2012. We express everything in what MODIS would have
-seen: from 2012 only VIIRS fire cells at or above a measured strength
-cut-off are counted, scaled by a constant for each calendar month because
-the two sensors' relation follows the season. Weaker fires only VIIRS can
-see are kept in the small-fire layer.
+seen, using a measured curve of how likely MODIS is to catch a fire of each
+strength: each VIIRS fire is counted by that chance (Córdoba, Chilecito) or
+only above the curve's midpoint (Punjab and Haryana), scaled by a constant
+for each calendar month because the two sensors' relation follows the
+season. Weaker fires only VIIRS can see are kept in the small-fire layer.
+(The app writes this sentence from `meta.level_shipped`.)
 
 ## Detail (expandable)
 **Unit.** {meta.unit}. Before February 2012 the calendar counts what Aqua
@@ -23,8 +25,9 @@ computed from VIIRS.
 **The curve.** Where Aqua and Suomi NPP passed over the same place on the same
 day ({meta.calibration.months}), we asked: did Aqua also report the fire VIIRS
 saw? The answer, by fire strength, is the curve shown. Its midpoint,
-{meta.floor_mw.day} MW by day, is the cut-off the hard floor uses. The curve
-does not weight the harmonized count; it weights the small-fire layer. Where it is weak (Punjab and Haryana: plateau
+{meta.floor_mw.day} MW by day, is the cut-off where the hard floor ships.
+Where the detection curve ships (Córdoba, Chilecito) it weights the
+harmonized count; everywhere it weights the small-fire layer. Where it is weak (Punjab and Haryana: plateau
 0.118) the cut-off is not a measured detection limit; do not call it one.
 
 **Checks.** Ten checks were written down before the data was opened. Each is
