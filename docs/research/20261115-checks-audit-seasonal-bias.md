@@ -202,3 +202,8 @@ picture, all in `submission/results.md` and `limits.md`:
   `pipeline/validate.py` ("two years no result had been looked at") and the
   docstring of `harmonize.seasonal_constants` ("fixed before the first run")
   say more than is true; read them with the corrections here.
+
+*Added 15 November, 10:08 IST: after this note, decision 58 (Mahabu) shipped
+the detection curve in Córdoba and Chilecito, setting the shipping rule aside
+there. "The detection curve ships in no area" above describes the state
+between decisions 57 and 58. Current values: `submission/results.md`.*

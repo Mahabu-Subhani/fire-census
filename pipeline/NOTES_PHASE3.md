@@ -400,3 +400,41 @@ run).
    Chilecito's are slightly out of date) and `obs` (carried in from the
    daily-mask tables as before).
 
+## The detection curve ships in Córdoba and Chilecito (15 November, decision 58)
+
+AI-assisted. Reviewed by: Mahabu Subhani (pending). Numbers from the same
+work files as the section above (`checks.json`, `loyo.json`,
+`sensitivity.json`, `evidence.json`), with `c6.json`, `c6m.json`,
+`sensitivity.json` and `findings.json` rerun for the curve.
+
+1. **What changed.** Only `pipeline/shipping.json`: Córdoba and Chilecito ship
+   the detection curve (`S0`) with the monthly constants. No code, setting,
+   threshold or fitted value changed. Mahabu's decision sets the shipping
+   rule aside in Córdoba; by the rule the hard floor ships there.
+2. **Rebuilt.** `export.py`, `stretch.py`, `figures.py`, `hotspots.py`,
+   `firecci.py`, `mcd64.py`, `sensitivity.py`, `findings.py` in an isolated
+   copy; only Córdoba's and Chilecito's files were copied into the
+   repository (`meta.json`, `cube.json`, `season.json`, `drift.json`,
+   `episodes.json`, 15 hotspot files each, three figures). Punjab and
+   Haryana's and Karnataka's files are untouched. The hotspot files from 2012
+   on are, row for row, the ones committed before decision 57.
+3. **Every verdict that flips** (shown to Mahabu before any file was
+   written). Córdoba: C2 pass to fail (-0.094 to -0.114), C1x pass to fail
+   (0.072 to 0.100). Chilecito: C2 fail to pass (+0.359 to -0.065), C6 pass
+   to fail (+0.034 to +0.394), C6m fail to pass (-0.535 to -0.226).
+4. **Córdoba, curve against hard floor.** C1 0.066, 0.077. C3 0.072, 0.117.
+   C3x 0.125, 0.124. C3r -0.062, -0.068. C4 slope 0.951, 0.938. C6 -0.446,
+   -0.403. C6m -0.381, -0.404. Leave one year out: 9 of 10 within 0.10
+   (largest 0.193, 2013), 3 of 10 (0.233, 2013). `month_log_sd` 0.186, 0.246.
+5. **Sensitivity of the curve in Córdoba** (five other settings): C1 0.065 to
+   0.070; C2 -0.114 to -0.117, a fail in all five; C3 0.075 to 0.105, a pass
+   in all five; C3x 0.093 to 0.129, a pass in all five; C3r -0.069 to -0.059.
+6. **Other values that changed.** Córdoba: 1 to 13 November 2026 is 16.63
+   against a median of 44.49 (0.37 times), 22nd of 25; trend -85.00 a year,
+   49.2 percent of a typical year per decade, Mann-Kendall p = 0.004 (the
+   app's tests, recomputed from `cube.json` and checked against the app's
+   earlier figure); season peak +6.9 days per decade (0.6 to 13.6); Aqua
+   against the record +0.015 (2012 to 2021) and +0.064 (2022 to 2026); small
+   over harmonized 1.83; constants against the midday sun -0.92. Chilecito:
+   July 2026 is 50.84 against 5.00 (10.2 times), 2nd of 25; its episode is
+   the 9th of 230 by total and by peak.

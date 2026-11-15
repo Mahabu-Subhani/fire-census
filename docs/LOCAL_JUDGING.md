@@ -6,17 +6,16 @@
 > written on 14 November and its scores were not redone. These statements in it
 > are no longer true:
 >
-> - "Detection-curve harmonization": the detection curve weights the harmonized
->   count in no area (it still sets the cut-off and weights the small-fire
->   layer; what is new in the work is listed in section 11 of
->   `docs/EXPLAINED.md`, "What is new here?"). The
->   hard floor (fire cells at or above the curve's midpoint) with one constant
->   per calendar month ships in Córdoba, Chilecito and Punjab and Haryana.
-> - Validity: C3 is no longer a fail under the shipped method (Córdoba 0.117,
+> - "Detection-curve harmonization": true of Córdoba and Chilecito only, and
+>   there it ships against our own shipping rule (decision 58: the curve fails
+>   the 2016 placebo). Punjab and Haryana ships the hard floor. Every area has
+>   one constant per calendar month. What is new in the work is listed in
+>   section 11 of `docs/EXPLAINED.md`, "What is new here?".
+> - Validity: C3 is no longer a fail under the shipped method (Córdoba 0.072,
 >   Punjab and Haryana 0.148 against 0.15), but the method was changed after
->   the failure was seen, the pass does not hold under other settings, and the
->   check on 2020 to 2021 fails in Punjab and Haryana (0.169). In Córdoba the
->   shipped record is within 0.10 of Aqua in 3 of 10 years leaving one out.
+>   the failure was seen, and the check on 2020 to 2021 fails in Punjab and
+>   Haryana (0.169). In Córdoba the shipped curve fails C2 (-0.114 against
+>   0.10) and C1x (0.100), and the rule was set aside to ship it.
 > - "Two independent burned-area records": both are MODIS-based; say
 >   independent of VIIRS.
 > - The answers to the hard questions below ("You changed a check", "Why trust

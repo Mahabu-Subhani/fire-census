@@ -92,3 +92,19 @@ branch is live and the demo exists, 8 after.
 - The official counts above: read the agency's own tables before quoting.
 - Why the constants follow the sun: background temperature is a candidate,
   not a result.
+
+## After decision 58 (added 15 November, 10:08 IST by `date`)
+
+Mahabu chose to ship the detection curve in Córdoba and Chilecito, setting
+the shipping rule aside there. What that changes in this note:
+
+- "Only the harmonized count stopped using it as a weight" is no longer true
+  of Córdoba and Chilecito: there the curve weights the count again.
+- The constants of the shipped model against the midday sun: Córdoba is now
+  -0.92 (lowest in January, highest in July); Punjab and Haryana -0.78.
+- Aqua against the record in Córdoba: +0.015 before 2022, +0.064 since.
+- The mock score. Creativity: the curve ships in the area where it is strong.
+  Validity: the record that ships in Córdoba is closer to Aqua month by month
+  and year by year, but it fails a check its own pre-registered rule names,
+  and the choice was made after both results were seen. The assistant had
+  recommended keeping the rule.
