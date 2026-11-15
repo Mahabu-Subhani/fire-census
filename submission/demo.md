@@ -21,7 +21,9 @@ https://mahabu-subhani.github.io/fire-census/, not from a mock-up.
 
 Follows the official order in the Project Submission Guide: names and team,
 the challenge, project name and tagline, how it works, the future. Leads with
-Punjab, which local judges know. 75 words: speak at a brisk, even pace (about
+Punjab, which local judges know. The first 10 seconds of picture are 8crsk's
+animated opener (decision 59, `submission/inbox/B-demo-opener.md`); the words
+do not change. 75 words: speak at a brisk, even pace (about
 2.7 words a second, about 28 seconds). Narrator: Charulekha.
 
 | Time | On screen (live app, 1280 x 720, start at the link below) | Charulekha says | Words |
@@ -30,8 +32,8 @@ Punjab, which local judges know. 75 words: speak at a brisk, even pace (about
 | 0:03 to 0:07 | Same view. Move the mouse slowly over the burning calendar | "Our challenge: NASA's MODIS and VIIRS fire records don't match." | 10 |
 | 0:07 to 0:10 | Same view, hold still | "Fire Census: one fire record, whichever satellite was watching." | 9 |
 | 0:10 to 0:16 | Click **Data**, scroll to **Monthly time series**. Click **RAW** (top right): the line jumps at 2012 | "Added up, Punjab's burning jumps fivefold in 2012. That's the camera, not the fire." | 14 |
-| 0:16 to 0:20 | Click **HARMONIZED**: the jump disappears. Hold two seconds | "We measured what the older sensor can see, and the jump disappears." | 12 |
-| 0:20 to 0:25 | Click **Overview**: the answer card ("24th highest of 25 Novembers"; read the live wording on the day), then open **Fire season timing** | "Pick any area: is this month unusual? Has the season moved?" | 11 |
+| 0:16 to 0:20 | Click **HARMONIZED**: the jump disappears. Hold two seconds | "We count only fires above a measured cut-off, and the jump disappears." | 12 |
+| 0:20 to 0:25 | Click **Overview**: the answer card ("23rd highest of 25 Novembers" with data to 13 November; read the live wording on the day), then open **Fire season timing** | "Pick any area: is this month unusual? Has the season moved?" | 11 |
 | 0:25 to 0:28 | Click **Data**, scroll to **Pre-registered checks: Punjab and Haryana, India** showing passed and failed | "Every check shown, pass or fail. When MODIS ends, the record continues." | 12 |
 
 Start link: https://mahabu-subhani.github.io/fire-census/?r=punjab-haryana
@@ -79,8 +81,10 @@ Content rules (Space Apps guides; breaking one can disqualify):
 - [ ] No one under 18 visible or audible, including in the background.
 - [ ] No NASA logos or NASA branding added to the video.
 - [ ] No copyrighted music. Silence or narration only is safest.
-- [ ] No AI-generated images or clips. If any is used, a visible watermark
-      saying it is AI-generated.
+- [ ] The 10-second animated opener (decision 59, from 8crsk) is AI-generated:
+      keep its "AI-generated animation" watermark on every frame, do not crop it,
+      and run the English subtitles over it too. No other AI-generated images
+      or clips.
 
 After recording:
 
@@ -93,6 +97,6 @@ After recording:
 ## If there is a live local pitch
 
 The same story, longer: the problem (the 2012 jump), the switch, the evidence
-(the checks, the detection limit agreeing with physics, NOAA-20 alone giving
-the same record), the app answering "is now unusual?", and the limits.
+(the checks, Córdoba's detection limit agreeing with physics, 9.9 MW against
+10.4 MW, never said of Punjab and Haryana; NOAA-20 alone giving the same record), the app answering "is now unusual?", and the limits.
 Questions: method to Mahabu, app to 8crsk, users and the page to Charulekha.
