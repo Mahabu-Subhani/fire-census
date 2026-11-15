@@ -1,9 +1,9 @@
 {
-  "level_shipped": "L2",
-  "level_name": "Hard floor",
-  "shipping_reason": "Case-study area with too few fires to calibrate. Uses Cordoba's curve, floor and monthly constants, and Cordoba's model (the hard floor). Its own checks are shown and several fail because so few fires occur there.",
+  "level_shipped": "S0",
+  "level_name": "Detection curve",
+  "shipping_reason": "Case-study area with too few fires to calibrate. Uses Cordoba's curve and monthly constants, and Cordoba's model (the detection curve, decision 58). Its own checks are shown and several fail because so few fires occur there.",
   "unit": "Aqua-equivalent fire cells",
-  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the hard floor (only fire cells at or above a measured strength cut-off are counted), scaled by a constant fitted for each calendar month because the two sensors' relation follows the season.",
+  "unit_note": "One fire cell is a 1 km square (0.01 degree) with fire in one satellite pass. Before February 2012: what Aqua MODIS reported. From February 2012: what Aqua would have reported, computed from VIIRS with the detection curve, scaled by a constant fitted for each calendar month because the two sensors' relation follows the season.",
   "unit_raw": "FIRMS hotspot detections (MODIS + VIIRS), not harmonized",
   "calibration": {
     "variant": "A",
@@ -19,23 +19,23 @@
     "night": 6.86
   },
   "constants": {
-    "day": 0.8098,
-    "night": 0.3274
+    "day": 0.7319,
+    "night": 0.2624
   },
   "constants_by_month": {
     "day": [
-      0.6036,
-      0.6676,
-      0.7889,
-      0.8717,
-      1.0252,
-      1.0378,
-      1.0001,
-      0.8798,
-      0.8025,
-      0.7068,
-      0.6568,
-      0.6311
+      0.5483,
+      0.5788,
+      0.6231,
+      0.6671,
+      0.798,
+      0.8574,
+      0.8809,
+      0.811,
+      0.7551,
+      0.6737,
+      0.618,
+      0.5893
     ]
   },
   "ladder": [
@@ -98,7 +98,7 @@
     {
       "id": "C1",
       "name": "No seam at 2012",
-      "value": -0.138,
+      "value": 0.268,
       "threshold": "absolute value at most 0.10",
       "verdict": "fail",
       "note": "Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
@@ -117,14 +117,14 @@
       "threshold": "absolute log ratio at most 0.10",
       "value": null,
       "verdict": "not run",
-      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Not tested in this area, which has too few fires to fit its own model; it uses the model of C\u00f3rdoba and neighbouring areas, whose own result is +0.072 (leaving one year out at a time (2012 to 2021): 3 of 10 years within 0.10, mean -0.044, largest 0.233)."
+      "note": "Not pre-registered. Fitted on Feb 2015 to Dec 2021 only, tested on Feb 2012 to Jan 2015. Not tested in this area, which has too few fires to fit its own model; it uses the model of C\u00f3rdoba and neighbouring areas, whose own result is +0.100 (leaving one year out at a time (2012 to 2021): 9 of 10 years within 0.10, mean -0.009, largest 0.193)."
     },
     {
       "id": "C2",
       "name": "No seam at placebo dates (2016, 2008)",
-      "value": "2016: +0.359; 2008: +0.000",
+      "value": "2016: -0.065; 2008: +0.000",
       "threshold": "absolute value at most 0.10 at both",
-      "verdict": "fail",
+      "verdict": "pass",
       "note": "Only the 2016 placebo tests anything: 2008 is zero by construction, because before 2012 the harmonized record is the Aqua reference itself. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
@@ -154,7 +154,7 @@
     {
       "id": "C4",
       "name": "NOAA-20 alone reproduces the record",
-      "value": "slope 0.998, correlation 0.821",
+      "value": "slope 0.988, correlation 0.899",
       "threshold": "slope 0.90 to 1.10 and correlation at least 0.90",
       "verdict": "fail",
       "note": "103 months. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
@@ -170,18 +170,18 @@
     {
       "id": "C6",
       "name": "Burned-area relationship is stable",
-      "value": 0.034,
+      "value": 0.394,
       "threshold": "absolute log ratio at most 0.25",
-      "verdict": "pass",
-      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.157 on the same statistic and the raw record 1.854: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by -0.123. ESA months missing: none. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
+      "verdict": "fail",
+      "note": "ESA Fire_cci v5.1 burned area, 2001 to 2020; not pre-registered for this area; reported only. Aqua alone, which has no sensor change, gives 0.157 on the same statistic and the raw record 1.854: the hotspot-to-burned-area relationship itself changed, and our record differs from Aqua's by 0.236. ESA months missing: none. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C6m",
       "name": "Same, against NASA MCD64A1 burned area (added after results)",
-      "value": -0.535,
+      "value": -0.226,
       "threshold": "absolute log ratio at most 0.25",
-      "verdict": "fail",
-      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.44. Aqua alone, with no sensor change: -0.306. Raw record: 1.565. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
+      "verdict": "pass",
+      "note": "NASA MCD64A1 C6.1 via Microsoft Planetary Computer; added after results, not pre-registered. 2013 to 2025: -0.226. Aqua alone, with no sensor change: -0.306. Raw record: 1.565. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     },
     {
       "id": "C7",
@@ -197,7 +197,7 @@
       "value": "midpoint 9.9 MW, 90% range 8.6 to 12.3 (width 38% of midpoint)",
       "threshold": "90% range at most 50% of the midpoint",
       "verdict": "pass",
-      "note": "applies to the detection curve, which is used for the small-fire layer. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
+      "note": "daytime curve. The night curve, read the same way, would be over the limit (72%); night fires are 7.4% of the reference fire cells in the fitting years. Curve and constants borrowed from C\u00f3rdoba and neighbouring areas; too few fires here to calibrate."
     }
   ],
   "all_models": {
@@ -328,62 +328,62 @@
   "error_by_calendar_month": {
     "year_round": {
       "fitting_years": {
-        "1": 0.08,
-        "2": 1.4,
-        "3": -0.21,
-        "4": 0.89,
-        "5": 0.53,
-        "6": -1.86,
-        "7": -0.34,
-        "8": 0.33,
-        "9": 0.55,
-        "10": 0.43,
-        "11": 0.43,
-        "12": 1.55
+        "1": 0.17,
+        "2": 1.66,
+        "3": 0.25,
+        "4": 1.52,
+        "5": 1.15,
+        "6": -0.52,
+        "7": 0.01,
+        "8": 0.3,
+        "9": 0.43,
+        "10": 0.26,
+        "11": 0.29,
+        "12": 1.66
       },
       "held_out_2018_2019": {
         "1": null,
-        "2": null,
+        "2": 0.51,
         "3": null,
-        "4": -0.9,
-        "5": -0.42,
-        "6": -1.3,
-        "7": -1.19,
-        "8": -0.21,
-        "9": 0.22,
-        "10": -0.26,
+        "4": -0.41,
+        "5": -0.1,
+        "6": -0.73,
+        "7": -0.13,
+        "8": 0.15,
+        "9": 0.43,
+        "10": -0.27,
         "11": null,
-        "12": 1.65
+        "12": 1.53
       }
     },
     "per_calendar_month": {
       "fitting_years": {
-        "1": -0.16,
-        "2": 1.21,
-        "3": -0.24,
-        "4": 0.96,
-        "5": 0.71,
-        "6": -1.74,
-        "7": -0.16,
-        "8": 0.39,
-        "9": 0.55,
-        "10": 0.33,
-        "11": 0.28,
-        "12": 1.34
+        "1": -0.07,
+        "2": 1.43,
+        "3": 0.1,
+        "4": 1.43,
+        "5": 1.22,
+        "6": -0.39,
+        "7": 0.16,
+        "8": 0.38,
+        "9": 0.46,
+        "10": 0.19,
+        "11": 0.18,
+        "12": 1.48
       },
       "held_out_2018_2019": {
         "1": null,
-        "2": null,
+        "2": 0.33,
         "3": null,
-        "4": -0.83,
-        "5": -0.19,
-        "6": -1.23,
-        "7": -0.98,
-        "8": -0.14,
-        "9": 0.21,
-        "10": -0.39,
+        "4": -0.49,
+        "5": -0.02,
+        "6": -0.64,
+        "7": 0.03,
+        "8": 0.23,
+        "9": 0.46,
+        "10": -0.34,
         "11": null,
-        "12": 1.44
+        "12": 1.36
       }
     }
   },
@@ -957,7 +957,7 @@
   },
   "data_version": "0.2.0",
   "code_commit": "8268032",
-  "generated_at": "2026-11-14T19:37:39Z",
+  "generated_at": "2026-11-14T20:39:00Z",
   "data_through": "2026-11-13",
   "nrt_from": "2026-08",
   "sources": [

@@ -1,10 +1,10 @@
 {
-  "note": "Which model fills `harm` for each area. Set by the shipping rule in docs/PREREGISTRATION.md as first written (the curve if it passes C0, C1, C1b, C2, C3 and C8; otherwise the hard floor if it passes C0 to C3; otherwise the ratio), applied to the models with one constant per calendar month (docs/DECISIONS.md, decision 57, 15 Nov 2026). Until then the year-round-constant models shipped under the revised check C3r (decision 30). C3r and the year-round versions' verdicts stay published in meta.json.",
+  "note": "Which model fills `harm` for each area. Punjab and Haryana and Karnataka: set by the shipping rule in docs/PREREGISTRATION.md as first written (the curve if it passes C0, C1, C1b, C2, C3 and C8; otherwise the hard floor if it passes C0 to C3; otherwise the ratio), applied to the models with one constant per calendar month (decision 57). Cordoba, and Chilecito which borrows its model: the detection curve, by decision 58 (Mahabu, 15 Nov 2026), which sets the rule aside there; by the rule the hard floor would ship. Both models' verdicts are published in meta.json (`all_models`).",
   "areas": {
     "cordoba": {
-      "model": "L2",
+      "model": "S0",
       "variant": "A",
-      "reason": "Hard floor, with one constant per calendar month. Passes every check the shipping rule names, as first written: C0, C1 (0.077), C1b, C2 (-0.094) and C3 (0.117 against 0.15); also C3r, C3x (2020 to 2021: 0.124) and C4. The detection curve passes C3 (0.072) but fails the 2016 placebo C2 (-0.114 against 0.10), so the rule moves to the hard floor. Until 15 Nov the detection curve with one year-round constant shipped under the revised check C3r; it failed C3 (0.207) because its error followed the season."
+      "reason": "Detection curve, with one constant per calendar month. Shipped by decision 58, which sets aside the shipping rule in this area: the curve fails the 2016 placebo C2 (-0.114 against 0.10) and the out-of-sample step C1x (0.100 against 0.10), so the rule as written would ship the hard floor. The curve passes C0, C1 (0.066), C1b, C3 (0.072 against 0.15), C3x (0.125), C3r, C4 and C8; leaving one year out it is within 0.10 of Aqua in 9 of 10 years, against 3 of 10 for the hard floor, which passes C2 (-0.094) and C1x (0.072)."
     },
     "punjab-haryana": {
       "model": "L2",
@@ -12,9 +12,9 @@
       "reason": "Hard floor, with one constant per calendar month. Passes every check the shipping rule names, as first written: C0, C1 (-0.020), C1b, C2 (-0.059) and C3 (0.148 against 0.15, narrowly); also C3r and C4. Fails C3x, added after results: the same statistic on 2020 to 2021 is 0.169. The detection curve fails C3 (0.208) and C8 (its midpoint is too uncertain), which is why it does not ship. Until 15 Nov the hard floor with one year-round constant shipped; it failed C3 (0.169) because its error followed the season."
     },
     "chilecito": {
-      "model": "L2",
+      "model": "S0",
       "variant": "A",
-      "reason": "Case-study area with too few fires to calibrate. Uses Cordoba's curve, floor and monthly constants, and Cordoba's model (the hard floor). Its own checks are shown and several fail because so few fires occur there."
+      "reason": "Case-study area with too few fires to calibrate. Uses Cordoba's curve and monthly constants, and Cordoba's model (the detection curve, decision 58). Its own checks are shown and several fail because so few fires occur there."
     },
     "karnataka-south": {
       "model": "L1r",

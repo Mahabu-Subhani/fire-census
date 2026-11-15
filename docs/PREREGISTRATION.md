@@ -233,3 +233,39 @@ before the model was changed, so C3's pass is no longer a clean held-out
 result. C3x on 2020 to 2021 is cleaner, and it is why it was added: the
 monthly values of those years had not been looked at. Their yearly totals
 had been, in the leave-one-year-out table of 14 November.
+
+### 15 November 2026: the shipping rule is set aside in Córdoba (drafted by the AI assistant; decision 58, chosen by Mahabu)
+
+No threshold and no definition above is changed, and no verdict is changed.
+**The shipping rule above is not followed in Córdoba.** This note records
+that, as the first paragraph of this file asks for a badly chosen threshold;
+here it is the rule, not a threshold, that the team departs from.
+
+**By the rule** the hard floor ships in Córdoba, because the detection curve
+fails a check the rule names: C2, the 2016 placebo, -0.114 against 0.10. It
+also fails C1x (0.100 against 0.10), which was added after results.
+
+**What ships instead:** the detection curve with one constant per calendar
+month, in Córdoba and in Chilecito, which borrows Córdoba's model.
+
+**Both models in Córdoba, same checks, same limits:**
+
+| Check | Detection curve (ships) | Hard floor (the rule's choice) |
+|---|---|---|
+| C1 | +0.066 pass | +0.077 pass |
+| C1b | pass by its window; change point October 2013, p = 0.014 | pass by its window; October 2013, p below 0.001 |
+| C2 (2016) | **-0.114 fail** | -0.094 pass |
+| C3 | 0.072 pass | 0.117 pass |
+| C3r | -0.062 pass | -0.068 pass |
+| C3x (added after results) | 0.125 pass | 0.124 pass |
+| C1x (added after results) | **+0.100 fail** | +0.072 pass |
+| C4 | slope 0.951, correlation 0.988, pass | slope 0.938, correlation 0.977, pass |
+| C8 | pass (38 percent) | not applicable |
+| Leaving one year out, 2012 to 2021 | 9 of 10 years within 0.10, largest miss 0.193 | 3 of 10, largest miss 0.233 |
+
+**What this costs.** A pre-registered rule exists so that the choice is not
+made after seeing which model one prefers. Here it was: the curve was chosen
+by Mahabu after both sets of results were on the table. The record that ships
+in Córdoba therefore fails a gating check of its own pre-registration, and
+the app shows that failure. Punjab and Haryana (hard floor) and Karnataka
+(ratio) still follow the rule.
